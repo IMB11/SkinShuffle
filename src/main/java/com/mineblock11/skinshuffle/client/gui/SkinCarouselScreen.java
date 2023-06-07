@@ -18,7 +18,7 @@ public class SkinCarouselScreen extends SpruceScreen {
     protected void init() {
         super.init();
 
-        this.addDrawableChild(new CarouselMoveButton(Position.of((this.width / 6) - 16, (this.height / 2) - 16), false));
-        this.addDrawableChild(new CarouselMoveButton(Position.of(this.width - (this.width / 6) - 16, (this.height / 2) - 16), true));
+        this.addDrawableChild(new CarouselMoveButton(Position.of((this.width / 6) - 8, (this.height / 2) - 8), false));
+        this.addDrawableChild(new CarouselMoveButton(Position.of(this.width - (this.width / 6) - 8, (this.height / 2) - 8), true));
     }
 }

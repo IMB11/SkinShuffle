@@ -20,6 +20,6 @@ public class CarouselMoveButton extends AbstractSpruceWidget {
 
     @Override
     protected void renderWidget(DrawContext guiGraphics, int mouseX, int mouseY, float delta) {
-        guiGraphics.drawTexture(ARROW_TEXTURES, getX(), getY(), (isRight ? 16 : 0), (isFocusedOrHovered() ? 16 : 0), 16, 16);
+        guiGraphics.drawTexture(ARROW_TEXTURES, getX(), getY(), (isRight ? 16 : 0), (isMouseHovered() ? 16 : 0),  16, 16, 32, 32);
     }
 }
