@@ -1,0 +1,33 @@
+name: Upload release assets
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  upload_asset:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - uses: burrunan/gradle-cache-action@v1
+        with:
+          gradle-distribution-sha-256-sum-warning: false
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          cache: gradle
+          java-version: 17
+      - run: chmod +x gradlew
+      - name: Build
+        run: ./gradlew build
+      - uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: ${{ vars.MODRINTH_ID }}
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge-id: ${{ vars.CURSEFORGE_ID }}
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          github-token: ${{ secrets.CLASSIC_GITHUB_TOKEN }}
