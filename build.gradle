@@ -7,7 +7,12 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
-
+    mavenLocal()
+    maven {
+        name 'Gegy'
+        url 'https://maven.gegy.dev'
+    }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -15,6 +20,8 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    include modImplementation("dev.lambdaurora:spruceui:${project.spruceui_version}")
 }
 
 processResources {
