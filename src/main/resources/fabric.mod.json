@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "skinshuffle",
+  "version": "${version}",
+  "name": "SkinShuffle",
+  "description": "TODO: desc",
+  "authors": [
+    "mineblock11",
+    "enjarai"
+  ],
+  "contact": {
+    "website": "TODO: docs.mineblock11.dev page",
+    "repo": "https://github.com/mineblock11/skinshuffle"
+  },
+  "license": "MIT",
+  "icon": "assets/skinshuffle/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "com.mineblock11.skinshuffle.client.SkinShuffleClient"
+    ],
+    "main": [
+      "com.mineblock11.skinshuffle.SkinShuffle"
+    ],
+    "server": [
+      "com.mineblock11.skinshuffle.dedicated.SkinShuffleDedicated"
+    ]
+  },
+  "mixins": [
+    "SkinShuffle.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
