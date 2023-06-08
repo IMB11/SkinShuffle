@@ -73,9 +73,11 @@ public class SkinCarouselScreen extends SpruceScreen {
         ScissorManager.pushScaleFactor(this.scaleFactor);
 
         // Carousel Widgets
-        int xOffset = (-cardIndex) * (PRESET_CARD_WIDTH + PRESET_CARD_GAP);
-        int currentX = (this.width / 2) - (PRESET_CARD_WIDTH / 2);
+        int xOffset = (-cardIndex + 1) * (PRESET_CARD_WIDTH + PRESET_CARD_GAP);
+        // TODO: How the fuck do you center it?
+        int currentX = this.width / 9;
         for (SkinPresetWidget loadedPreset : this.loadedPresets) {
+//            graphics.drawTextWithShadow(this.textRenderer, String.valueOf(loadedPresets.indexOf(loadedPreset)), currentX + xOffset, this.height/2 - this.textRenderer.fontHeight /2 , 0xFFFFFFFF);
             loadedPreset.overridePosition(Position.of(currentX + xOffset, (this.height / 2) - (PRESET_CARD_HEIGHT / 2)));
             loadedPreset.overrideDimensions(PRESET_CARD_WIDTH, PRESET_CARD_HEIGHT);
 
