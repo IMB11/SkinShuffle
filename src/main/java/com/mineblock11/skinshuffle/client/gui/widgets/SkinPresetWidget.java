@@ -1,20 +1,36 @@
 package com.mineblock11.skinshuffle.client.gui.widgets;
 
+import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
+import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
+import com.mineblock11.skinshuffle.client.preset.SkinPreset;
+import com.mineblock11.skinshuffle.client.skin.Skin;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.widget.AbstractSpruceWidget;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+
+import java.util.UUID;
 
 public class SkinPresetWidget extends AbstractSpruceWidget {
-    private final Object skinPreset;
+    private final SkinPreset skinPreset;
     private Position position;
     private boolean isCentral;
+    private LivingEntity entity;
 
-    public SkinPresetWidget(Position position, int width, int height, Object skinPreset) {
+    public SkinPresetWidget(Position position, int width, int height, SkinPreset skinPreset) {
         super(position);
 
         this.skinPreset = skinPreset;
         this.width = width;
         this.height = height;
+
+        var skin = skinPreset.getSkin();
+        entity = new DummyClientPlayerEntity(
+                null, UUID.randomUUID(),
+                skin::getTexture, skin::getModel
+        );
     }
 
     public void overridePosition(Position newPosition) {
@@ -45,5 +61,10 @@ public class SkinPresetWidget extends AbstractSpruceWidget {
     @Override
     protected void renderWidget(DrawContext graphics, int mouseX, int mouseY, float delta) {
         graphics.drawTextWithShadow(this.client.textRenderer, "{" + getX() + "," + getY() + "}", getX(), getY(), this.active ? 0xFFFFFFFF : 0xFF808080);
+
+        GuiEntityRenderer.drawEntity(
+                graphics.getMatrices(), getX(), getY(),
+                30, 0.0f, mouseX, mouseY, entity
+        );
     }
 }
