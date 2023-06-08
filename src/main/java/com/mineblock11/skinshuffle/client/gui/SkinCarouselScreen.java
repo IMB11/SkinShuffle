@@ -28,7 +28,7 @@ public class SkinCarouselScreen extends SpruceScreen {
     protected void init() {
         super.init();
 
-        leftMoveButton = new CarouselMoveButton(Position.of((this.width / 4) - 8, (this.height / 2) - 8), false);
+        leftMoveButton = new CarouselMoveButton(Position.of((this.width / 4) + 8, (this.height / 2) - 8), false);
         rightMoveButton = new CarouselMoveButton(Position.of(this.width - (this.width / 4) - 8, (this.height / 2) - 8), true);
 
         leftMoveButton.setCallback(() -> {
@@ -36,12 +36,14 @@ public class SkinCarouselScreen extends SpruceScreen {
             if (cardIndex < 0) {
                 cardIndex = this.loadedPresets.size() - 1;
             }
+            System.out.println(cardIndex);
         });
         rightMoveButton.setCallback(() -> {
             cardIndex = (cardIndex + 1) % (this.loadedPresets.size());
             if (cardIndex < 0) {
                 cardIndex = this.loadedPresets.size();
             }
+            System.out.println(cardIndex);
         });
 
         this.loadedPresets.add(new SkinPresetWidget(Position.of(0, 0), this.width / 8, this.height / 4, new Object()));
@@ -58,7 +60,7 @@ public class SkinCarouselScreen extends SpruceScreen {
     @Override
     public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
         PRESET_CARD_WIDTH = this.width / 4;
-        PRESET_CARD_HEIGHT = this.height / 8;
+        PRESET_CARD_HEIGHT = (int) (this.height / 1.5);
         PRESET_CARD_GAP = (int) (10 * this.scaleFactor);
 
         // BG stuff
@@ -73,6 +75,13 @@ public class SkinCarouselScreen extends SpruceScreen {
             graphics.drawTextWithShadow(this.textRenderer, String.valueOf(loadedPresets.indexOf(loadedPreset)), currentX + xOffset, PRESET_CARD_HEIGHT - this.textRenderer.fontHeight, 0xFFFFFFFF);
             loadedPreset.overridePosition(Position.of(currentX + xOffset, (this.height / 2) - (PRESET_CARD_HEIGHT / 2)));
             loadedPreset.overrideDimensions(PRESET_CARD_WIDTH, PRESET_CARD_HEIGHT);
+
+            if(cardIndex == this.loadedPresets.indexOf(loadedPreset)) {
+                loadedPreset.setActive(true);
+            } else {
+                loadedPreset.setActive(false);
+            }
+
             loadedPreset.render(graphics, mouseX, mouseY, delta);
             currentX += PRESET_CARD_WIDTH + PRESET_CARD_GAP;
         }
