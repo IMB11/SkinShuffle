@@ -2,6 +2,8 @@ package com.mineblock11.skinshuffle.client.gui;
 
 import com.mineblock11.skinshuffle.client.gui.widgets.CarouselMoveButton;
 import com.mineblock11.skinshuffle.client.gui.widgets.SkinPresetWidget;
+import com.mineblock11.skinshuffle.client.preset.SkinPreset;
+import com.mineblock11.skinshuffle.client.skin.source.NameMcSource;
 import com.sun.jna.platform.win32.OaIdl;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.Tooltip;
@@ -50,12 +52,12 @@ public class SkinCarouselScreen extends SpruceScreen {
             System.out.println(cardIndex);
         });
 
-        this.loadedPresets.add(new SkinPresetWidget(Position.of(0, 0), this.width / 8, this.height / 4, new Object()));
-        this.loadedPresets.add(new SkinPresetWidget(Position.of(0, 0), this.width / 8, this.height / 4, new Object()));
-        this.loadedPresets.add(new SkinPresetWidget(Position.of(0, 0), this.width / 8, this.height / 4, new Object()));
-        this.loadedPresets.add(new SkinPresetWidget(Position.of(0, 0), this.width / 8, this.height / 4, new Object()));
-        this.loadedPresets.add(new SkinPresetWidget(Position.of(0, 0), this.width / 8, this.height / 4, new Object()));
-        this.loadedPresets.add(new SkinPresetWidget(Position.of(0, 0), this.width / 8, this.height / 4, new Object()));
+        var source = NameMcSource.getInstance();
+
+        for (int i = 0; i < 10; i++) {
+            var preset = new SkinPreset(source.get(i));
+            this.loadedPresets.add(new SkinPresetWidget(Position.of(0, 0), this.width / 8, this.height / 4, preset));
+        }
 
         this.addSelectableChild(leftMoveButton);
         this.addSelectableChild(rightMoveButton);
