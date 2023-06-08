@@ -24,6 +24,8 @@ dependencies {
     include modImplementation("dev.lambdaurora:spruceui:${project.spruceui_version}")
 
     include implementation("org.jsoup:jsoup:${project.jsoup_version}")
+    include implementation("com.github.corese4rch:cvurl-io:${project.cvurlio_version}")
+    include implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.8.5")
 }
 
 processResources {
