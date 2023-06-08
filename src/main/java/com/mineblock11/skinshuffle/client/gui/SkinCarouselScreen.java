@@ -32,8 +32,8 @@ public class SkinCarouselScreen extends SpruceScreen {
         PRESET_CARD_HEIGHT = (int) (this.height / 1.5);
         PRESET_CARD_GAP = (int) (10 * this.scaleFactor);
 
-        leftMoveButton = new CarouselMoveButton(Position.of((this.width / 2) - PRESET_CARD_WIDTH, (this.height / 2) - 8), false);
-        rightMoveButton = new CarouselMoveButton(Position.of(this.width - (this.width / 2) + PRESET_CARD_WIDTH, (this.height / 2) - 8), true);
+        leftMoveButton = new CarouselMoveButton(Position.of((PRESET_CARD_WIDTH / 2), (this.height / 2) - 8), false);
+        rightMoveButton = new CarouselMoveButton(Position.of(this.width - (PRESET_CARD_WIDTH / 2), (this.height / 2) - 8), true);
 
         leftMoveButton.setCallback(() -> {
             cardIndex = (cardIndex - 1 + (this.loadedPresets.size())) % (this.loadedPresets.size());
@@ -73,9 +73,9 @@ public class SkinCarouselScreen extends SpruceScreen {
         ScissorManager.pushScaleFactor(this.scaleFactor);
 
         // Carousel Widgets
-        int xOffset = (-cardIndex + 1) * (PRESET_CARD_WIDTH + PRESET_CARD_GAP);
+        int xOffset = (-cardIndex) * (PRESET_CARD_WIDTH + PRESET_CARD_GAP);
         // TODO: How the fuck do you center it?
-        int currentX = this.width / 9;
+        int currentX = (this.width / 2) - (PRESET_CARD_WIDTH / 2);
         for (SkinPresetWidget loadedPreset : this.loadedPresets) {
 //            graphics.drawTextWithShadow(this.textRenderer, String.valueOf(loadedPresets.indexOf(loadedPreset)), currentX + xOffset, this.height/2 - this.textRenderer.fontHeight /2 , 0xFFFFFFFF);
             loadedPreset.overridePosition(Position.of(currentX + xOffset, (this.height / 2) - (PRESET_CARD_HEIGHT / 2)));
