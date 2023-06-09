@@ -3,8 +3,8 @@ package com.mineblock11.skinshuffle.client.gui;
 import com.mineblock11.skinshuffle.client.gui.widgets.CarouselMoveButton;
 import com.mineblock11.skinshuffle.client.gui.widgets.SkinPresetWidget;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
-import com.mineblock11.skinshuffle.client.skin.source.NameMcSource;
-import com.sun.jna.platform.win32.OaIdl;
+import com.mineblock11.skinshuffle.client.skin.UrlSkin;
+import com.mineblock11.skinshuffle.client.skin.source.SkinDexSource;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.Tooltip;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
@@ -13,7 +13,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class SkinCarouselScreen extends SpruceScreen {
     private static int PRESET_CARD_WIDTH, PRESET_CARD_HEIGHT, PRESET_CARD_GAP;
@@ -52,10 +51,8 @@ public class SkinCarouselScreen extends SpruceScreen {
             System.out.println(cardIndex);
         });
 
-        var source = NameMcSource.getInstance();
-
         for (int i = 0; i < 10; i++) {
-            var preset = new SkinPreset(source.get(i));
+            var preset = new SkinPreset(new UrlSkin("https://www.minecraftskins.com/uploads/skins/2023/06/06/among-us-character-21667114.png?v577", "default"));
             this.loadedPresets.add(new SkinPresetWidget(Position.of(0, 0), this.width / 8, this.height / 4, preset));
         }
 

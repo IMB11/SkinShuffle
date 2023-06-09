@@ -13,16 +13,17 @@ import org.jsoup.select.Selector;
 
 import java.io.IOException;
 
-public class NameMcSource implements SkinSource {
-    private static final String BASE_URL = "https://namemc.com";
-    private static final String PAGE_URL = BASE_URL + "/minecraft-skins?page=%d";
-    private static NameMcSource INSTANCE;
+public class SkinDexSource implements SkinSource {
+    private static final String BASE_URL = "https://www.minecraftskins.com/";
+    private static final String PAGE_URL = BASE_URL + "%d/";
+    private static SkinDexSource INSTANCE;
 
-    public static NameMcSource getInstance() {
+    public static SkinDexSource getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new NameMcSource( // TODO: json these
-                    30, ".row .col-4 .card a", ".right-0 form a",
-                    ".card .checkered canvas", "data-model"
+            INSTANCE = new SkinDexSource( // TODO: json these
+                    58, ".skin-list .skin a.skin-title",
+                    ".skin-previews .skin-previews-wrapper img[src*=\"/uploads/skins\"]",
+                    ".skin-preview div.sid-pxarm"
             );
         }
         return INSTANCE;
@@ -32,16 +33,14 @@ public class NameMcSource implements SkinSource {
     private final String detailsPageSelector;
     private final String downloadButtonSelector;
     private final String skinTypeElementSelector;
-    private final String skinTypeAttributeSelector;
 
     private final IntObjectMap<Page> pages = new IntObjectHashMap<>();
 
-    public NameMcSource(int pageSize, String detailsPageSelector, String downloadButtonSelector, String skinTypeElementSelector, String skinTypeAttributeSelector) {
+    public SkinDexSource(int pageSize, String detailsPageSelector, String downloadButtonSelector, String skinTypeElementSelector) {
         this.pageSize = pageSize;
         this.detailsPageSelector = detailsPageSelector;
         this.downloadButtonSelector = downloadButtonSelector;
         this.skinTypeElementSelector = skinTypeElementSelector;
-        this.skinTypeAttributeSelector = skinTypeAttributeSelector;
     }
 
     @Override
@@ -67,7 +66,7 @@ public class NameMcSource implements SkinSource {
 
         private Document fetchPage() {
             try {
-                return SkinShuffleClient.jsoupConnection(String.format(PAGE_URL, index)).get();
+                return SkinShuffleClient.jsoupConnection(String.format(PAGE_URL, index + 1)).get();
             } catch (IOException e) {
                 throw new FetchException(e);
             }
@@ -86,10 +85,10 @@ public class NameMcSource implements SkinSource {
                         .get();
                 var skinUrl = skinPage.select(downloadButtonSelector)
                         .first()
-                        .attr("href");
+                        .attr("src");
                 var skinType = skinPage.select(skinTypeElementSelector)
                         .first()
-                        .attr(skinTypeAttributeSelector).equals("classic") ? "default" : "slim";
+                        .text().toLowerCase().contains("slim") ? "slim" : "default";
                 return new UrlSkin(skinUrl, skinType);
             } catch (IOException e) {
                 throw new FetchException(e);

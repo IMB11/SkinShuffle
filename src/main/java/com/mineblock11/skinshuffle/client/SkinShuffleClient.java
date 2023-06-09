@@ -20,6 +20,7 @@ public class SkinShuffleClient implements ClientModInitializer {
                 .header("Host", "namemc.com")
                 .referrer("http://www.google.com")
                 .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/113.0")
+                .maxBodySize(0)
                 .timeout(12000)
                 .followRedirects(true);
     }

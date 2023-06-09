@@ -33,13 +33,13 @@ public class UrlSkin implements Skin {
     }
 
     public void fetchSkin() {
-        var id = SkinShuffle.id("skin/url/" + url.hashCode());
+        var id = SkinShuffle.id("skin/url/" + Math.abs(url.hashCode()));
         var textureManager = MinecraftClient.getInstance().getTextureManager();
 
         if (textureManager.getOrDefault(id, null) == null) {
             // Texture doesn't exist, we need to fetch it
             fetching = true;
-            var texture = new PlayerSkinTexture(null, url, null, true, () -> {
+            var texture = new PlayerSkinTexture(null, url, id, true, () -> {
                 fetching = false;
                 fetched = true;
                 setTexture(id);
