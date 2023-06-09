@@ -3,12 +3,19 @@ package com.mineblock11.skinshuffle.client.skin;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import coresearch.cvurl.io.request.CVurl;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.PlayerSkinTexture;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.IOException;
+import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class UrlSkin implements Skin {
     // Keep track of how many instances exist for each texture id, so we can clean them up when they're no longer used
@@ -37,14 +44,43 @@ public class UrlSkin implements Skin {
         var textureManager = MinecraftClient.getInstance().getTextureManager();
 
         if (textureManager.getOrDefault(id, null) == null) {
-            // Texture doesn't exist, we need to fetch it
+            // Texture doesn't exist, we need to fetch it.
             fetching = true;
-            var texture = new PlayerSkinTexture(null, url, id, true, () -> {
-                fetching = false;
-                fetched = true;
-                setTexture(id);
-            });
-            textureManager.registerTexture(id, texture);
+
+            new Thread(() -> {
+                try {
+                    Path cacheFolder = FabricLoader.getInstance().getGameDir().resolve(".cache/");
+                    if(!cacheFolder.toFile().exists()) Files.createDirectory(cacheFolder);
+
+                    Path temporaryFilePath = cacheFolder.resolve(Math.abs(url.hashCode()) + ".png");
+
+                    try {
+                        CVurl cVurl = new CVurl();
+                        var response = cVurl.get(url).as(HttpResponse.BodyHandlers.ofByteArray()).get();
+                        var bytes = response.getBody();
+
+                        Files.write(temporaryFilePath, bytes);
+
+                        var texture = new PlayerSkinTexture(temporaryFilePath.toFile(), url, new Identifier("minecraft:textures/entity/player/wide/steve.png"), true, () -> {
+                            fetching = false;
+                            fetched = true;
+                            setTexture(id);
+                        });
+
+                        textureManager.registerTexture(id, texture);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    } finally {
+                        try {
+                            Files.delete(temporaryFilePath);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }, "UrlSkinFetcher").start();
         } else {
             // Texture already exists, we assume it hasn't changed
             fetched = true;

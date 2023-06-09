@@ -4,24 +4,33 @@ import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mineblock11.skinshuffle.client.skin.Skin;
+import com.mojang.blaze3d.systems.RenderSystem;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.widget.AbstractSpruceWidget;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.InventoryScreen;
+import net.minecraft.client.render.DiffuseLighting;
+import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import org.joml.Vector3f;
 
 import java.util.UUID;
 
 public class SkinPresetWidget extends AbstractSpruceWidget {
     private final SkinPreset skinPreset;
+    private final Screen parent;
     private Position position;
     private boolean isCentral;
     private LivingEntity entity;
+    private double scaleFactor;
 
-    public SkinPresetWidget(Position position, int width, int height, SkinPreset skinPreset) {
+    public SkinPresetWidget(Screen parent, Position position, int width, int height, SkinPreset skinPreset) {
         super(position);
 
+        this.parent = parent;
         this.skinPreset = skinPreset;
         this.width = width;
         this.height = height;
@@ -63,8 +72,12 @@ public class SkinPresetWidget extends AbstractSpruceWidget {
         graphics.drawTextWithShadow(this.client.textRenderer, "{" + getX() + "," + getY() + "}", getX(), getY(), this.active ? 0xFFFFFFFF : 0xFF808080);
 
         GuiEntityRenderer.drawEntity(
-                graphics.getMatrices(), getX(), getY(),
-                30, 0.0f, mouseX, mouseY, entity
+                graphics.getMatrices(), getX() + (this.getWidth() / 2), (int) (this.getY() + this.height / 2),
+                (int) this.scaleFactor * 16, 0.0f, 0, 0, entity
         );
+    }
+
+    public void setScaleFactor(double scaleFactor) {
+        this.scaleFactor = scaleFactor;
     }
 }

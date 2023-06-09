@@ -85,6 +85,11 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
         return DefaultSkinHelper.getTexture(getUuid());
     }
 
+    @Override
+    public boolean isInvisibleTo(PlayerEntity player) {
+        return false;
+    }
+
     @Nullable
     @Override
     protected PlayerListEntry getPlayerListEntry() {

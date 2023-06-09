@@ -8,6 +8,7 @@
     "accessor.YggdrasilUserApiServiceAccessor"
   ],
   "client": [
+    "LivingEntityRendererMixin",
     "TitleScreenMixin",
     "accessor.MinecraftClientAccessor"
   ],

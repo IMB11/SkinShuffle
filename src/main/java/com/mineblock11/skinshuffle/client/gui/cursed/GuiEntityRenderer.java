@@ -7,14 +7,15 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 public class GuiEntityRenderer {
     public static void drawEntity(MatrixStack matrices, int x, int y, int size, float rotation, double mouseX, double mouseY, LivingEntity entity) {
-        float f = (float) (Math.atan(mouseX / 40.0F) * Math.sin((rotation / 180.0 + 0.5) * Math.PI));
-        float g = (float)Math.atan(mouseY / 40.0F);
+        float f = (float) Math.atan(mouseX / 40.0F);
+        float g = (float) Math.atan(mouseY / 40.0F);
         Quaternionf quaternionf = (new Quaternionf()).rotateZ(3.1415927F);
         Quaternionf quaternionf2 = (new Quaternionf()).rotateX(g * 20.0F * 0.017453292F);
         quaternionf.mul(quaternionf2);
@@ -54,11 +55,11 @@ public class GuiEntityRenderer {
             quaternionf2.conjugate();
             entityRenderDispatcher.setRotation(quaternionf2);
         }
-        entityRenderDispatcher.setRenderShadows(false);
         VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0f, 1.0f, matrices, immediate, 0xF000F0));
-        immediate.draw();
+        entityRenderDispatcher.setRenderShadows(false);
+        entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0f, 1.0f, matrices, immediate, 0xF000F0);
         entityRenderDispatcher.setRenderShadows(true);
+        immediate.draw();
         matrices.pop();
         DiffuseLighting.enableGuiDepthLighting();
         matrixStack.pop();

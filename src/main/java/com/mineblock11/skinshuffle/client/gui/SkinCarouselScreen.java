@@ -53,7 +53,7 @@ public class SkinCarouselScreen extends SpruceScreen {
 
         for (int i = 0; i < 10; i++) {
             var preset = new SkinPreset(new UrlSkin("https://www.minecraftskins.com/uploads/skins/2023/06/06/among-us-character-21667114.png?v577", "default"));
-            this.loadedPresets.add(new SkinPresetWidget(Position.of(0, 0), this.width / 8, this.height / 4, preset));
+            this.loadedPresets.add(new SkinPresetWidget(this, Position.of(0, 0), this.width / 8, this.height / 4, preset));
         }
 
         this.addSelectableChild(leftMoveButton);
@@ -73,7 +73,6 @@ public class SkinCarouselScreen extends SpruceScreen {
 
         // Carousel Widgets
         int xOffset = (-cardIndex + 1) * (PRESET_CARD_WIDTH + PRESET_CARD_GAP);
-        // TODO: How the fuck do you center it?
         int currentX = this.width / 9;
         for (SkinPresetWidget loadedPreset : this.loadedPresets) {
 //            graphics.drawTextWithShadow(this.textRenderer, String.valueOf(loadedPresets.indexOf(loadedPreset)), currentX + xOffset, this.height/2 - this.textRenderer.fontHeight /2 , 0xFFFFFFFF);
@@ -85,6 +84,8 @@ public class SkinCarouselScreen extends SpruceScreen {
             } else {
                 loadedPreset.setActive(false);
             }
+
+            loadedPreset.setScaleFactor(this.scaleFactor);
 
             loadedPreset.render(graphics, mouseX, mouseY, delta);
             currentX += PRESET_CARD_WIDTH + PRESET_CARD_GAP;
