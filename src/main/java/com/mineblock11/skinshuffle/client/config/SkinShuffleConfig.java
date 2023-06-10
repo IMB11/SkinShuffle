@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mineblock11.skinshuffle.client.skin.ConfigSkin;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 
@@ -21,6 +22,14 @@ public class SkinShuffleConfig {
 
     private static SkinPreset chosenPreset = null;
     private static final ArrayList<SkinPreset> loadedPresets = new ArrayList<>();
+
+    public static ArrayList<SkinPreset> getLoadedPresets() {
+        return loadedPresets;
+    }
+
+    public static SkinPreset getChosenPreset() {
+        return chosenPreset;
+    }
 
     public static void saveConfig() {
         if(chosenPreset == null) {
@@ -48,6 +57,25 @@ public class SkinShuffleConfig {
 
     public static void loadConfig() {
         if(!CONFIG_FILE.toFile().exists()) saveConfig();
+
+        loadedPresets.clear();
+        chosenPreset = null;
+
+        try {
+            String jsonString = Files.readString(PRESETS);
+            JsonObject presetFile = GSON.fromJson(jsonString, JsonObject.class);
+            int chosenPresetIndex = presetFile.get("chosenPreset").getAsInt();
+            JsonArray array = presetFile.get("loadedPresets").getAsJsonArray();
+            for (JsonElement jsonElement : array) {
+                DataResult<Pair<SkinPreset, JsonElement>> dataResult = SkinPreset.CODEC.decode(JsonOps.INSTANCE, jsonElement);
+                Pair<SkinPreset, JsonElement> pair = dataResult.getOrThrow(false, SkinShuffle.LOGGER::error);
+                SkinPreset preset = pair.getFirst();
+                loadedPresets.add(preset);
+            }
+            chosenPreset = loadedPresets.get(chosenPresetIndex);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void createDirectories() {

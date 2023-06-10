@@ -1,5 +1,6 @@
 package com.mineblock11.skinshuffle.client.gui.widgets;
 
+import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.SkinCarouselScreen;
 import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
@@ -33,10 +34,7 @@ public class OpenCarouselWidget extends SpruceContainerWidget {
             this.client.setScreen(new SkinCarouselScreen());
         }));
 
-        var preset = new SkinPreset(new UrlSkin("https://s.namemc.com/i/37529af66bcdd70d.png", "default"));
-        preset.setName("Technoblade");
-
-        setSelectedPreset(preset);
+        setSelectedPreset(SkinShuffleConfig.getChosenPreset());
     }
 
 
