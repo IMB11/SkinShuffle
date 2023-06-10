@@ -23,6 +23,9 @@ public class CarouselMoveButton extends AbstractSpruceWidget {
         this.isRight = isRight;
         this.width = 16;
         this.height = 16;
+        if (isRight) {
+            position.setRelativeX(position.getRelativeX() - width);
+        }
     }
 
     public void setCallback(@Nullable Runnable action) {

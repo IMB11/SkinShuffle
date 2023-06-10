@@ -10,7 +10,9 @@ import dev.lambdaurora.spruceui.Tooltip;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
 import dev.lambdaurora.spruceui.util.ScissorManager;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
 
@@ -22,7 +24,9 @@ public class SkinCarouselScreen extends SpruceScreen {
 
     public CarouselMoveButton leftMoveButton;
     public CarouselMoveButton rightMoveButton;
-    public int cardIndex = 0;
+    private int cardIndex = 0;
+    private double lastCardIndex = 0;
+    private double lastCardSwitchTime = 0;
     public ArrayList<SkinPresetWidget> loadedPresets = new ArrayList<>();
 
     @Override
@@ -37,18 +41,18 @@ public class SkinCarouselScreen extends SpruceScreen {
         rightMoveButton = new CarouselMoveButton(Position.of(this.width - (PRESET_CARD_WIDTH / 2), (this.height / 2) - 8), true);
 
         leftMoveButton.setCallback(() -> {
-            cardIndex = (cardIndex - 1 + (this.loadedPresets.size())) % (this.loadedPresets.size());
+            var cardIndex = (this.cardIndex - 1 + (this.loadedPresets.size())) % (this.loadedPresets.size());
             if (cardIndex < 0) {
                 cardIndex = this.loadedPresets.size() - 1;
             }
-            System.out.println(cardIndex);
+            setCardIndex(cardIndex);
         });
         rightMoveButton.setCallback(() -> {
-            cardIndex = (cardIndex + 1) % (this.loadedPresets.size());
+            var cardIndex = (this.cardIndex + 1) % (this.loadedPresets.size());
             if (cardIndex < 0) {
                 cardIndex = this.loadedPresets.size();
             }
-            System.out.println(cardIndex);
+            setCardIndex(cardIndex);
         });
 
         var preset = new SkinPreset(new UrlSkin("https://www.minecraftskins.com/uploads/skins/2023/06/06/among-us-character-21667114.png?v577", "default"));
@@ -77,8 +81,9 @@ public class SkinCarouselScreen extends SpruceScreen {
         ScissorManager.pushScaleFactor(this.scaleFactor);
 
         // Carousel Widgets
-        int xOffset = (-cardIndex + 1) * (PRESET_CARD_WIDTH + PRESET_CARD_GAP);
-        int currentX = this.width / 9;
+        double deltaIndex = getDeltaCardIndex();
+        int xOffset = (int) ((-deltaIndex + 1) * (PRESET_CARD_WIDTH + PRESET_CARD_GAP));
+        int currentX = this.width / 2 - (PRESET_CARD_WIDTH + PRESET_CARD_GAP) - PRESET_CARD_WIDTH / 2;
         for (SkinPresetWidget loadedPreset : this.loadedPresets) {
 //            graphics.drawTextWithShadow(this.textRenderer, String.valueOf(loadedPresets.indexOf(loadedPreset)), currentX + xOffset, this.height/2 - this.textRenderer.fontHeight /2 , 0xFFFFFFFF);
             loadedPreset.overridePosition(Position.of(currentX + xOffset, (this.height / 2) - (PRESET_CARD_HEIGHT / 2)));
@@ -107,5 +112,22 @@ public class SkinCarouselScreen extends SpruceScreen {
     public void renderTitle(DrawContext graphics, int mouseX, int mouseY, float delta) {
         graphics.drawCenteredTextWithShadow(this.textRenderer, this.getTitle().asOrderedText(), this.width / 2, this.textRenderer.fontHeight, 0xFFFFFFFF);
         graphics.fillGradient(0, (int) (this.textRenderer.fontHeight * 2.5), this.width, this.textRenderer.fontHeight * 3, 0x00000000, 0x7F000000);
+    }
+
+    private double getDeltaCardIndex() {
+        var deltaTime = (GlfwUtil.getTime() - lastCardSwitchTime) * 5;
+        deltaTime = MathHelper.clamp(deltaTime, 0, 1);
+        deltaTime = Math.sin(deltaTime * Math.PI / 2);
+        return MathHelper.lerp(deltaTime, lastCardIndex, cardIndex);
+    }
+
+    public void setCardIndex(int index) {
+        lastCardIndex = getDeltaCardIndex();
+        lastCardSwitchTime = GlfwUtil.getTime();
+        cardIndex = index;
+    }
+
+    public double getLastCardSwitchTime() {
+        return lastCardSwitchTime;
     }
 }

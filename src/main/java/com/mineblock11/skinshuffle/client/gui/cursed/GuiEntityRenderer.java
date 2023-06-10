@@ -24,8 +24,8 @@ public class GuiEntityRenderer {
         float j = entity.getPitch();
         float k = entity.prevHeadYaw;
         float l = entity.headYaw;
-        entity.bodyYaw = 180.0F + f * 20.0F;
-        entity.setYaw(180.0F + f * 40.0F);
+        entity.bodyYaw = 180.0F + f * 20.0F + rotation;
+        entity.setYaw(180.0F + f * 40.0F + rotation);
         entity.setPitch(-g * 20.0F);
         entity.headYaw = entity.getYaw();
         entity.prevHeadYaw = entity.getYaw();
