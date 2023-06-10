@@ -6,33 +6,59 @@ import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.widget.AbstractSpruceWidget;
+import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
+import dev.lambdaurora.spruceui.widget.SpruceWidget;
+import dev.lambdaurora.spruceui.widget.container.AbstractSpruceParentWidget;
+import dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.text.Text;
 
 import java.util.UUID;
 
-public class SkinPresetWidget extends AbstractSpruceWidget {
+public class SkinPresetWidget extends SpruceContainerWidget {
     private final SkinPreset skinPreset;
     private final SkinCarouselScreen parent;
     private Position position;
-    private boolean isCentral;
     private LivingEntity entity;
     private double scaleFactor;
 
-    public SkinPresetWidget(SkinCarouselScreen parent, Position position, int width, int height, SkinPreset skinPreset) {
-        super(position);
+    public SkinPresetWidget(SkinCarouselScreen parent, int width, int height, SkinPreset skinPreset) {
+        super(Position.of(0, 0), width, height);
 
         this.parent = parent;
         this.skinPreset = skinPreset;
-        this.width = width;
-        this.height = height;
 
         var skin = skinPreset.getSkin();
         entity = new DummyClientPlayerEntity(
                 null, UUID.randomUUID(),
                 skin::getTexture, skin::getModel
         );
+
+        addChild(new SpruceButtonWidget(
+                Position.of(4, height - 48), width - 8, 20,
+                Text.translatable("gui.skinshuffle.skin_carousel.skin_preset_widget.edit_preset"),
+                button -> {
+                    // TODO
+                }
+        ));
+
+        addChild(new SpruceButtonWidget(
+                Position.of(4, height - 24), width / 2 - 6, 20,
+                Text.translatable("gui.skinshuffle.skin_carousel.skin_preset_widget.copy_preset"),
+                button -> {
+                    // TODO
+                }
+        ));
+
+        addChild(new SpruceButtonWidget(
+                Position.of(width / 2 + 2, height - 24), width / 2 - 6, 20,
+                Text.translatable("gui.skinshuffle.skin_carousel.skin_preset_widget.delete_preset"),
+                button -> {
+                    // TODO
+                }
+        ));
     }
 
     public void overridePosition(Position newPosition) {
@@ -68,6 +94,8 @@ public class SkinPresetWidget extends AbstractSpruceWidget {
                 graphics.getMatrices(), getX() + (this.getWidth() / 2), this.getY() + this.height / 2,
                 this.height / 5, getEntityRotation(), 0, 0, entity
         );
+
+        super.renderWidget(graphics, mouseX, mouseY, delta);
     }
 
     public void setScaleFactor(double scaleFactor) {
