@@ -37,7 +37,6 @@ public class CarouselMoveButton extends AbstractSpruceWidget {
         if(this.action != null) {
             try {
                 this.action.run();
-//                System.out.println("Clicked");
             } catch (Exception e) {
                 throw new RuntimeException("Failed to trigger callback for CarouselMoveButton{x=" + getX() + ", y=" + getY() +"}\n" + e);
             }
@@ -47,7 +46,6 @@ public class CarouselMoveButton extends AbstractSpruceWidget {
 
     @Override
     protected void renderWidget(DrawContext guiGraphics, int mouseX, int mouseY, float delta) {
-//        System.out.println(this.hovered);
         guiGraphics.drawTexture(ARROW_TEXTURES, getX(), getY(), (isRight ? 16 : 0), (this.hovered ? 16 : 0),  16, 16, 32, 32);
     }
 }

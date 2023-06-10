@@ -66,7 +66,7 @@ public class SkinPresetWidget extends AbstractSpruceWidget {
 
         GuiEntityRenderer.drawEntity(
                 graphics.getMatrices(), getX() + (this.getWidth() / 2), this.getY() + this.height / 2,
-                (int) this.scaleFactor * 16, getEntityRotation(), 0, 0, entity
+                this.height / 5, getEntityRotation(), 0, 0, entity
         );
     }
 
