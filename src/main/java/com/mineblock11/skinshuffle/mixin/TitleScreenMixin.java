@@ -32,7 +32,7 @@ public class TitleScreenMixin extends Screen {
             this.client.setScreen(new TitleScreen());
         }));
 
-        SkinShuffleClient.addButtonToScreen(this, this::addDrawableChild);
+        OpenCarouselWidget.safelyCreateWidget(this, this::addDrawableChild);
 
 //        this.addDrawableChild(new SpruceButtonWidget(Position.of(5, 5), 200, 20, Text.of("carousel"), (btn) -> MinecraftClient.getInstance().setScreen(new SkinCarouselScreen())));
 //        MojangSkinAPI.setSkinTexture("https://s.namemc.com/i/2b931e86a910f916.png", MojangSkinAPI.SkinModelType.CLASSIC);
