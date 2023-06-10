@@ -1,6 +1,7 @@
 package com.mineblock11.skinshuffle.client.gui.widgets;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
+import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.widget.AbstractSpruceButtonWidget;
 import dev.lambdaurora.spruceui.widget.AbstractSprucePressableButtonWidget;
@@ -26,6 +27,8 @@ public class CarouselMoveButton extends AbstractSpruceWidget {
         if (isRight) {
             position.setRelativeX(position.getRelativeX() - width);
         }
+
+        if(SkinShuffleConfig.getLoadedPresets().size() < 2) setActive(false);
     }
 
     public void setCallback(@Nullable Runnable action) {
@@ -50,7 +53,7 @@ public class CarouselMoveButton extends AbstractSpruceWidget {
         matrices.push();
         // Translate the matrix forward so its above rendered playermodels
         matrices.translate(0, 0, 10000);
-        guiGraphics.drawTexture(ARROW_TEXTURES, getX(), getY(), (isRight ? 16 : 0), (this.hovered || this.focused ? 16 : 0),  16, 16, 32, 32);
+        guiGraphics.drawTexture(ARROW_TEXTURES, getX(), getY(), (isRight ? 16 : 0), (this.active ? (this.hovered || this.focused ? 16 : 0) : 16), 16, 16, 32, 32);
         matrices.pop();
     }
 
