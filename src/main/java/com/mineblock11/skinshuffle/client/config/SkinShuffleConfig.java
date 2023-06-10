@@ -80,7 +80,7 @@ public class SkinShuffleConfig {
 
     public static void createDirectories() {
         try {
-            Files.createDirectories(PERSISTENT_SKINS_DIR);
+            if(!PERSISTENT_SKINS_DIR.toFile().exists()) Files.createDirectories(PERSISTENT_SKINS_DIR);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

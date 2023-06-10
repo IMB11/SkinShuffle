@@ -1,5 +1,7 @@
 package com.mineblock11.skinshuffle.client.gui.widgets;
 
+import com.mineblock11.skinshuffle.SkinShuffle;
+import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.SkinCarouselScreen;
 import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
@@ -21,6 +23,7 @@ import java.util.UUID;
 public class SkinPresetWidget extends SpruceContainerWidget {
     private final SkinPreset skinPreset;
     private final SkinCarouselScreen parent;
+    private final SpruceButtonWidget deleteButton;
     private Position position = Position.of(0, 0);
     private LivingEntity entity;
     private double scaleFactor;
@@ -53,7 +56,7 @@ public class SkinPresetWidget extends SpruceContainerWidget {
                 }
         ));
 
-        addChild(new SpruceButtonWidget(
+        this.deleteButton = new SpruceButtonWidget(
                 Position.of(getWidth() / 2 + 2, getHeight() - 24), getWidth() / 2 - 5, 20,
                 Text.translatable("skinshuffle.carousel.preset_widget.delete"),
                 button -> {
@@ -66,7 +69,11 @@ public class SkinPresetWidget extends SpruceContainerWidget {
 
                     this.client.setScreen(confirmScreen);
                 }
-        ));
+        );
+
+        if(SkinShuffleConfig.getLoadedPresets().size() < 2) this.deleteButton.setActive(false);
+
+        addChild(deleteButton);
     }
 
     @Override
@@ -74,6 +81,7 @@ public class SkinPresetWidget extends SpruceContainerWidget {
         super.setActive(active);
 
         for (SpruceWidget child : this.children()) {
+            if(child.equals(this.deleteButton) && SkinShuffleConfig.getLoadedPresets().size() < 2) continue;
             child.setActive(active);
         }
     }

@@ -16,13 +16,7 @@ public class SkinShuffle implements ModInitializer {
     public static final Path DATA_DIR = FabricLoader.getInstance().getConfigDir().resolve("skinshuffle");
 
     @Override
-    public void onInitialize() {
-        try {
-            Files.createDirectory(DATA_DIR);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    public void onInitialize() {}
 
     public static Identifier id(String path) {
         return new Identifier(MOD_ID, path);
