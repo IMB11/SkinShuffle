@@ -46,6 +46,11 @@ public class CarouselMoveButton extends AbstractSpruceWidget {
 
     @Override
     protected void renderWidget(DrawContext guiGraphics, int mouseX, int mouseY, float delta) {
+        var matrices = guiGraphics.getMatrices();
+        matrices.push();
+        // Translate the matrix forward so its above rendered playermodels
+        matrices.translate(0, 0, 10000);
         guiGraphics.drawTexture(ARROW_TEXTURES, getX(), getY(), (isRight ? 16 : 0), (this.hovered ? 16 : 0),  16, 16, 32, 32);
+        matrices.pop();
     }
 }
