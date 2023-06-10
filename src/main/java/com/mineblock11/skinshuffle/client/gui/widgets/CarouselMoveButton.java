@@ -41,7 +41,7 @@ public class CarouselMoveButton extends AbstractSpruceWidget {
                 throw new RuntimeException("Failed to trigger callback for CarouselMoveButton{x=" + getX() + ", y=" + getY() +"}\n" + e);
             }
         }
-        return true;
+        return false;
     }
 
     @Override

@@ -37,7 +37,7 @@ public class SkinPresetWidget extends SpruceContainerWidget {
         );
 
         addChild(new SpruceButtonWidget(
-                Position.of(4, height - 48), width - 8, 20,
+                Position.of(getWidth() / 8, getHeight() - 48), getWidth() - (this.getWidth() / 4), 20,
                 Text.translatable("gui.skinshuffle.skin_carousel.skin_preset_widget.edit_preset"),
                 button -> {
                     // TODO
@@ -45,7 +45,7 @@ public class SkinPresetWidget extends SpruceContainerWidget {
         ));
 
         addChild(new SpruceButtonWidget(
-                Position.of(4, height - 24), width / 2 - 6, 20,
+                Position.of(3, getHeight() - 24), getWidth() / 2 - 5, 20,
                 Text.translatable("gui.skinshuffle.skin_carousel.skin_preset_widget.copy_preset"),
                 button -> {
                     // TODO
@@ -53,12 +53,21 @@ public class SkinPresetWidget extends SpruceContainerWidget {
         ));
 
         addChild(new SpruceButtonWidget(
-                Position.of(width / 2 + 2, height - 24), width / 2 - 6, 20,
+                Position.of(getWidth() / 2 + 2, getHeight() - 24), getWidth() / 2 - 5, 20,
                 Text.translatable("gui.skinshuffle.skin_carousel.skin_preset_widget.delete_preset"),
                 button -> {
                     // TODO
                 }
         ));
+    }
+
+    @Override
+    public void setActive(boolean active) {
+        super.setActive(active);
+
+        for (SpruceWidget child : this.children()) {
+            child.setActive(active);
+        }
     }
 
     public void overridePosition(Position newPosition) {
@@ -91,8 +100,8 @@ public class SkinPresetWidget extends SpruceContainerWidget {
         graphics.drawTextWithShadow(this.client.textRenderer, this.skinPreset.getName() != null ? this.skinPreset.getName() : "Unnamed Preset", getX() + (this.width / 2) - (this.client.textRenderer.getWidth(this.skinPreset.getName() != null ? this.skinPreset.getName() : "Unnamed Preset")) / 2, getY() + this.client.textRenderer.fontHeight / 2, this.active ? 0xFFFFFFFF : 0xFF808080);
 
         GuiEntityRenderer.drawEntity(
-                graphics.getMatrices(), getX() + (this.getWidth() / 2), this.getY() + this.height / 2,
-                this.height / 5, getEntityRotation(), 0, 0, entity
+                graphics.getMatrices(), getX() + (this.getWidth() / 2), (int) (this.getY() + this.height / 1.65),
+                this.height / 4, getEntityRotation(), 0, 0, entity
         );
 
         super.renderWidget(graphics, mouseX, mouseY, delta);
