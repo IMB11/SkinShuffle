@@ -5,14 +5,13 @@ import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mineblock11.skinshuffle.client.skin.UrlSkin;
+import com.terraformersmc.modmenu.config.ModMenuConfig;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
 import dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.GlfwUtil;
-import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
 
 import java.util.UUID;
@@ -39,8 +38,9 @@ public class OpenCarouselWidget extends SpruceContainerWidget {
         int y = (screen.height / 4 + 48) + 72 + 12;
 
         if (FabricLoader.getInstance().isModLoaded("modmenu")) {
-            // Mod menu moves all buttons up by 51 pixels.
-            y += 51/4;
+            if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.CLASSIC) {
+                y += 51 / 4;
+            }
         }
 
         widgetConsumer.accept(new OpenCarouselWidget(Position.of(screen.width / 2 + 104 + 25, y), 64, screen.height / 4));
