@@ -100,7 +100,7 @@ public class SkinPresetWidget extends SpruceContainerWidget {
         graphics.drawTextWithShadow(this.client.textRenderer, this.skinPreset.getName() != null ? this.skinPreset.getName() : "Unnamed Preset", getX() + (this.width / 2) - (this.client.textRenderer.getWidth(this.skinPreset.getName() != null ? this.skinPreset.getName() : "Unnamed Preset")) / 2, getY() + this.client.textRenderer.fontHeight / 2, this.active ? 0xFFFFFFFF : 0xFF808080);
 
         GuiEntityRenderer.drawEntity(
-                graphics.getMatrices(), getX() + (this.getWidth() / 2), (int) (this.getY() + this.height / 1.65),
+                graphics.getMatrices(), getX() + (this.getWidth() / 2), (int) (this.getY() + this.height / 1.6),
                 this.height / 4, getEntityRotation(), 0, 0, entity
         );
 
