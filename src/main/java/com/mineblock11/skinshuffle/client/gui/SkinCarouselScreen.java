@@ -9,8 +9,11 @@ import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.Tooltip;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
 import dev.lambdaurora.spruceui.util.ScissorManager;
+import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.util.GlfwUtil;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
@@ -67,6 +70,16 @@ public class SkinCarouselScreen extends SpruceScreen {
         for (SkinPresetWidget loadedPreset : this.loadedPresets) {
             this.addDrawableChild(loadedPreset);
         }
+
+        this.addDrawableChild(new SpruceButtonWidget(Position.of(this.width / 2 - 128 - 5, this.height - 23), 128, 20, ScreenTexts.CANCEL, button -> {
+            this.client.setScreen(new TitleScreen());
+        }));
+
+        this.addDrawableChild(new SpruceButtonWidget(Position.of(this.width / 2 + 5, this.height - 23), 128, 20, Text.translatable("skinshuffle.carousel.save_button"), button -> {
+            // TODO: Remember selected preset.
+
+            this.client.setScreen(new TitleScreen());
+        }));
     }
 
     @Override

@@ -2,6 +2,7 @@ skinshuffle:
   button: "Skin Presets"
   carousel:
     title: "Skin Presets"
+    save_button: "Select Preset"
     confirmations:
       delete_preset:
         title: "Preset Deletion"
