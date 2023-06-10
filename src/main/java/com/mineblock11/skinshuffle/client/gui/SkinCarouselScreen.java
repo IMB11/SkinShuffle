@@ -51,10 +51,15 @@ public class SkinCarouselScreen extends SpruceScreen {
             System.out.println(cardIndex);
         });
 
-        for (int i = 0; i < 10; i++) {
-            var preset = new SkinPreset(new UrlSkin("https://www.minecraftskins.com/uploads/skins/2023/06/06/among-us-character-21667114.png?v577", "default"));
-            this.loadedPresets.add(new SkinPresetWidget(this, Position.of(0, 0), this.width / 8, this.height / 4, preset));
-        }
+        var preset = new SkinPreset(new UrlSkin("https://www.minecraftskins.com/uploads/skins/2023/06/06/among-us-character-21667114.png?v577", "default"));
+        preset.setName("sus");
+        this.loadedPresets.add(new SkinPresetWidget(this, Position.of(0, 0), this.width / 8, this.height / 4, preset));
+        var preset2 = new SkinPreset(new UrlSkin("https://s.namemc.com/i/2b931e86a910f916.png", "default"));
+        preset2.setName("w a t");
+        this.loadedPresets.add(new SkinPresetWidget(this, Position.of(0, 0), this.width / 8, this.height / 4, preset2));
+        var preset3 = new SkinPreset(new UrlSkin("https://s.namemc.com/i/37529af66bcdd70d.png", "default"));
+        preset3.setName("Technoblade");
+        this.loadedPresets.add(new SkinPresetWidget(this, Position.of(0, 0), this.width / 8, this.height / 4, preset3));
 
         this.addSelectableChild(leftMoveButton);
         this.addSelectableChild(rightMoveButton);
