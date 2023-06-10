@@ -54,7 +54,7 @@ public class OpenCarouselWidget extends SpruceContainerWidget {
             }
         }
 
-        widgetConsumer.accept(new OpenCarouselWidget(Position.of(x, y), 96, screen.height / 4));
+        widgetConsumer.accept(new OpenCarouselWidget(Position.of(x, y), 72, screen.height / 4));
     }
 
     public void setSelectedPreset(SkinPreset preset) {
@@ -70,8 +70,8 @@ public class OpenCarouselWidget extends SpruceContainerWidget {
     protected void renderWidget(DrawContext graphics, int mouseX, int mouseY, float delta) {
         if(this.entity != null) {
             GuiEntityRenderer.drawEntity(
-                    graphics.getMatrices(), getX() + (this.getWidth() / 2), this.getY() - (this.height / 8),
-                    (int)( 20 * this.client.getWindow().getScaleFactor()), 0, (float)(getX() + (this.getWidth() / 2)) - mouseX, (float)(this.getY() - (this.height / 2)) - mouseY, entity
+                    graphics.getMatrices(), getX() + (this.getWidth() / 2), this.getY() - 12,
+                    (int)(45), 0, (float)(getX() + (this.getWidth() / 2)) - mouseX, (float)(this.getY() - (this.height / 2)) - mouseY, entity
             );
         }
 
