@@ -1,15 +1,17 @@
 package com.mineblock11.skinshuffle.client;
 
-import com.mineblock11.skinshuffle.client.gui.widgets.OpenCarouselWidget;
-import dev.lambdaurora.spruceui.Position;
+import com.mineblock11.skinshuffle.SkinShuffle;
 import net.fabricmc.api.ClientModInitializer;
-import net.minecraft.client.gui.screen.Screen;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
-import java.util.function.Consumer;
+import java.nio.file.Path;
 
 public class SkinShuffleClient implements ClientModInitializer {
+    // TODO move this to a config class or smt
+    public static final Path PROFILES = SkinShuffle.DATA_DIR.resolve("profiles.json");
+    public static final Path PERSISTENT_SKINS_DIR = SkinShuffle.DATA_DIR.resolve("skins");
+
     @Override
     public void onInitializeClient() {}
 

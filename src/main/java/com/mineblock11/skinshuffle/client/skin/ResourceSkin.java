@@ -27,4 +27,10 @@ public record ResourceSkin(Identifier texture, String model) implements Skin {
     public Identifier getSerializationId() {
         return SERIALIZATION_ID;
     }
+
+    @Override
+    public ConfigSkin saveToConfig() {
+        // TODO: not sure how to handle this one
+        throw new UnsupportedOperationException("Cannot save a resource skin to config");
+    }
 }
