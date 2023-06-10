@@ -71,7 +71,7 @@ public class OpenCarouselWidget extends SpruceContainerWidget {
         if(this.entity != null) {
             GuiEntityRenderer.drawEntity(
                     graphics.getMatrices(), getX() + (this.getWidth() / 2), this.getY() - 12,
-                    (int)(45), 0, (float)(getX() + (this.getWidth() / 2)) - mouseX, (float)(this.getY() - (this.height / 2)) - mouseY, entity
+                    (int)(45), 0, (float)(getX() + (this.getWidth() / 2)) - mouseX, (float)(this.getY() - this.height * 1.25) - mouseY, entity
             );
         }
 
