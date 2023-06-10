@@ -63,6 +63,10 @@ public class SkinCarouselScreen extends SpruceScreen {
 
         this.addSelectableChild(leftMoveButton);
         this.addSelectableChild(rightMoveButton);
+
+        for (SkinPresetWidget loadedPreset : this.loadedPresets) {
+            this.addDrawableChild(loadedPreset);
+        }
     }
 
     @Override
@@ -85,7 +89,6 @@ public class SkinCarouselScreen extends SpruceScreen {
             loadedPreset.setActive(cardIndex == this.loadedPresets.indexOf(loadedPreset));
             loadedPreset.setScaleFactor(this.scaleFactor);
 
-            loadedPreset.render(graphics, mouseX, mouseY, delta);
             currentX += cardAreaWidth;
         }
 

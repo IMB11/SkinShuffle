@@ -11,6 +11,7 @@ import dev.lambdaurora.spruceui.widget.SpruceWidget;
 import dev.lambdaurora.spruceui.widget.container.AbstractSpruceParentWidget;
 import dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.ConfirmScreen;
 import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.text.Text;
@@ -48,7 +49,7 @@ public class SkinPresetWidget extends SpruceContainerWidget {
                 Position.of(3, getHeight() - 24), getWidth() / 2 - 5, 20,
                 Text.translatable("gui.skinshuffle.skin_carousel.skin_preset_widget.copy_preset"),
                 button -> {
-                    // TODO
+
                 }
         ));
 
@@ -56,7 +57,14 @@ public class SkinPresetWidget extends SpruceContainerWidget {
                 Position.of(getWidth() / 2 + 2, getHeight() - 24), getWidth() / 2 - 5, 20,
                 Text.translatable("gui.skinshuffle.skin_carousel.skin_preset_widget.delete_preset"),
                 button -> {
-                    // TODO
+                    ConfirmScreen confirmScreen = new ConfirmScreen(result -> {
+                        if(result) {
+                            // delete preset
+                        }
+                        this.client.setScreen(parent);
+                    }, Text.translatable("gui.skinshuffle.skin_carousel.confirm_delete"), Text.translatable("gui.skinshuffle.skin_carousel.confirm_delete.desc"));
+
+                    this.client.setScreen(confirmScreen);
                 }
         ));
     }
@@ -97,14 +105,14 @@ public class SkinPresetWidget extends SpruceContainerWidget {
 
     @Override
     protected void renderWidget(DrawContext graphics, int mouseX, int mouseY, float delta) {
+        super.renderWidget(graphics, mouseX, mouseY, delta);
+
         graphics.drawTextWithShadow(this.client.textRenderer, this.skinPreset.getName() != null ? this.skinPreset.getName() : "Unnamed Preset", getX() + (this.width / 2) - (this.client.textRenderer.getWidth(this.skinPreset.getName() != null ? this.skinPreset.getName() : "Unnamed Preset")) / 2, getY() + this.client.textRenderer.fontHeight / 2, this.active ? 0xFFFFFFFF : 0xFF808080);
 
         GuiEntityRenderer.drawEntity(
                 graphics.getMatrices(), getX() + (this.getWidth() / 2), (int) (this.getY() + this.height / 1.6),
                 this.height / 4, getEntityRotation(), 0, 0, entity
         );
-
-        super.renderWidget(graphics, mouseX, mouseY, delta);
     }
 
     public void setScaleFactor(double scaleFactor) {
@@ -113,5 +121,19 @@ public class SkinPresetWidget extends SpruceContainerWidget {
 
     private float getEntityRotation() {
         return isActive() ? (float) (GlfwUtil.getTime() - parent.getLastCardSwitchTime()) * 35.0f : 0.0f;
+    }
+
+    private static class SkinPresetButton extends SpruceButtonWidget {
+        public SkinPresetButton(Position position, int width, int height, Text message, PressAction action) {
+            super(position, width, height, message, action);
+        }
+
+        @Override
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            if (!this.isActive() || !this.isVisible() || !this.isFocusedOrHovered())
+                return false;
+
+            return this.onMouseClick(mouseX, mouseY, button);
+        }
     }
 }
