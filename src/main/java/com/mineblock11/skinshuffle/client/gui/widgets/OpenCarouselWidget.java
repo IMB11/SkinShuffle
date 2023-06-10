@@ -5,13 +5,18 @@ import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mineblock11.skinshuffle.client.skin.UrlSkin;
+import com.mineblock11.skinshuffle.mixin.accessor.GameMenuScreenAccessor;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
 import dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.TitleScreen;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 
 import java.util.UUID;
@@ -36,14 +41,20 @@ public class OpenCarouselWidget extends SpruceContainerWidget {
 
     public static void safelyCreateWidget(Screen screen, Consumer<OpenCarouselWidget> widgetConsumer) {
         int y = (screen.height / 4 + 48) + 72 + 12;
+        int x = screen.width / 2 + 104 + 25;
+
+        if(screen instanceof GameMenuScreen gameMenuScreen) {
+            y = ((GameMenuScreenAccessor) gameMenuScreen).getExitButton().getY();
+            x -= 25 / 2;
+        }
 
         if (FabricLoader.getInstance().isModLoaded("modmenu")) {
-            if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.CLASSIC) {
+            if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.CLASSIC && screen instanceof TitleScreen) {
                 y += 51 / 4;
             }
         }
 
-        widgetConsumer.accept(new OpenCarouselWidget(Position.of(screen.width / 2 + 104 + 25, y), 64, screen.height / 4));
+        widgetConsumer.accept(new OpenCarouselWidget(Position.of(x, y), 96, screen.height / 4));
     }
 
     public void setSelectedPreset(SkinPreset preset) {

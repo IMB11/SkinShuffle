@@ -20,7 +20,7 @@ public class TitleScreenMixin extends Screen {
         super(title);
     }
 
-    @Inject(method = "init", at = @At("HEAD"))
+    @Inject(method = "init", at = @At("TAIL"))
     public void addButton(CallbackInfo ci) {
         /*
             TODO: Maybe different types of buttons?
@@ -28,13 +28,6 @@ public class TitleScreenMixin extends Screen {
              - Bedrock-style skin preview
          */
 
-        this.addDrawableChild(new SpruceButtonWidget(Position.of(5, 5), 64, 10, Text.of("refresh"), btn -> {
-            this.client.setScreen(new TitleScreen());
-        }));
-
         OpenCarouselWidget.safelyCreateWidget(this, this::addDrawableChild);
-
-//        this.addDrawableChild(new SpruceButtonWidget(Position.of(5, 5), 200, 20, Text.of("carousel"), (btn) -> MinecraftClient.getInstance().setScreen(new SkinCarouselScreen())));
-//        MojangSkinAPI.setSkinTexture("https://s.namemc.com/i/2b931e86a910f916.png", MojangSkinAPI.SkinModelType.CLASSIC);
     }
 }

@@ -8,8 +8,10 @@
     "accessor.YggdrasilUserApiServiceAccessor"
   ],
   "client": [
+    "GameMenuScreenMixin",
     "LivingEntityRendererMixin",
     "TitleScreenMixin",
+    "accessor.GameMenuScreenAccessor",
     "accessor.MinecraftClientAccessor"
   ],
   "injectors": {
