@@ -21,7 +21,7 @@ import java.util.UUID;
 public class SkinPresetWidget extends SpruceContainerWidget {
     private final SkinPreset skinPreset;
     private final SkinCarouselScreen parent;
-    private Position position;
+    private Position position = Position.of(0, 0);
     private LivingEntity entity;
     private double scaleFactor;
 
@@ -39,7 +39,7 @@ public class SkinPresetWidget extends SpruceContainerWidget {
 
         addChild(new SpruceButtonWidget(
                 Position.of(getWidth() / 8, getHeight() - 48), getWidth() - (this.getWidth() / 4), 20,
-                Text.translatable("gui.skinshuffle.skin_carousel.skin_preset_widget.edit_preset"),
+                Text.translatable("skinshuffle.carousel.preset_widget.edit"),
                 button -> {
                     // TODO
                 }
@@ -47,7 +47,7 @@ public class SkinPresetWidget extends SpruceContainerWidget {
 
         addChild(new SpruceButtonWidget(
                 Position.of(3, getHeight() - 24), getWidth() / 2 - 5, 20,
-                Text.translatable("gui.skinshuffle.skin_carousel.skin_preset_widget.copy_preset"),
+                Text.translatable("skinshuffle.carousel.preset_widget.copy"),
                 button -> {
 
                 }
@@ -55,14 +55,14 @@ public class SkinPresetWidget extends SpruceContainerWidget {
 
         addChild(new SpruceButtonWidget(
                 Position.of(getWidth() / 2 + 2, getHeight() - 24), getWidth() / 2 - 5, 20,
-                Text.translatable("gui.skinshuffle.skin_carousel.skin_preset_widget.delete_preset"),
+                Text.translatable("skinshuffle.carousel.preset_widget.delete"),
                 button -> {
                     ConfirmScreen confirmScreen = new ConfirmScreen(result -> {
                         if(result) {
                             // delete preset
                         }
                         this.client.setScreen(parent);
-                    }, Text.translatable("gui.skinshuffle.skin_carousel.confirm_delete"), Text.translatable("gui.skinshuffle.skin_carousel.confirm_delete.desc"));
+                    }, Text.translatable("skinshuffle.carousel.confirmations.delete_preset.title"), Text.translatable("skinshuffle.carousel.confirmations.delete_preset.message"));
 
                     this.client.setScreen(confirmScreen);
                 }

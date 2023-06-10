@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class SkinCarouselScreen extends SpruceScreen {
     public SkinCarouselScreen() {
-        super(Text.translatable("skinshuffle.gui.skincarousel"));
+        super(Text.translatable("skinshuffle.carousel.title"));
     }
 
     public CarouselMoveButton leftMoveButton;

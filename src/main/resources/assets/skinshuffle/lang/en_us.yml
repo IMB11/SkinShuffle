@@ -1,0 +1,11 @@
+skinshuffle:
+  carousel:
+    title: "Skin Presets"
+    confirmations:
+      delete_preset:
+        title: "Preset Deletion"
+        message: "Are you sure you want to delete this preset? (This action is irreversible.)"
+    preset_widget:
+      edit: "Edit"
+      copy: "Copy"
+      delete: "Delete"
