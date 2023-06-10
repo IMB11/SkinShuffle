@@ -2,11 +2,18 @@ skinshuffle:
   button: "Skin Presets"
   carousel:
     title: "Skin Presets"
+
     save_button: "Select Preset"
+
+    # These are used for narrations.
+    left: "Move Carousel Left"
+    right: "Move Carousel Right"
+
     confirmations:
       delete_preset:
         title: "Preset Deletion"
         message: "Are you sure you want to delete this preset?\n(This action is irreversible.)"
+
     preset_widget:
       edit: "Edit"
       copy: "Copy"

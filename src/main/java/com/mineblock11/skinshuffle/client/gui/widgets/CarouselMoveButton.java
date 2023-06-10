@@ -50,7 +50,12 @@ public class CarouselMoveButton extends AbstractSpruceWidget {
         matrices.push();
         // Translate the matrix forward so its above rendered playermodels
         matrices.translate(0, 0, 10000);
-        guiGraphics.drawTexture(ARROW_TEXTURES, getX(), getY(), (isRight ? 16 : 0), (this.hovered ? 16 : 0),  16, 16, 32, 32);
+        guiGraphics.drawTexture(ARROW_TEXTURES, getX(), getY(), (isRight ? 16 : 0), (this.hovered || this.focused ? 16 : 0),  16, 16, 32, 32);
         matrices.pop();
+    }
+
+    @Override
+    protected @Nullable Text getNarrationMessage() {
+        return Text.translatable("skinshuffle.carousel." + (this.isRight ? "right" : "left"));
     }
 }

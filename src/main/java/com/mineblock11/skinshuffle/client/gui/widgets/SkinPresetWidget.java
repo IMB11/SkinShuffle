@@ -122,18 +122,4 @@ public class SkinPresetWidget extends SpruceContainerWidget {
     private float getEntityRotation() {
         return isActive() ? (float) (GlfwUtil.getTime() - parent.getLastCardSwitchTime()) * 35.0f : 0.0f;
     }
-
-    private static class SkinPresetButton extends SpruceButtonWidget {
-        public SkinPresetButton(Position position, int width, int height, Text message, PressAction action) {
-            super(position, width, height, message, action);
-        }
-
-        @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (!this.isActive() || !this.isVisible() || !this.isFocusedOrHovered())
-                return false;
-
-            return this.onMouseClick(mouseX, mouseY, button);
-        }
-    }
 }
