@@ -6,6 +6,8 @@ import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class SkinShuffle implements ModInitializer {
@@ -15,7 +17,11 @@ public class SkinShuffle implements ModInitializer {
 
     @Override
     public void onInitialize() {
-
+        try {
+            Files.createDirectory(DATA_DIR);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static Identifier id(String path) {

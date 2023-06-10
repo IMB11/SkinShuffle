@@ -15,6 +15,14 @@ repositories {
     }
     maven { url 'https://jitpack.io' }
     maven { url 'https://maven.terraformersmc.com/releases' }
+    maven {
+        name 'Xander Maven'
+        url 'https://maven.isxander.dev/releases'
+    }
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/skinshuffle.accesswidener")
 }
 
 yamlang {

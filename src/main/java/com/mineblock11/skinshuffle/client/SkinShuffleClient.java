@@ -1,19 +1,18 @@
 package com.mineblock11.skinshuffle.client;
 
-import com.mineblock11.skinshuffle.SkinShuffle;
+import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
+import com.mineblock11.skinshuffle.client.skin.ResourceSkin;
 import net.fabricmc.api.ClientModInitializer;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
-import java.nio.file.Path;
+import java.nio.file.Files;
 
 public class SkinShuffleClient implements ClientModInitializer {
-    // TODO move this to a config class or smt
-    public static final Path PROFILES = SkinShuffle.DATA_DIR.resolve("profiles.json");
-    public static final Path PERSISTENT_SKINS_DIR = SkinShuffle.DATA_DIR.resolve("skins");
-
     @Override
-    public void onInitializeClient() {}
+    public void onInitializeClient() {
+        SkinShuffleConfig.createDirectories();
+    }
 
     public static Connection jsoupConnection(String url) {
         return Jsoup.connect(url)

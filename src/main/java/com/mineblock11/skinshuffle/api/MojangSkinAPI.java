@@ -12,6 +12,7 @@ import coresearch.cvurl.io.multipart.MultipartBody;
 import coresearch.cvurl.io.multipart.Part;
 import coresearch.cvurl.io.request.CVurl;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 
 public class MojangSkinAPI {
     private static final CVurl CLIENT = new CVurl();
