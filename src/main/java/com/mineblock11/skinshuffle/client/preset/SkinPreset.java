@@ -61,7 +61,7 @@ public class SkinPreset {
         String name = client.getSession().getUsername();
 
         Identifier skinTexture = client.getSkinProvider().loadSkin(client.getSession().getProfile());
-        Skin skin = new ResourceSkin(skinTexture, "default");
+        Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
 
         return new SkinPreset(skin, name);
     }
