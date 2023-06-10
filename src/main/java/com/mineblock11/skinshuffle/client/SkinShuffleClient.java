@@ -1,13 +1,22 @@
 package com.mineblock11.skinshuffle.client;
 
+import com.mineblock11.skinshuffle.client.gui.widgets.OpenCarouselWidget;
+import dev.lambdaurora.spruceui.Position;
 import net.fabricmc.api.ClientModInitializer;
+import net.minecraft.client.gui.screen.Screen;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+
+import java.util.function.Consumer;
 
 public class SkinShuffleClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
 
+    }
+
+    public static void addButtonToScreen(Screen screen, Consumer<OpenCarouselWidget> consumer) {
+        consumer.accept(new OpenCarouselWidget(Position.of(screen.width / 2 + 104 + 25, (screen.height / 4 + 48) + 72 + 12), 64, screen.height / 4));
     }
 
     public static Connection jsoupConnection(String url) {
