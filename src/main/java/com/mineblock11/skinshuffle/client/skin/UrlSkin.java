@@ -65,17 +65,18 @@ public class UrlSkin implements Skin {
                             fetching = false;
                             fetched = true;
                             setTexture(id);
+
+                            try {
+                                if(temporaryFilePath.toFile().exists()) Files.delete(temporaryFilePath);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
                         });
 
                         textureManager.registerTexture(id, texture);
+
                     } catch (Exception e) {
                         throw new RuntimeException(e);
-                    } finally {
-                        try {
-                            Files.delete(temporaryFilePath);
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
                     }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
