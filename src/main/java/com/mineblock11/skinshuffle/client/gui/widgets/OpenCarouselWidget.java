@@ -40,7 +40,7 @@ public class OpenCarouselWidget extends SpruceContainerWidget {
 
         if (FabricLoader.getInstance().isModLoaded("modmenu")) {
             // Mod menu moves all buttons up by 51 pixels.
-            y += 51;
+            y += 51/4;
         }
 
         widgetConsumer.accept(new OpenCarouselWidget(Position.of(screen.width / 2 + 104 + 25, y), 64, screen.height / 4));
@@ -57,8 +57,6 @@ public class OpenCarouselWidget extends SpruceContainerWidget {
 
     @Override
     protected void renderWidget(DrawContext graphics, int mouseX, int mouseY, float delta) {
-        graphics.fill(getX(), getY(), getX() + 5, getY() + 5, 0xFFFFFFFF);
-
         if(this.entity != null) {
             GuiEntityRenderer.drawEntity(
                     graphics.getMatrices(), getX() + (this.getWidth() / 2), this.getY() - (this.height / 8),
