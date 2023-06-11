@@ -38,9 +38,6 @@ public class TitleScreenMixin extends Screen {
              - Bedrock-style skin preview
          */
 
-        var skin = new ResourceSkin(DefaultSkinHelper.getTexture(), "slim");
-        skin.saveToConfig();
-
         OpenCarouselWidget.safelyCreateWidget(this, this::addDrawableChild);
     }
 }

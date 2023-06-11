@@ -1,6 +1,7 @@
 package com.mineblock11.skinshuffle.client.gui;
 
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
+import com.mineblock11.skinshuffle.client.gui.widgets.AddPresetWidget;
 import com.mineblock11.skinshuffle.client.gui.widgets.CarouselMoveButton;
 import com.mineblock11.skinshuffle.client.gui.widgets.SkinPresetWidget;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
@@ -9,6 +10,7 @@ import dev.lambdaurora.spruceui.Tooltip;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
 import dev.lambdaurora.spruceui.util.ScissorManager;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
+import dev.lambdaurora.spruceui.widget.SpruceWidget;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.util.GlfwUtil;
@@ -28,29 +30,33 @@ public class SkinCarouselScreen extends SpruceScreen {
     private int cardIndex = 0;
     private double lastCardIndex = 0;
     private double lastCardSwitchTime = 0;
-    public ArrayList<SkinPresetWidget> presetCardWidgets = new ArrayList<>();
-
+    public ArrayList<SpruceWidget> carouselWidgets = new ArrayList<>();
     @Override
     protected void init() {
         super.init();
-        presetCardWidgets.clear();
+        carouselWidgets.clear();
 
         leftMoveButton = new CarouselMoveButton(Position.of((getCardWidth() / 2), (this.height / 2) - 8), false);
         rightMoveButton = new CarouselMoveButton(Position.of(this.width - (getCardWidth() / 2), (this.height / 2) - 8), true);
 
         leftMoveButton.setCallback(() -> {
-            var cardIndex = (this.cardIndex - 1 + (this.presetCardWidgets.size())) % (this.presetCardWidgets.size());
+            var cardIndex = (this.cardIndex - 1 + (this.carouselWidgets.size())) % (this.carouselWidgets.size());
             if (cardIndex < 0) {
-                cardIndex = this.presetCardWidgets.size() - 1;
+                cardIndex = this.carouselWidgets.size() - 1;
             }
             setCardIndex(cardIndex);
         });
         rightMoveButton.setCallback(() -> {
-            var cardIndex = (this.cardIndex + 1) % (this.presetCardWidgets.size());
+            var cardIndex = (this.cardIndex + 1) % (this.carouselWidgets.size());
             if (cardIndex < 0) {
-                cardIndex = this.presetCardWidgets.size();
+                cardIndex = this.carouselWidgets.size();
             }
             setCardIndex(cardIndex);
+        });
+
+        var addPresetWidget = new AddPresetWidget(Position.of(0, 0), getCardWidth(), getCardHeight());
+        addPresetWidget.setCallback(() -> {
+            // Add preset screen.
         });
 
         var loadedPresets = SkinShuffleConfig.getLoadedPresets();
@@ -60,22 +66,15 @@ public class SkinCarouselScreen extends SpruceScreen {
         this.cardIndex = loadedPresets.indexOf(SkinShuffleConfig.getChosenPreset());
         this.lastCardIndex = this.cardIndex;
 
-//        var preset = new SkinPreset(new UrlSkin("https://www.minecraftskins.com/uploads/skins/2023/06/06/among-us-character-21667114.png?v577", "default"));
-//        preset.setName("sus");
-//        loadPreset(preset);
-//        var preset2 = new SkinPreset(new UrlSkin("https://s.namemc.com/i/2b931e86a910f916.png", "default"));
-//        preset2.setName("w a t");
-//        loadPreset(preset2);
-//        var preset3 = new SkinPreset(new UrlSkin("https://s.namemc.com/i/37529af66bcdd70d.png", "default"));
-//        preset3.setName("Technoblade");
-//        loadPreset(preset3);
+        this.addDrawableChild(leftMoveButton);
+        this.addDrawableChild(rightMoveButton);
+        this.addDrawableChild(addPresetWidget);
 
-        this.addSelectableChild(leftMoveButton);
-        this.addSelectableChild(rightMoveButton);
-
-        for (SkinPresetWidget presetCards : this.presetCardWidgets) {
+        for (SpruceWidget presetCards : this.carouselWidgets) {
             this.addDrawableChild(presetCards);
         }
+
+        this.carouselWidgets.add(addPresetWidget);
 
         this.addDrawableChild(new SpruceButtonWidget(Position.of(this.width / 2 - 128 - 5, this.height - 23), 128, 20, ScreenTexts.CANCEL, button -> {
             this.client.setScreen(new TitleScreen());
@@ -101,12 +100,17 @@ public class SkinCarouselScreen extends SpruceScreen {
         double deltaIndex = getDeltaCardIndex();
         int xOffset = (int) ((-deltaIndex + 1) * cardAreaWidth);
         int currentX = this.width / 2 - cardAreaWidth - getCardWidth() / 2;
-        for (SkinPresetWidget loadedPreset : this.presetCardWidgets) {
-//            graphics.drawTextWithShadow(this.textRenderer, String.valueOf(loadedPresets.indexOf(loadedPreset)), currentX + xOffset, this.height/2 - this.textRenderer.fontHeight /2 , 0xFFFFFFFF);
-            loadedPreset.overridePosition(Position.of(currentX + xOffset, (this.height / 2) - (getCardHeight() / 2)));
 
-            loadedPreset.setActive(cardIndex == this.presetCardWidgets.indexOf(loadedPreset));
-            loadedPreset.setScaleFactor(this.scaleFactor);
+        for (SpruceWidget widget : this.carouselWidgets) {
+//            graphics.drawTextWithShadow(this.textRenderer, String.valueOf(loadedPresets.indexOf(loadedPreset)), currentX + xOffset, this.height/2 - this.textRenderer.fontHeight /2 , 0xFFFFFFFF);
+            if(widget instanceof SkinPresetWidget loadedPreset) {
+                loadedPreset.overridePosition(Position.of(currentX + xOffset, (this.height / 2) - (getCardHeight() / 2)));
+                loadedPreset.setScaleFactor(this.scaleFactor);
+            } else if (widget instanceof AddPresetWidget addPresetWidget) {
+                addPresetWidget.overridePosition(Position.of(currentX + xOffset, (this.height / 2) - (getCardHeight() / 2)));
+            }
+
+            widget.setActive(cardIndex == this.carouselWidgets.indexOf(widget));
 
             currentX += cardAreaWidth;
         }
@@ -144,7 +148,7 @@ public class SkinCarouselScreen extends SpruceScreen {
     }
 
     public void loadPreset(SkinPreset preset) {
-        this.presetCardWidgets.add(new SkinPresetWidget(this, getCardWidth(), getCardHeight(), preset));
+        this.carouselWidgets.add(new SkinPresetWidget(this, getCardWidth(), getCardHeight(), preset));
     }
 
     public void setCardIndex(int index) {

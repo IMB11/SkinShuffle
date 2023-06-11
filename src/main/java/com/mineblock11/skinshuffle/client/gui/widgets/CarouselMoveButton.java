@@ -28,7 +28,7 @@ public class CarouselMoveButton extends AbstractSpruceWidget {
             position.setRelativeX(position.getRelativeX() - width);
         }
 
-        if(SkinShuffleConfig.getLoadedPresets().size() < 2) setActive(false);
+        setActive(SkinShuffleConfig.getLoadedPresets().size() == 1);
     }
 
     public void setCallback(@Nullable Runnable action) {
