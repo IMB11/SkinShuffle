@@ -40,6 +40,7 @@ public class CarouselMoveButton extends AbstractSpruceWidget {
         if(this.action != null) {
             try {
                 this.action.run();
+                this.playDownSound();
             } catch (Exception e) {
                 throw new RuntimeException("Failed to trigger callback for CarouselMoveButton{x=" + getX() + ", y=" + getY() +"}\n" + e);
             }

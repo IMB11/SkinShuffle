@@ -54,7 +54,8 @@ public class SkinCarouselScreen extends SpruceScreen {
             setCardIndex(cardIndex);
         });
 
-        var addPresetWidget = new AddPresetWidget(this, Position.of(0, 0), getCardWidth(), getCardHeight());
+        var addPresetWidget = new AddPresetWidget(this,
+                Position.of(0, 0), getCardWidth(), getCardHeight());
         addPresetWidget.setCallback(() -> {
             // Add preset screen.
         });
@@ -93,7 +94,10 @@ public class SkinCarouselScreen extends SpruceScreen {
 
         // BG stuff
         this.renderBackground(graphics);
+
         graphics.fill(0, this.textRenderer.fontHeight * 3, this.width, this.height - (this.textRenderer.fontHeight * 3), 0x7F000000);
+        graphics.fillGradient(0, (int) (this.textRenderer.fontHeight * 2.75), this.width, this.textRenderer.fontHeight * 3, 0x00000000, 0x7F000000);
+        graphics.fillGradient(0, (int) (this.height - (this.textRenderer.fontHeight * 3)), this.width, (int) (this.height - (this.textRenderer.fontHeight * 2.75)), 0x7F000000, 0x00000000);
         ScissorManager.pushScaleFactor(this.scaleFactor);
 
         // Carousel Widgets
@@ -125,7 +129,6 @@ public class SkinCarouselScreen extends SpruceScreen {
     @Override
     public void renderTitle(DrawContext graphics, int mouseX, int mouseY, float delta) {
         graphics.drawCenteredTextWithShadow(this.textRenderer, this.getTitle().asOrderedText(), this.width / 2, this.textRenderer.fontHeight, 0xFFFFFFFF);
-        graphics.fillGradient(0, (int) (this.textRenderer.fontHeight * 2.5), this.width, this.textRenderer.fontHeight * 3, 0x00000000, 0x7F000000);
     }
 
     private int getCardWidth() {
