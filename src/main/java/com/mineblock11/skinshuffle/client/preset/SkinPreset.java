@@ -6,9 +6,12 @@ import com.mineblock11.skinshuffle.api.MojangSkinAPI;
 import com.mineblock11.skinshuffle.client.skin.ResourceSkin;
 import com.mineblock11.skinshuffle.client.skin.Skin;
 import com.mineblock11.skinshuffle.client.skin.UrlSkin;
+import com.mineblock11.skinshuffle.mixin.accessor.MinecraftClientAccessor;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
+import com.mojang.authlib.minecraft.UserApiService;
 import com.mojang.authlib.properties.Property;
+import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.handler.codec.base64.Base64Decoder;
@@ -60,9 +63,24 @@ public class SkinPreset {
         MinecraftClient client = MinecraftClient.getInstance();
         String name = client.getSession().getUsername();
 
-        Identifier skinTexture = client.getSkinProvider().loadSkin(client.getSession().getProfile());
-        Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
+        UserApiService service = ((MinecraftClientAccessor) client).getUserApiService();
 
-        return new SkinPreset(skin, name);
+        if(!(service instanceof YggdrasilUserApiService)) {
+            Identifier skinTexture = client.getSkinProvider().loadSkin(client.getSession().getProfile());
+            Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
+
+            return new SkinPreset(skin, name);
+        } else {
+            var tripletResult = MojangSkinAPI.getPlayerSkinTexture();
+
+            if(tripletResult.getFirst()) {
+                Identifier skinTexture = client.getSkinProvider().loadSkin(client.getSession().getProfile());
+                Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
+
+                return new SkinPreset(skin, name);
+            }
+
+            return new SkinPreset(new UrlSkin(tripletResult.getSecond(), tripletResult.getThird().getValue()), name);
+        }
     }
 }
