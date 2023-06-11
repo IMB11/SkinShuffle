@@ -1,4 +1,8 @@
 skinshuffle:
+  offline:
+    toast:
+      title: "SkinShuffle cannot apply your skin."
+      message: "You are not authenticated, your skin will only be visible to you."
   button: "Skin Presets"
   carousel:
     title: "Skin Presets"

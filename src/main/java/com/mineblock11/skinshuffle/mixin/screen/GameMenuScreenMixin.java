@@ -1,4 +1,4 @@
-package com.mineblock11.skinshuffle.mixin;
+package com.mineblock11.skinshuffle.mixin.screen;
 
 import com.mineblock11.skinshuffle.client.gui.widgets.OpenCarouselWidget;
 import net.minecraft.client.gui.screen.GameMenuScreen;

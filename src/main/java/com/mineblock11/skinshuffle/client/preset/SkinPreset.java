@@ -7,6 +7,7 @@ import com.mineblock11.skinshuffle.client.skin.ResourceSkin;
 import com.mineblock11.skinshuffle.client.skin.Skin;
 import com.mineblock11.skinshuffle.client.skin.UrlSkin;
 import com.mineblock11.skinshuffle.mixin.accessor.MinecraftClientAccessor;
+import com.mineblock11.skinshuffle.util.AuthUtil;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.authlib.minecraft.UserApiService;
@@ -63,9 +64,7 @@ public class SkinPreset {
         MinecraftClient client = MinecraftClient.getInstance();
         String name = client.getSession().getUsername();
 
-        UserApiService service = ((MinecraftClientAccessor) client).getUserApiService();
-
-        if(!(service instanceof YggdrasilUserApiService)) {
+        if(!AuthUtil.isLoggedIn()) {
             Identifier skinTexture = client.getSkinProvider().loadSkin(client.getSession().getProfile());
             Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
 
@@ -80,7 +79,7 @@ public class SkinPreset {
                 return new SkinPreset(skin, name);
             }
 
-            return new SkinPreset(new UrlSkin(tripletResult.getSecond(), tripletResult.getThird().getValue()), name);
+            return new SkinPreset(new UrlSkin(tripletResult.getSecond(), tripletResult.getThird()), name);
         }
     }
 }

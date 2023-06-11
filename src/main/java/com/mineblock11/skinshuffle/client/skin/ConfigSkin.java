@@ -38,7 +38,7 @@ public class ConfigSkin extends FileBackedSkin {
         return this;
     }
 
-    protected Path getFile() {
+    public Path getFile() {
         return SkinShuffleConfig.PERSISTENT_SKINS_DIR.resolve(skinName + ".png");
     }
 }

@@ -1,2 +1,4 @@
 accessWidener   v1  named
 accessible class net/minecraft/client/texture/ResourceTexture$TextureData
+accessible class net/minecraft/client/toast/ToastManager$Entry
+accessible field net/minecraft/client/toast/SystemToast title Lnet/minecraft/text/Text;

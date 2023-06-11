@@ -1,21 +1,12 @@
 package com.mineblock11.skinshuffle.client.skin;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import coresearch.cvurl.io.request.CVurl;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.AbstractTexture;
-import net.minecraft.client.texture.PlayerSkinTexture;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
-
-import java.net.http.HttpResponse;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 public abstract class BackedSkin implements Skin {
     // Keep track of how many instances exist for each texture id, so we can clean them up when they're no longer used

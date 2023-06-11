@@ -1,4 +1,4 @@
-package com.mineblock11.skinshuffle.mixin;
+package com.mineblock11.skinshuffle.mixin.render;
 
 import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import net.minecraft.client.render.entity.LivingEntityRenderer;

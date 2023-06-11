@@ -3,14 +3,13 @@ package com.mineblock11.skinshuffle.client.skin;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import coresearch.cvurl.io.request.CVurl;
+import kong.unirest.Unirest;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.texture.PlayerSkinTexture;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
-import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -51,9 +50,7 @@ public class UrlSkin extends BackedSkin {
             var textureName = String.valueOf(Math.abs(getTextureUniqueness().hashCode()));
             var configSkin = new ConfigSkin(textureName, getModel());
 
-            CVurl cVurl = new CVurl();
-            var response = cVurl.get(url).as(HttpResponse.BodyHandlers.ofByteArray()).get();
-            var bytes = response.getBody();
+            var bytes = Unirest.get(this.url).asBytes().getBody();
 
             Files.write(configSkin.getFile(), bytes);
 
@@ -74,9 +71,7 @@ public class UrlSkin extends BackedSkin {
 
             Path temporaryFilePath = cacheFolder.resolve(Math.abs(url.hashCode()) + ".png");
 
-            CVurl cVurl = new CVurl();
-            var response = cVurl.get(url).as(HttpResponse.BodyHandlers.ofByteArray()).get();
-            var bytes = response.getBody();
+            var bytes = Unirest.get(this.url).asBytes().getBody();
 
             Files.write(temporaryFilePath, bytes);
 
@@ -95,5 +90,9 @@ public class UrlSkin extends BackedSkin {
             SkinShuffle.LOGGER.warn("Failed to load skin from URL: " + url, e);
             return null;
         }
+    }
+
+    public String getUrl() {
+        return url;
     }
 }

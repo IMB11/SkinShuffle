@@ -4,7 +4,9 @@ import com.google.gson.*;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.api.MojangSkinAPI;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
+import com.mineblock11.skinshuffle.client.skin.ConfigSkin;
 import com.mineblock11.skinshuffle.client.skin.UrlSkin;
+import com.mineblock11.skinshuffle.util.AuthUtil;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
@@ -93,11 +95,28 @@ public class SkinShuffleConfig {
     }
 
     public static void setChosenPreset(SkinPreset preset) {
+        if(chosenPreset == preset) return;
         chosenPreset = preset;
         savePresets();
 
         if(preset.getSkin() instanceof UrlSkin)
             MojangSkinAPI.resetCache();
+
+        if(!AuthUtil.isLoggedIn()) {
+            AuthUtil.warnNotAuthed();
+            return;
+        }
+
+        try {
+            if(preset.getSkin() instanceof UrlSkin urlSkin) {
+                MojangSkinAPI.setSkinTexture(urlSkin.getUrl(), urlSkin.getModel());
+            } else {
+                ConfigSkin configSkin = preset.getSkin().saveToConfig();
+                MojangSkinAPI.setSkinTexture(configSkin.getFile().toFile(), preset.getSkin().getModel());
+            }
+        } catch (Exception e) {
+            SkinShuffle.LOGGER.error("Failed to apply skin preset.", e);
+        }
     }
 
     public static int getPresetIndex(SkinPreset preset) {
