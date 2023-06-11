@@ -1,16 +1,13 @@
 package com.mineblock11.skinshuffle.client.gui.widgets;
 
-import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.SkinCarouselScreen;
 import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import dev.lambdaurora.spruceui.Position;
-import dev.lambdaurora.spruceui.widget.AbstractSpruceWidget;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
 import dev.lambdaurora.spruceui.widget.SpruceWidget;
-import dev.lambdaurora.spruceui.widget.container.AbstractSpruceParentWidget;
 import dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ConfirmScreen;
@@ -52,7 +49,9 @@ public class SkinPresetWidget extends SpruceContainerWidget {
                 Position.of(3, getHeight() - 24), getWidth() / 2 - 5, 20,
                 Text.translatable("skinshuffle.carousel.preset_widget.copy"),
                 button -> {
-
+                    SkinPreset presetCopy = new SkinPreset(this.skinPreset.getSkin(), this.skinPreset.getName());
+                    SkinShuffleConfig.addPreset(presetCopy);
+                    this.parent.refresh();
                 }
         ));
 
@@ -62,11 +61,10 @@ public class SkinPresetWidget extends SpruceContainerWidget {
                 button -> {
                     ConfirmScreen confirmScreen = new ConfirmScreen(result -> {
                         if(result) {
-                            // delete preset
+                            SkinShuffleConfig.deletePreset(this.skinPreset);
                         }
-                        this.client.setScreen(parent);
+                        this.client.setScreen(new SkinCarouselScreen());
                     }, Text.translatable("skinshuffle.carousel.confirmations.delete_preset.title"), Text.translatable("skinshuffle.carousel.confirmations.delete_preset.message"));
-
                     this.client.setScreen(confirmScreen);
                 }
         );
@@ -129,5 +127,9 @@ public class SkinPresetWidget extends SpruceContainerWidget {
 
     private float getEntityRotation() {
         return isActive() ? (float) (GlfwUtil.getTime() - parent.getLastCardSwitchTime()) * 35.0f : 0.0f;
+    }
+
+    public SkinPreset getPreset() {
+        return this.skinPreset;
     }
 }

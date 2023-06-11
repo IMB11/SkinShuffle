@@ -84,4 +84,25 @@ public class SkinShuffleConfig {
             throw new RuntimeException(e);
         }
     }
+
+    public static void addPreset(SkinPreset preset) {
+        loadedPresets.add(preset);
+        savePresets();
+    }
+
+    public static void setChosenPreset(SkinPreset preset) {
+        chosenPreset = preset;
+        savePresets();
+    }
+
+    public static int getPresetIndex(SkinPreset preset) {
+        return loadedPresets.indexOf(preset);
+    }
+
+    public static void deletePreset(SkinPreset skinPreset) {
+        loadedPresets.remove(skinPreset);
+        if(chosenPreset == skinPreset)
+            chosenPreset = loadedPresets.get(0);
+        savePresets();
+    }
 }

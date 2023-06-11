@@ -28,11 +28,6 @@ public class AddPresetWidget extends SpruceContainerWidget {
         this.position = position;
         this.parent = parent;
 
-//        ResourceSkin skin = new ResourceSkin(SkinShuffle.id("textures/skins/question.png"), "default");
-//        this.entity = new DummyClientPlayerEntity(
-//                null, UUID.randomUUID(),
-//                skin::getTexture, skin::getModel
-//        );
 
         addChild(new SpruceButtonWidget(Position.of(3, getHeight() - 24), width - 6, 20, Text.translatable("skinshuffle.carousel.create"), button -> {
             action.run();
@@ -56,11 +51,6 @@ public class AddPresetWidget extends SpruceContainerWidget {
         graphics.drawBorder(getX(), getY(), getWidth(), getHeight(), this.active ? 0xDF000000 : 0x5F000000);
         graphics.fill(getX() + 1, getY() + 1, getX() + getWidth() - 1, getY() + getHeight() - 1, this.active ? 0x7F000000 : 0x0D000000);
         graphics.drawTexture(SkinShuffle.id("textures/gui/carousel_add.png"), getX() + (this.getWidth() / 2) - 16, getY() + (this.getHeight() / 2) - 16, 0, !this.active ? 32 : 0, 32, 32, 32, 64);
-
-//        GuiEntityRenderer.drawEntity(
-//                graphics.getMatrices(), getX() + (this.getWidth() / 2), (int) (this.getY() + this.height / 1.6),
-//                this.height / 4, getEntityRotation(), 0, 0, entity
-//        );
 
         var text = Text.translatable("skinshuffle.carousel.new");
         graphics.drawTextWithShadow(this.client.textRenderer, text, getX() + (this.width / 2) - this.client.textRenderer.getWidth(text) / 2, getY() + this.client.textRenderer.fontHeight / 2, this.active ? 0xFFFFFFFF : 0xFF808080);

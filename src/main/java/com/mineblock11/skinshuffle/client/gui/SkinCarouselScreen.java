@@ -5,6 +5,7 @@ import com.mineblock11.skinshuffle.client.gui.widgets.AddPresetWidget;
 import com.mineblock11.skinshuffle.client.gui.widgets.CarouselMoveButton;
 import com.mineblock11.skinshuffle.client.gui.widgets.SkinPresetWidget;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
+import com.mineblock11.skinshuffle.client.skin.Skin;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.Tooltip;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
@@ -12,13 +13,13 @@ import dev.lambdaurora.spruceui.util.ScissorManager;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
 import dev.lambdaurora.spruceui.widget.SpruceWidget;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class SkinCarouselScreen extends SpruceScreen {
     public SkinCarouselScreen() {
@@ -57,7 +58,11 @@ public class SkinCarouselScreen extends SpruceScreen {
         var addPresetWidget = new AddPresetWidget(this,
                 Position.of(0, 0), getCardWidth(), getCardHeight());
         addPresetWidget.setCallback(() -> {
-            // Add preset screen.
+            SkinPreset unnamed = SkinPreset.generateDefaultPreset();
+            unnamed.setName("Unnamed Preset");
+            SkinShuffleConfig.addPreset(unnamed);
+            SkinShuffleConfig.setChosenPreset(unnamed);
+            this.client.setScreen(new SkinCarouselScreen());
         });
 
         var loadedPresets = SkinShuffleConfig.getLoadedPresets();
@@ -78,14 +83,34 @@ public class SkinCarouselScreen extends SpruceScreen {
         this.carouselWidgets.add(addPresetWidget);
 
         this.addDrawableChild(new SpruceButtonWidget(Position.of(this.width / 2 - 128 - 5, this.height - 23), 128, 20, ScreenTexts.CANCEL, button -> {
-            this.client.setScreen(new TitleScreen());
+            this.close();
         }));
 
         this.addDrawableChild(new SpruceButtonWidget(Position.of(this.width / 2 + 5, this.height - 23), 128, 20, Text.translatable("skinshuffle.carousel.save_button"), button -> {
             // TODO: Remember selected preset.
 
-            this.client.setScreen(new TitleScreen());
+            SpruceWidget chosenPresetWidget = this.carouselWidgets.get(cardIndex);
+
+            if(chosenPresetWidget instanceof AddPresetWidget) {
+                this.close();
+                return;
+            }
+
+            assert chosenPresetWidget instanceof SkinPresetWidget;
+            SkinPresetWidget presetWidget = (SkinPresetWidget) chosenPresetWidget;
+
+            SkinShuffleConfig.setChosenPreset(presetWidget.getPreset());
+
+            this.close();
         }));
+
+        this.leftMoveButton.setActive(this.carouselWidgets.size() != 1);
+        this.rightMoveButton.setActive(this.carouselWidgets.size() != 1);
+    }
+
+    @Override
+    public boolean shouldCloseOnEsc() {
+        return false;
     }
 
     @Override
@@ -150,8 +175,10 @@ public class SkinCarouselScreen extends SpruceScreen {
         return MathHelper.lerp(deltaTime, lastCardIndex, cardIndex);
     }
 
-    public void loadPreset(SkinPreset preset) {
-        this.carouselWidgets.add(new SkinPresetWidget(this, getCardWidth(), getCardHeight(), preset));
+    public SkinPresetWidget loadPreset(SkinPreset preset) {
+        var widget = new SkinPresetWidget(this, getCardWidth(), getCardHeight(), preset);
+        this.carouselWidgets.add(widget);
+        return widget;
     }
 
     public void setCardIndex(int index) {
@@ -162,5 +189,10 @@ public class SkinCarouselScreen extends SpruceScreen {
 
     public double getLastCardSwitchTime() {
         return lastCardSwitchTime;
+    }
+
+    public void refresh() {
+        this.children().clear();
+        this.init();
     }
 }
