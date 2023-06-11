@@ -33,7 +33,7 @@ public class AddPresetWidget extends AbstractSprucePressableButtonWidget {
 
     @Override
     protected void renderButton(DrawContext graphics, int mouseX, int mouseY, float delta) {
-        graphics.drawTexture(SkinShuffle.id("textures/gui/carousel_add.png"), getX() + (this.getWidth() / 2) - 32, getY() + (this.getHeight() / 2) - 32, 0, this.hovered || !this.active ? 64 : 0, 64, 64, 64, 128);
+        graphics.drawTexture(SkinShuffle.id("textures/gui/carousel_add.png"), getX() + (this.getWidth() / 2) - 16, getY() + (this.getHeight() / 2) - 16, 0, this.hovered || !this.active ? 32 : 0, 32, 32, 32, 64);
     }
 
     public void overridePosition(Position newPosition) {
