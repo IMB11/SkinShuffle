@@ -54,7 +54,7 @@ public class SkinCarouselScreen extends SpruceScreen {
             setCardIndex(cardIndex);
         });
 
-        var addPresetWidget = new AddPresetWidget(Position.of(0, 0), getCardWidth(), getCardHeight());
+        var addPresetWidget = new AddPresetWidget(this, Position.of(0, 0), getCardWidth(), getCardHeight());
         addPresetWidget.setCallback(() -> {
             // Add preset screen.
         });

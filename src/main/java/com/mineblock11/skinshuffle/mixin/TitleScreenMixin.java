@@ -1,17 +1,9 @@
 package com.mineblock11.skinshuffle.mixin;
 
-import com.mineblock11.skinshuffle.SkinShuffle;
-import com.mineblock11.skinshuffle.client.SkinShuffleClient;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
-import com.mineblock11.skinshuffle.client.gui.SkinCarouselScreen;
 import com.mineblock11.skinshuffle.client.gui.widgets.OpenCarouselWidget;
-import com.mineblock11.skinshuffle.client.skin.ResourceSkin;
-import dev.lambdaurora.spruceui.Position;
-import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
-import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,7 +19,7 @@ public class TitleScreenMixin extends Screen {
     @Inject(method = "init", at = @At("HEAD"))
     public void refreshConfig(CallbackInfo ci) {
         // Config must be refreshed here as it requires resource manager.
-        SkinShuffleConfig.loadConfig();
+        SkinShuffleConfig.loadPresets();
     }
 
     @Inject(method = "init", at = @At("TAIL"))

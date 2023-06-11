@@ -3,7 +3,8 @@ skinshuffle:
   carousel:
     title: "Skin Presets"
 
-    add_preset: "Add Preset"
+    create: "Create"
+    new: "New Preset"
     save_button: "Select Preset"
 
     # These are used for narrations.

@@ -3,7 +3,6 @@ package com.mineblock11.skinshuffle.client.config;
 import com.google.gson.*;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
-import com.mineblock11.skinshuffle.client.skin.ConfigSkin;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
@@ -31,7 +30,7 @@ public class SkinShuffleConfig {
         return chosenPreset;
     }
 
-    public static void saveConfig() {
+    public static void savePresets() {
         if(chosenPreset == null) {
             chosenPreset = SkinPreset.generateDefaultPreset();
             loadedPresets.add(chosenPreset);
@@ -55,8 +54,8 @@ public class SkinShuffleConfig {
         }
     }
 
-    public static void loadConfig() {
-        if(!CONFIG_FILE.toFile().exists()) saveConfig();
+    public static void loadPresets() {
+        if(!PRESETS.toFile().exists()) savePresets();
 
         loadedPresets.clear();
         chosenPreset = null;
