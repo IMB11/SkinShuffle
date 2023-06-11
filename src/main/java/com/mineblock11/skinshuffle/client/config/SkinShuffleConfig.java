@@ -26,14 +26,23 @@ public class SkinShuffleConfig {
     private static SkinPreset chosenPreset = null;
     private static final ArrayList<SkinPreset> loadedPresets = new ArrayList<>();
 
+    /**
+     * Get all loaded presets.
+     */
     public static ArrayList<SkinPreset> getLoadedPresets() {
         return loadedPresets;
     }
 
+    /**
+     * Get the currently chosen preset.
+     */
     public static SkinPreset getChosenPreset() {
         return chosenPreset;
     }
 
+    /**
+     * Save the currently loaded presets to the presets.json file.
+     */
     public static void savePresets() {
         if(chosenPreset == null) {
             chosenPreset = SkinPreset.generateDefaultPreset();
@@ -58,6 +67,9 @@ public class SkinShuffleConfig {
         }
     }
 
+    /**
+     * Load presets from the presets.json file.
+     */
     public static void loadPresets() {
         if(!PRESETS.toFile().exists()) savePresets();
 
@@ -81,19 +93,31 @@ public class SkinShuffleConfig {
         }
     }
 
-    public static void createDirectories() {
+    /**
+     * Create the necessary directories and cache files.
+     */
+    public static void setup() {
         try {
             if(!PERSISTENT_SKINS_DIR.toFile().exists()) Files.createDirectories(PERSISTENT_SKINS_DIR);
+            MojangSkinAPI.loadSkinCache();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Add a preset.
+     * @param preset The preset to add.
+     */
     public static void addPreset(SkinPreset preset) {
         loadedPresets.add(preset);
         savePresets();
     }
 
+    /**
+     * Set a chosen preset, and apply it.
+     * @param preset The preset to apply.
+     */
     public static void setChosenPreset(SkinPreset preset) {
         if(chosenPreset == preset) return;
         chosenPreset = preset;
@@ -119,14 +143,40 @@ public class SkinShuffleConfig {
         }
     }
 
-    public static int getPresetIndex(SkinPreset preset) {
-        return loadedPresets.indexOf(preset);
-    }
-
+    /**
+     * Delete a preset.
+     * @param skinPreset The skin preset to delete.
+     */
     public static void deletePreset(SkinPreset skinPreset) {
         loadedPresets.remove(skinPreset);
         if(chosenPreset == skinPreset)
             chosenPreset = loadedPresets.get(0);
         savePresets();
+    }
+
+    /**
+     * Apply the currently chosen preset - ran after configuration load.
+     */
+    public static void apply() {
+        SkinPreset preset = getChosenPreset();
+
+        if(preset.getSkin() instanceof UrlSkin)
+            MojangSkinAPI.resetCache();
+
+        if(!AuthUtil.isLoggedIn()) {
+            AuthUtil.warnNotAuthed();
+            return;
+        }
+
+        try {
+            if(preset.getSkin() instanceof UrlSkin urlSkin) {
+                MojangSkinAPI.setSkinTexture(urlSkin.getUrl(), urlSkin.getModel());
+            } else {
+                ConfigSkin configSkin = preset.getSkin().saveToConfig();
+                MojangSkinAPI.setSkinTexture(configSkin.getFile().toFile(), preset.getSkin().getModel());
+            }
+        } catch (Exception e) {
+            SkinShuffle.LOGGER.error("Failed to apply skin preset.", e);
+        }
     }
 }

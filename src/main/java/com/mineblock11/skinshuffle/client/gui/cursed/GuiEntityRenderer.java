@@ -14,6 +14,9 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 public class GuiEntityRenderer {
+    /**
+     * Render a player in the GUI.
+     */
     public static void drawEntity(MatrixStack matrices, int x, int y, int size, float rotation, double mouseX, double mouseY, LivingEntity entity) {
         float f = (float) Math.atan(mouseX / 40.0F);
         float g = (float) Math.atan(mouseY / 40.0F);

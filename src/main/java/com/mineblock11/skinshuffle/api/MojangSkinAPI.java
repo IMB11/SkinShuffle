@@ -1,5 +1,7 @@
 package com.mineblock11.skinshuffle.api;
 
+import com.google.common.hash.Hashing;
+import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -11,7 +13,6 @@ import com.mineblock11.skinshuffle.util.AuthUtil;
 import com.mineblock11.skinshuffle.util.Triplet;
 import com.mojang.authlib.minecraft.UserApiService;
 import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
-import kong.unirest.ContentType;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import net.minecraft.client.MinecraftClient;
@@ -19,8 +20,23 @@ import org.apache.commons.codec.binary.Base64;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MojangSkinAPI {
+    private static final Path SKIN_CACHE_PATH = SkinShuffle.DATA_DIR.resolve("uploaded-skin-cache.json");
+    private static Triplet<Boolean, @Nullable String, @Nullable String> cachedResult;
+    private static Map<String, String> UPLOADED_SKIN_CACHE;
+    private static final Gson GSON = new Gson();
+
+    /**
+     * Set the player's skin texture from a URL.
+     * @param skinURL The URL of the skin texture.
+     * @param model The skin model type.
+     */
     public static void setSkinTexture(String skinURL, String model) {
         UserApiService service = ((MinecraftClientAccessor) MinecraftClient.getInstance()).getUserApiService();
 
@@ -29,15 +45,14 @@ public class MojangSkinAPI {
                 com.mojang.authlib.minecraft.client.MinecraftClient client = ((YggdrasilUserApiServiceAccessor) apiService).getMinecraftClient();
                 String token = ((MinecraftClientAuthAccessor) client).getAccessToken();
 
-                Gson gson = new Gson();
                 JsonObject obj = new JsonObject();
                 obj.addProperty("variant", model.equals("default") ? "classic" : "slim");
                 obj.addProperty("url", skinURL);
                 var result = Unirest.post("https://api.minecraftservices.com/minecraft/profile/skins")
-                        .body(gson.toJson(obj))
+                        .body(GSON.toJson(obj))
                         .contentType("application/json")
                         .header("Authorization", "Bearer " + token).asString().getBody();
-                SkinShuffle.LOGGER.info(result);
+                SkinShuffle.LOGGER.info("Set player skin: " + skinURL);
             } catch (Exception e) {
                 throw new RuntimeException("Cannot connect to Mojang API.", e);
             }
@@ -46,11 +61,12 @@ public class MojangSkinAPI {
         }
     }
 
-    private static Triplet<Boolean, @Nullable String, @Nullable String> cachedResult;
-
-    // is default skin, skin url, model type
+    /**
+     * Get the player's skin texture.
+     * @return Is a default skin? Skin URL, Model Type
+     */
     public static Triplet<Boolean, @Nullable String, @Nullable String> getPlayerSkinTexture() {
-        if(cachedResult != null) return cachedResult;
+        if (cachedResult != null) return cachedResult;
         MinecraftClient client = MinecraftClient.getInstance();
 
         try {
@@ -65,18 +81,18 @@ public class MojangSkinAPI {
 
             for (JsonElement properties : object.get("properties").getAsJsonArray()) {
                 if (properties.getAsJsonObject().get("name").getAsString().equals("textures")) {
-                    String jsonContent = new String(Base64.decodeBase64(properties.getAsJsonObject().get("value").getAsString()), "UTF-8");
+                    String jsonContent = new String(Base64.decodeBase64(properties.getAsJsonObject().get("value").getAsString()), StandardCharsets.UTF_8);
                     textureJSON = gson.fromJson(jsonContent, JsonObject.class);
                     break;
                 }
             }
 
-            if(textureJSON.has("invalid")) {
+            if (textureJSON.has("invalid")) {
                 cachedResult = new Triplet<>(true, null, null);
                 return cachedResult;
             }
 
-            if(!textureJSON
+            if (!textureJSON
                     .get("textures").getAsJsonObject()
                     .has("SKIN")
             ) {
@@ -88,7 +104,7 @@ public class MojangSkinAPI {
                     .get("textures").getAsJsonObject()
                     .get("SKIN").getAsJsonObject();
 
-            if(skin.get("url").getAsString().equals("Steve?") || skin.get("url").getAsString().equals("Alex?")) {
+            if (skin.get("url").getAsString().equals("Steve?") || skin.get("url").getAsString().equals("Alex?")) {
                 cachedResult = new Triplet<>(true, null, null);
                 return cachedResult;
             }
@@ -97,12 +113,13 @@ public class MojangSkinAPI {
             String modelType = "default";
 
             try {
-                 modelType = skin
+                modelType = skin
                         .get("metadata").getAsJsonObject()
                         .get("model").getAsString();
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
 
-            cachedResult =  new Triplet<>(false, skinURL, modelType);
+            cachedResult = new Triplet<>(false, skinURL, modelType);
             return cachedResult;
         } catch (Exception e) {
             SkinShuffle.LOGGER.error(e.getMessage());
@@ -110,8 +127,49 @@ public class MojangSkinAPI {
         }
     }
 
+    /**
+     * Write the skin cache to a file.
+     * @throws IOException
+     */
+    public static void writeSkinCache() throws IOException {
+        if (UPLOADED_SKIN_CACHE == null) {
+            UPLOADED_SKIN_CACHE = new HashMap<>();
+            UPLOADED_SKIN_CACHE.put("warning", "Please do not edit this file. This file is automatically generated.");
+        }
+        Gson gson = new Gson();
+        String jsonString = gson.toJson(UPLOADED_SKIN_CACHE);
+        java.nio.file.Files.writeString(SKIN_CACHE_PATH, jsonString);
+    }
+
+    /**
+     * Load the skin cache from a file.
+     * @throws IOException
+     */
+    public static void loadSkinCache() throws IOException {
+        if (!SKIN_CACHE_PATH.toFile().exists()) writeSkinCache();
+        Gson gson = new Gson();
+        String jsonString = java.nio.file.Files.readString(SKIN_CACHE_PATH);
+        UPLOADED_SKIN_CACHE = gson.fromJson(jsonString, Map.class);
+    }
+
+    /**
+     * Set a skin texture from a file - will use URL if file has not been modified since previous upload.
+     * @param skinFile The file to upload.
+     * @param model The type of skin model.
+     */
     public static void setSkinTexture(File skinFile, String model) {
         UserApiService service = ((MinecraftClientAccessor) MinecraftClient.getInstance()).getUserApiService();
+        String fileHash;
+        try {
+            fileHash = Files.asByteSource(skinFile).hash(Hashing.sha1()).toString();
+            if (UPLOADED_SKIN_CACHE.containsKey(fileHash)) {
+                setSkinTexture(UPLOADED_SKIN_CACHE.get(fileHash), model);
+                return;
+            }
+        } catch (IOException e) {
+            SkinShuffle.LOGGER.error("Failed to hash file.");
+            return;
+        }
 
         if (AuthUtil.isLoggedIn()) {
             try {
@@ -123,7 +181,15 @@ public class MojangSkinAPI {
                         .field("variant", model.equals("default") ? "classic" : "slim")
                         .field("file", skinFile)
                         .asString();
-                SkinShuffle.LOGGER.info(response.getBody());
+                JsonObject responseObject = GSON.fromJson(response.getBody(), JsonObject.class);
+                String skinURL = responseObject
+                        .get("skins").getAsJsonArray()
+                        .get(0).getAsJsonObject()
+                        .get("url").getAsString();
+                UPLOADED_SKIN_CACHE.put(fileHash, skinURL);
+                writeSkinCache();
+                SkinShuffle.LOGGER.info("Uploaded texture: " + skinURL);
+                SkinShuffle.LOGGER.info("Set player skin: " + skinURL);
             } catch (Exception e) {
                 SkinShuffle.LOGGER.error(e.getMessage());
             }

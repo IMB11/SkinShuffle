@@ -1,17 +1,14 @@
 package com.mineblock11.skinshuffle.client;
 
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
-import com.mineblock11.skinshuffle.client.skin.ResourceSkin;
 import net.fabricmc.api.ClientModInitializer;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
-import java.nio.file.Files;
-
 public class SkinShuffleClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        SkinShuffleConfig.createDirectories();
+        SkinShuffleConfig.setup();
     }
 
     public static Connection jsoupConnection(String url) {
