@@ -2,7 +2,6 @@ plugins {
     id 'fabric-loom' version '1.2-SNAPSHOT'
     id 'maven-publish'
     id 'me.fallenbreath.yamlang' version '1.3.0'
-    id "io.github.0ffz.github-packages" version "1.2.1"
 }
 
 version = project.mod_version
@@ -16,7 +15,6 @@ repositories {
     maven { url 'https://maven.terraformersmc.com/releases' }
     maven { url 'https://maven.shedaniel.me/' }
     maven { url 'https://maven.isxander.dev/releases' }
-    maven githubPackage.invoke("axieum/authme")
 }
 
 loom {
@@ -36,7 +34,7 @@ dependencies {
 
     modLocalRuntime modCompileOnly("com.terraformersmc:modmenu:${project.modmenu_version}")
 
-    modLocalRuntime "me.axieum.mcmod.authme:authme:7.0.1+1.20"
+    modImplementation "com.ptsmods:devlogin:3.2.2"
 
     include modImplementation("dev.lambdaurora:spruceui:${project.spruceui_version}")
 
