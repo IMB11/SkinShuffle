@@ -19,6 +19,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+
 public class MojangSkinAPI {
     private static final CVurl CLIENT = new CVurl();
 
@@ -45,8 +47,11 @@ public class MojangSkinAPI {
         }
     }
 
+    private static Triplet<Boolean, @Nullable String, @Nullable SkinModelType> cachedResult;
+
     // is default skin, skin url, model type
     public static Triplet<Boolean, @Nullable String, @Nullable SkinModelType> getPlayerSkinTexture() {
+        if(cachedResult != null) return cachedResult;
         MinecraftClient client = MinecraftClient.getInstance();
 
         try {
@@ -66,14 +71,16 @@ public class MojangSkinAPI {
             }
 
             if(textureJSON.has("invalid")) {
-                return new Triplet<>(true, null, null);
+                cachedResult = new Triplet<>(true, null, null);
+                return cachedResult;
             }
 
             if(!textureJSON
                     .get("textures").getAsJsonObject()
                     .has("SKIN")
             ) {
-                return new Triplet<>(true, null, null);
+                cachedResult = new Triplet<>(true, null, null);
+                return cachedResult;
             }
 
             var skin = textureJSON
@@ -81,7 +88,8 @@ public class MojangSkinAPI {
                     .get("SKIN").getAsJsonObject();
 
             if(skin.get("url").getAsString().equals("Steve?") || skin.get("url").getAsString().equals("Alex?")) {
-                return new Triplet<>(true, null, null);
+                cachedResult = new Triplet<>(true, null, null);
+                return cachedResult;
             }
 
             String skinURL = skin.get("url").getAsString();
@@ -93,7 +101,8 @@ public class MojangSkinAPI {
                         .get("model").getAsString();
             } catch (Exception ignored) {}
 
-            return new Triplet<>(false, skinURL, SkinModelType.valueOf(modelType.toUpperCase()));
+            cachedResult =  new Triplet<>(false, skinURL, SkinModelType.valueOf(modelType.toUpperCase()));
+            return cachedResult;
         } catch (Exception e) {
             SkinShuffle.LOGGER.error(e.getMessage());
             return new Triplet<>(true, null, null);
@@ -120,6 +129,10 @@ public class MojangSkinAPI {
         } else {
             SkinShuffle.LOGGER.error("Cannot connect to Mojang API.");
         }
+    }
+
+    public static void resetCache() {
+        cachedResult = null;
     }
 
     public enum SkinModelType {

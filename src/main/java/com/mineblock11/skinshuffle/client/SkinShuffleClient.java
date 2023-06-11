@@ -12,6 +12,7 @@ public class SkinShuffleClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         SkinShuffleConfig.createDirectories();
+        SkinShuffleConfig.loadPresets();
     }
 
     public static Connection jsoupConnection(String url) {

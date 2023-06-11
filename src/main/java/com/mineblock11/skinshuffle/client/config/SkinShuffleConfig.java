@@ -2,7 +2,9 @@ package com.mineblock11.skinshuffle.client.config;
 
 import com.google.gson.*;
 import com.mineblock11.skinshuffle.SkinShuffle;
+import com.mineblock11.skinshuffle.api.MojangSkinAPI;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
+import com.mineblock11.skinshuffle.client.skin.UrlSkin;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
@@ -93,6 +95,9 @@ public class SkinShuffleConfig {
     public static void setChosenPreset(SkinPreset preset) {
         chosenPreset = preset;
         savePresets();
+
+        if(preset.getSkin() instanceof UrlSkin)
+            MojangSkinAPI.resetCache();
     }
 
     public static int getPresetIndex(SkinPreset preset) {

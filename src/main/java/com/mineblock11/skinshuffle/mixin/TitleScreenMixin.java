@@ -19,7 +19,7 @@ public class TitleScreenMixin extends Screen {
     @Inject(method = "init", at = @At("HEAD"))
     public void refreshConfig(CallbackInfo ci) {
         // Config must be refreshed here as it requires resource manager.
-        SkinShuffleConfig.loadPresets();
+
     }
 
     @Inject(method = "init", at = @At("TAIL"))
