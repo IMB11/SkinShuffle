@@ -24,3 +24,11 @@ skinshuffle:
       edit: "Edit"
       copy: "Copy"
       delete: "Delete"
+
+  edit:
+    general:
+      title: "General"
+    skin:
+      title: "Skin"
+    gameplay:
+      title: "Gameplay"

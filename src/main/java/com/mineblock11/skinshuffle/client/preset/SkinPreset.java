@@ -82,4 +82,13 @@ public class SkinPreset {
             return new SkinPreset(new UrlSkin(tripletResult.getSecond(), tripletResult.getThird()), name);
         }
     }
+
+    public void copyFrom(SkinPreset other) {
+        this.name = other.name;
+        this.skin = other.skin;
+    }
+
+    public SkinPreset copy() {
+        return new SkinPreset(this.skin, this.name);
+    }
 }

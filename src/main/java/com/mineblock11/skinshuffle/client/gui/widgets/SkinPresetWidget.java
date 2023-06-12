@@ -1,6 +1,7 @@
 package com.mineblock11.skinshuffle.client.gui.widgets;
 
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
+import com.mineblock11.skinshuffle.client.gui.PresetEditScreen;
 import com.mineblock11.skinshuffle.client.gui.SkinCarouselScreen;
 import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
@@ -41,7 +42,7 @@ public class SkinPresetWidget extends SpruceContainerWidget {
                 Position.of(getWidth() / 8, getHeight() - 48), getWidth() - (this.getWidth() / 4), 20,
                 Text.translatable("skinshuffle.carousel.preset_widget.edit"),
                 button -> {
-                    // TODO
+                    client.setScreen(new PresetEditScreen(this.parent, this.skinPreset));
                 }
         ));
 
