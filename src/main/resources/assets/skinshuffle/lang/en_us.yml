@@ -18,7 +18,7 @@ skinshuffle:
     confirmations:
       delete_preset:
         title: "Preset Deletion"
-        message: "Are you sure you want to delete this preset?\n(This action is irreversible.)"
+        message: "Are you sure you want to delete this preset?\nIt will be lost forever! (A long time!)"
 
     preset_widget:
       edit: "Edit"
