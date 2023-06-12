@@ -99,7 +99,6 @@ public class SkinShuffleConfig {
     public static void setup() {
         try {
             if(!PERSISTENT_SKINS_DIR.toFile().exists()) Files.createDirectories(PERSISTENT_SKINS_DIR);
-            MojangSkinAPI.loadSkinCache();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -123,24 +122,7 @@ public class SkinShuffleConfig {
         chosenPreset = preset;
         savePresets();
 
-        if(preset.getSkin() instanceof UrlSkin)
-            MojangSkinAPI.resetCache();
-
-        if(!AuthUtil.isLoggedIn()) {
-            AuthUtil.warnNotAuthed();
-            return;
-        }
-
-        try {
-            if(preset.getSkin() instanceof UrlSkin urlSkin) {
-                MojangSkinAPI.setSkinTexture(urlSkin.getUrl(), urlSkin.getModel());
-            } else {
-                ConfigSkin configSkin = preset.getSkin().saveToConfig();
-                MojangSkinAPI.setSkinTexture(configSkin.getFile().toFile(), preset.getSkin().getModel());
-            }
-        } catch (Exception e) {
-            SkinShuffle.LOGGER.error("Failed to apply skin preset.", e);
-        }
+        apply();
     }
 
     /**

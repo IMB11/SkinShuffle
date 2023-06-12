@@ -15,8 +15,12 @@ public class AuthUtil {
         return ((MinecraftClientAccessor) client).getUserApiService() instanceof YggdrasilUserApiService;
     }
 
+    private static boolean toastLock = false;
     public static void warnNotAuthed() {
+        if(toastLock) return;
+        toastLock = true;
         MinecraftClient client = MinecraftClient.getInstance();
+
         ToastManager manager = client.getToastManager();
 
         var toast = SystemToast.create(MinecraftClient.getInstance(), SystemToast.Type.PACK_LOAD_FAILURE, Text.translatable("skinshuffle.offline.toast.title"), Text.translatable("skinshuffle.offline.toast.message"));
@@ -26,14 +30,15 @@ public class AuthUtil {
         // There is a high chance that the player changes in quick succession.
         for (ToastManager.Entry<?> visibleEntry : ((ToastManagerAccessor) manager).getVisibleEntries()) {
             if(visibleEntry.getInstance() instanceof SystemToast systemToast) {
-                if(systemToast.title.getString().equals(Text.translatable("skinshuffle.offline.toast.title").getString())) {
+                if(systemToast.title.equals(Text.translatable("skinshuffle.offline.toast.title"))) {
                     canShowToast = false;
                 }
             }
         }
 
-        if(canShowToast) {
+        if(canShowToast && toastLock) {
             manager.add(toast);
         }
+        toastLock = false;
     }
 }
