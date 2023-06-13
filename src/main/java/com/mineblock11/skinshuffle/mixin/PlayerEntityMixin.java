@@ -46,7 +46,7 @@ public abstract class PlayerEntityMixin extends PlayerEntity {
     @Inject(method = "getSkinTexture", at = @At("HEAD"), cancellable = true)
     private void modifySkinTexture(CallbackInfoReturnable<Identifier> cir) {
         if(MinecraftClient.getInstance().world != null) {
-            if(!AuthUtil.isLoggedIn() && this.getUuid().equals(MinecraftClient.getInstance().player.getUuid())) {
+            if(this.getUuid().equals(MinecraftClient.getInstance().player.getUuid())) {
                 SkinPreset currentPreset = SkinShuffleConfig.getChosenPreset();
                 cir.setReturnValue(Objects.requireNonNullElse(currentPreset.getSkin().getTexture(), new Identifier("textures/skins/default/steve.png")));
             }

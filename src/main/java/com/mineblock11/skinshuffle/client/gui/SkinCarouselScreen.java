@@ -123,10 +123,6 @@ public class SkinCarouselScreen extends SpruceScreen {
 
             SkinShuffleConfig.setChosenPreset(presetWidget.getPreset());
 
-            if(this.client.world != null) {
-                ClientPlayNetworking.send(SkinShuffle.id("preset_changed"), PacketByteBufs.empty());
-            }
-
             this.close();
         }));
 

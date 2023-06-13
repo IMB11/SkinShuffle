@@ -36,6 +36,8 @@ import com.mojang.authlib.minecraft.UserApiService;
 import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import org.apache.commons.codec.binary.Base64;
 import org.jetbrains.annotations.Nullable;
@@ -76,6 +78,10 @@ public class MojangSkinAPI {
             }
         } else {
             throw new RuntimeException("Cannot connect to Mojang API - offline mode is active.");
+        }
+
+        if(MinecraftClient.getInstance().world != null) {
+            ClientPlayNetworking.send(SkinShuffle.id("preset_changed"), PacketByteBufs.empty());
         }
     }
 
@@ -189,6 +195,10 @@ public class MojangSkinAPI {
             }
         } else {
             SkinShuffle.LOGGER.error("Cannot connect to Mojang API.");
+        }
+
+        if(MinecraftClient.getInstance().world != null) {
+            ClientPlayNetworking.send(SkinShuffle.id("preset_changed"), PacketByteBufs.empty());
         }
     }
 
