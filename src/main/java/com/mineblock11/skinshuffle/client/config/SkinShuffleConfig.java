@@ -1,3 +1,23 @@
+/*
+ *
+ *     Copyright (C) 2023 Calum (mineblock11), enjarai
+ *
+ *     This library is free software; you can redistribute it and/or
+ *     modify it under the terms of the GNU Lesser General Public
+ *     License as published by the Free Software Foundation; either
+ *     version 2.1 of the License, or (at your option) any later version.
+ *
+ *     This library is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *     Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public
+ *     License along with this library; if not, write to the Free Software
+ *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ *     USA
+ */
+
 package com.mineblock11.skinshuffle.client.config;
 
 import com.google.gson.*;
@@ -99,7 +119,6 @@ public class SkinShuffleConfig {
     public static void setup() {
         try {
             if(!PERSISTENT_SKINS_DIR.toFile().exists()) Files.createDirectories(PERSISTENT_SKINS_DIR);
-            MojangSkinAPI.loadSkinCache();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -123,24 +142,7 @@ public class SkinShuffleConfig {
         chosenPreset = preset;
         savePresets();
 
-        if(preset.getSkin() instanceof UrlSkin)
-            MojangSkinAPI.resetCache();
-
-        if(!AuthUtil.isLoggedIn()) {
-            AuthUtil.warnNotAuthed();
-            return;
-        }
-
-        try {
-            if(preset.getSkin() instanceof UrlSkin urlSkin) {
-                MojangSkinAPI.setSkinTexture(urlSkin.getUrl(), urlSkin.getModel());
-            } else {
-                ConfigSkin configSkin = preset.getSkin().saveToConfig();
-                MojangSkinAPI.setSkinTexture(configSkin.getFile().toFile(), preset.getSkin().getModel());
-            }
-        } catch (Exception e) {
-            SkinShuffle.LOGGER.error("Failed to apply skin preset.", e);
-        }
+        apply();
     }
 
     /**
