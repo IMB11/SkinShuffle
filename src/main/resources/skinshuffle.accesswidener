@@ -1,4 +1,10 @@
 accessWidener   v1  named
 accessible class net/minecraft/client/texture/ResourceTexture$TextureData
+
 accessible class net/minecraft/client/toast/ToastManager$Entry
 accessible field net/minecraft/client/toast/SystemToast title Lnet/minecraft/text/Text;
+
+accessible class net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTracker
+accessible field net/minecraft/server/world/ThreadedAnvilChunkStorage entityTrackers Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;
+accessible field net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTracker entry Lnet/minecraft/server/network/EntityTrackerEntry;
+accessible field net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTracker listeners Ljava/util/Set;

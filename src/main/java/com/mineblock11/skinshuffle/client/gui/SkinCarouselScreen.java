@@ -1,5 +1,26 @@
+/*
+ *
+ *     Copyright (C) 2023 Calum (mineblock11), enjarai
+ *
+ *     This library is free software; you can redistribute it and/or
+ *     modify it under the terms of the GNU Lesser General Public
+ *     License as published by the Free Software Foundation; either
+ *     version 2.1 of the License, or (at your option) any later version.
+ *
+ *     This library is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *     Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public
+ *     License along with this library; if not, write to the Free Software
+ *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ *     USA
+ */
+
 package com.mineblock11.skinshuffle.client.gui;
 
+import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.widgets.AddPresetWidget;
 import com.mineblock11.skinshuffle.client.gui.widgets.CarouselMoveButton;
@@ -12,8 +33,11 @@ import dev.lambdaurora.spruceui.screen.SpruceScreen;
 import dev.lambdaurora.spruceui.util.ScissorManager;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
 import dev.lambdaurora.spruceui.widget.SpruceWidget;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.GlfwUtil;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
@@ -87,8 +111,6 @@ public class SkinCarouselScreen extends SpruceScreen {
         }));
 
         this.addDrawableChild(new SpruceButtonWidget(Position.of(this.width / 2 + 5, this.height - 23), 128, 20, Text.translatable("skinshuffle.carousel.save_button"), button -> {
-            // TODO: Remember selected preset.
-
             SpruceWidget chosenPresetWidget = this.carouselWidgets.get(cardIndex);
 
             if(chosenPresetWidget instanceof AddPresetWidget) {
@@ -100,6 +122,10 @@ public class SkinCarouselScreen extends SpruceScreen {
             SkinPresetWidget presetWidget = (SkinPresetWidget) chosenPresetWidget;
 
             SkinShuffleConfig.setChosenPreset(presetWidget.getPreset());
+
+            if(this.client.world != null) {
+                ClientPlayNetworking.send(SkinShuffle.id("preset_changed"), PacketByteBufs.empty());
+            }
 
             this.close();
         }));

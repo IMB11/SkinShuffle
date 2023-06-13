@@ -4,15 +4,16 @@
   "package": "com.mineblock11.skinshuffle.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "ServerPlayerEntityMixin",
     "accessor.MinecraftClientAuthAccessor",
     "accessor.YggdrasilUserApiServiceAccessor"
   ],
   "client": [
+    "PlayerEntityMixin",
     "accessor.GameMenuScreenAccessor",
     "accessor.MinecraftClientAccessor",
     "accessor.ToastManagerAccessor",
     "render.LivingEntityRendererMixin",
-    "render.PlayerEntityMixin",
     "screen.GameMenuScreenMixin",
     "screen.TitleScreenMixin"
   ],
