@@ -20,30 +20,16 @@
 
 package com.mineblock11.skinshuffle.client.preset;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.mineblock11.skinshuffle.api.MojangSkinAPI;
 import com.mineblock11.skinshuffle.client.skin.ResourceSkin;
 import com.mineblock11.skinshuffle.client.skin.Skin;
 import com.mineblock11.skinshuffle.client.skin.UrlSkin;
-import com.mineblock11.skinshuffle.mixin.accessor.MinecraftClientAccessor;
 import com.mineblock11.skinshuffle.util.AuthUtil;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.minecraft.MinecraftProfileTexture;
-import com.mojang.authlib.minecraft.UserApiService;
-import com.mojang.authlib.properties.Property;
-import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.netty.handler.codec.base64.Base64Decoder;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.DefaultSkinHelper;
-import net.minecraft.util.ApiServices;
+import net.minecraft.client.util.Session;
 import net.minecraft.util.Identifier;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.UUID;
 
 public class SkinPreset {
     public static final Codec<SkinPreset> CODEC = RecordCodecBuilder.create(instance ->
@@ -82,24 +68,25 @@ public class SkinPreset {
 
     public static SkinPreset generateDefaultPreset() {
         MinecraftClient client = MinecraftClient.getInstance();
-        String name = client.getSession().getUsername();
+        Session session = client.getSession();
+        String name = session.getUsername();
 
         if(!AuthUtil.isLoggedIn()) {
-            Identifier skinTexture = client.getSkinProvider().loadSkin(client.getSession().getProfile());
+            Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
             Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
 
             return new SkinPreset(skin, name);
         } else {
-            var tripletResult = MojangSkinAPI.getPlayerSkinTexture();
+            var skinQueryResult = MojangSkinAPI.getPlayerSkinTexture(session.getUuid());
 
-            if(tripletResult.getFirst()) {
-                Identifier skinTexture = client.getSkinProvider().loadSkin(client.getSession().getProfile());
+            if(skinQueryResult.usesDefaultSkin()) {
+                Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
                 Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
 
                 return new SkinPreset(skin, name);
             }
 
-            return new SkinPreset(new UrlSkin(tripletResult.getSecond(), tripletResult.getThird()), name);
+            return new SkinPreset(new UrlSkin(skinQueryResult.skinURL(), skinQueryResult.skinURL()), name);
         }
     }
 

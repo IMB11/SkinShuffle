@@ -28,6 +28,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(YggdrasilUserApiService.class)
 public interface YggdrasilUserApiServiceAccessor {
-    @Accessor
+    @Accessor("minecraftClient")
     MinecraftClient getMinecraftClient();
 }

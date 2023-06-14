@@ -20,9 +20,8 @@
 
 package com.mineblock11.skinshuffle.api;
 
-import com.google.common.hash.Hashing;
-import com.google.common.io.Files;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mineblock11.skinshuffle.SkinShuffle;
@@ -31,7 +30,6 @@ import com.mineblock11.skinshuffle.mixin.accessor.MinecraftClientAuthAccessor;
 import com.mineblock11.skinshuffle.mixin.accessor.YggdrasilUserApiServiceAccessor;
 import com.mineblock11.skinshuffle.util.AuthUtil;
 import com.mineblock11.skinshuffle.util.SkinCacheRegistry;
-import com.mineblock11.skinshuffle.util.Triplet;
 import com.mojang.authlib.minecraft.UserApiService;
 import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
 import kong.unirest.HttpResponse;
@@ -45,12 +43,9 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MojangSkinAPI {
-    private static Triplet<Boolean, @Nullable String, @Nullable String> cachedResult;
-    private static final Gson GSON = new Gson();
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     /**
      * Set the player's skin texture from a URL.
@@ -73,6 +68,7 @@ public class MojangSkinAPI {
                         .contentType("application/json")
                         .header("Authorization", "Bearer " + token).asString().getBody();
                 SkinShuffle.LOGGER.info("Set player skin: " + skinURL);
+                SkinShuffle.LOGGER.info(result);
             } catch (Exception e) {
                 throw new RuntimeException("Cannot connect to Mojang API.", e);
             }
@@ -88,14 +84,11 @@ public class MojangSkinAPI {
     /**
      * Get the player's skin texture.
      * @return Is a default skin? Skin URL, Model Type
+     * @param uuid
      */
-    public static Triplet<Boolean, @Nullable String, @Nullable String> getPlayerSkinTexture() {
-        if (cachedResult != null) return cachedResult;
-        MinecraftClient client = MinecraftClient.getInstance();
-
+    public static SkinQueryResult getPlayerSkinTexture(String uuid) {
         try {
-            String UUID = client.getSession().getUuid();
-            String jsonResponse = Unirest.get("https://sessionserver.mojang.com/session/minecraft/profile/" + UUID)
+            String jsonResponse = Unirest.get("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid + "?unsigned=false")
                     .asString().getBody();
 
             Gson gson = new Gson();
@@ -103,25 +96,29 @@ public class MojangSkinAPI {
             JsonObject textureJSON = new JsonObject();
             textureJSON.addProperty("invalid", true);
 
+            @Nullable String textureSignature = null;
+            @Nullable String textureValue = null;
+
             for (JsonElement properties : object.get("properties").getAsJsonArray()) {
                 if (properties.getAsJsonObject().get("name").getAsString().equals("textures")) {
-                    String jsonContent = new String(Base64.decodeBase64(properties.getAsJsonObject().get("value").getAsString()), StandardCharsets.UTF_8);
+                    textureSignature = properties.getAsJsonObject().get("signature").getAsString();
+                    textureValue = properties.getAsJsonObject().get("value").getAsString();
+
+                    String jsonContent = new String(Base64.decodeBase64(textureValue), StandardCharsets.UTF_8);
                     textureJSON = gson.fromJson(jsonContent, JsonObject.class);
                     break;
                 }
             }
 
             if (textureJSON.has("invalid")) {
-                cachedResult = new Triplet<>(true, null, null);
-                return cachedResult;
+                return SkinQueryResult.EMPTY_RESULT;
             }
 
             if (!textureJSON
                     .get("textures").getAsJsonObject()
                     .has("SKIN")
             ) {
-                cachedResult = new Triplet<>(true, null, null);
-                return cachedResult;
+                return SkinQueryResult.EMPTY_RESULT;
             }
 
             var skin = textureJSON
@@ -129,8 +126,7 @@ public class MojangSkinAPI {
                     .get("SKIN").getAsJsonObject();
 
             if (skin.get("url").getAsString().equals("Steve?") || skin.get("url").getAsString().equals("Alex?")) {
-                cachedResult = new Triplet<>(true, null, null);
-                return cachedResult;
+                return SkinQueryResult.EMPTY_RESULT;
             }
 
             String skinURL = skin.get("url").getAsString();
@@ -143,11 +139,10 @@ public class MojangSkinAPI {
             } catch (Exception ignored) {
             }
 
-            cachedResult = new Triplet<>(false, skinURL, modelType);
-            return cachedResult;
+            return new SkinQueryResult(false, skinURL, modelType, textureSignature, textureValue);
         } catch (Exception e) {
             SkinShuffle.LOGGER.error(e.getMessage());
-            return new Triplet<>(true, null, null);
+            return SkinQueryResult.EMPTY_RESULT;
         }
     }
 
@@ -188,6 +183,10 @@ public class MojangSkinAPI {
 
                 SkinCacheRegistry.saveUploadedSkin(skinFile, skinURL);
 
+                if(MinecraftClient.getInstance().world != null) {
+                    ClientPlayNetworking.send(SkinShuffle.id("preset_changed"), PacketByteBufs.create().writeString(skinURL));
+                }
+
                 SkinShuffle.LOGGER.info("Uploaded texture: " + skinURL);
                 SkinShuffle.LOGGER.info("Set player skin: " + skinURL);
             } catch (Exception e) {
@@ -196,13 +195,5 @@ public class MojangSkinAPI {
         } else {
             SkinShuffle.LOGGER.error("Cannot connect to Mojang API.");
         }
-
-        if(MinecraftClient.getInstance().world != null) {
-            ClientPlayNetworking.send(SkinShuffle.id("preset_changed"), PacketByteBufs.empty());
-        }
-    }
-
-    public static void resetCache() {
-        cachedResult = null;
     }
 }

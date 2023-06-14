@@ -18,14 +18,16 @@
  *     USA
  */
 
-package com.mineblock11.skinshuffle.mixin.accessor;
+package com.mineblock11.skinshuffle.api;
 
-import com.mojang.authlib.minecraft.client.MinecraftClient;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+import com.mojang.authlib.properties.Property;
+import net.minecraft.client.texture.PlayerSkinProvider;
+import org.jetbrains.annotations.Nullable;
 
-@Mixin(MinecraftClient.class)
-public interface MinecraftClientAuthAccessor {
-    @Accessor("accessToken")
-    String getAccessToken();
+public record SkinQueryResult(boolean usesDefaultSkin, @Nullable String skinURL, @Nullable String modelType, @Nullable String textureSignature, @Nullable String textureValue) {
+    public static final SkinQueryResult EMPTY_RESULT = new SkinQueryResult(true, null, null, null, null);
+
+    public Property toProperty() {
+        return new Property(PlayerSkinProvider.TEXTURES, textureValue, textureSignature);
+    }
 }

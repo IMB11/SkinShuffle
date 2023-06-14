@@ -162,9 +162,6 @@ public class SkinShuffleConfig {
     public static void apply() {
         SkinPreset preset = getChosenPreset();
 
-        if(preset.getSkin() instanceof UrlSkin)
-            MojangSkinAPI.resetCache();
-
         if(!AuthUtil.isLoggedIn()) {
             AuthUtil.warnNotAuthed();
             return;
