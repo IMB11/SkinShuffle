@@ -21,5 +21,5 @@
 package com.mineblock11.skinshuffle.util;
 
 public interface SkinShufflePlayer {
-    void skinShuffle$RefreshSkin();
+    void skinShuffle$refreshSkin();
 }

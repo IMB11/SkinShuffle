@@ -20,8 +20,12 @@
 
 package com.mineblock11.skinshuffle;
 
+import com.mineblock11.skinshuffle.api.MojangSkinAPI;
+import com.mineblock11.skinshuffle.api.SkinQueryResult;
+import com.mineblock11.skinshuffle.networking.ServerSkinHandling;
 import com.mineblock11.skinshuffle.util.SkinCacheRegistry;
 import com.mineblock11.skinshuffle.util.SkinShufflePlayer;
+import com.mojang.authlib.properties.Property;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
@@ -43,10 +47,7 @@ public class SkinShuffle implements ModInitializer {
         ensureDataDir();
         SkinCacheRegistry.initialize();
 
-        ServerPlayNetworking.registerGlobalReceiver(SkinShuffle.id("preset_changed"), (server, player, handler, buf, responseSender) -> {
-            SkinShufflePlayer skinShufflePlayer = (SkinShufflePlayer) player;
-            skinShufflePlayer.skinShuffle$RefreshSkin();
-        });
+        ServerSkinHandling.init();
     }
 
     private void ensureDataDir() {

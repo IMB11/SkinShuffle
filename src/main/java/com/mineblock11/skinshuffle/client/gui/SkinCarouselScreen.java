@@ -20,24 +20,20 @@
 
 package com.mineblock11.skinshuffle.client.gui;
 
-import com.mineblock11.skinshuffle.SkinShuffle;
+import com.mineblock11.skinshuffle.api.MojangSkinAPI;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.widgets.AddPresetWidget;
 import com.mineblock11.skinshuffle.client.gui.widgets.CarouselMoveButton;
 import com.mineblock11.skinshuffle.client.gui.widgets.SkinPresetWidget;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
-import com.mineblock11.skinshuffle.client.skin.Skin;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.Tooltip;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
 import dev.lambdaurora.spruceui.util.ScissorManager;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
 import dev.lambdaurora.spruceui.widget.SpruceWidget;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.GlfwUtil;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;

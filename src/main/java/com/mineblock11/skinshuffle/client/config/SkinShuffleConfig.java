@@ -23,6 +23,7 @@ package com.mineblock11.skinshuffle.client.config;
 import com.google.gson.*;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.api.MojangSkinAPI;
+import com.mineblock11.skinshuffle.api.SkinQueryResult;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mineblock11.skinshuffle.client.skin.ConfigSkin;
 import com.mineblock11.skinshuffle.client.skin.UrlSkin;
@@ -30,12 +31,19 @@ import com.mineblock11.skinshuffle.util.AuthUtil;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.toast.SystemToast;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.text.Text;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.concurrent.*;
 
 public class SkinShuffleConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -45,6 +53,7 @@ public class SkinShuffleConfig {
 
     private static SkinPreset chosenPreset = null;
     private static final ArrayList<SkinPreset> loadedPresets = new ArrayList<>();
+    private static boolean cooldownActive;
 
     /**
      * Get all loaded presets.
@@ -168,14 +177,42 @@ public class SkinShuffleConfig {
         }
 
         try {
+            MinecraftClient client = MinecraftClient.getInstance();
             if(preset.getSkin() instanceof UrlSkin urlSkin) {
                 MojangSkinAPI.setSkinTexture(urlSkin.getUrl(), urlSkin.getModel());
+
+                if(client.world != null) {
+                    sendUpdateToServer(client);
+                }
+
+
             } else {
                 ConfigSkin configSkin = preset.getSkin().saveToConfig();
                 MojangSkinAPI.setSkinTexture(configSkin.getFile().toFile(), preset.getSkin().getModel());
+
+                if(client.world != null) {
+                    sendUpdateToServer(client);
+                }
             }
         } catch (Exception e) {
             SkinShuffle.LOGGER.error("Failed to apply skin preset.", e);
         }
+    }
+
+
+
+    private static void sendUpdateToServer(MinecraftClient client) {
+        if(cooldownActive) {
+            client.getToastManager().add(SystemToast.create(client,
+                    SystemToast.Type.PACK_LOAD_FAILURE,
+                    Text.translatable("skinshuffle.cooldown.toast.title"),
+                    Text.translatable("skinshuffle.cooldown.toast.message")));
+        }
+
+        ClientPlayNetworking.send(SkinShuffle.id("preset_changed"), PacketByteBufs.empty());
+    }
+
+    public static void setCooldown(boolean value) {
+        cooldownActive = value;
     }
 }

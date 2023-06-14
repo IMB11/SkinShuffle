@@ -1,4 +1,8 @@
 skinshuffle:
+  cooldown:
+    toast:
+      title: "Skin refresh has been scheduled."
+      message: "You have already changed your skin in the last 30 seconds. Your skin will be visible to players after the cooldown period has ended."
   offline:
     toast:
       title: "SkinShuffle cannot apply your skin."

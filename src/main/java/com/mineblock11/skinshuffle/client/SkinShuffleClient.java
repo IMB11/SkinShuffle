@@ -20,10 +20,19 @@
 
 package com.mineblock11.skinshuffle.client;
 
+import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
+import com.mineblock11.skinshuffle.networking.ClientSkinHandling;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.toast.SystemToast;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.text.Text;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
@@ -31,6 +40,7 @@ public class SkinShuffleClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         SkinShuffleConfig.setup();
+        ClientSkinHandling.init();
     }
 
     public static Connection jsoupConnection(String url) {

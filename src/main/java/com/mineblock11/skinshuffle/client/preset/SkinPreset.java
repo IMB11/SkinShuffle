@@ -86,7 +86,7 @@ public class SkinPreset {
                 return new SkinPreset(skin, name);
             }
 
-            return new SkinPreset(new UrlSkin(skinQueryResult.skinURL(), skinQueryResult.skinURL()), name);
+            return new SkinPreset(new UrlSkin(skinQueryResult.skinURL(), skinQueryResult.modelType()), name);
         }
     }
 

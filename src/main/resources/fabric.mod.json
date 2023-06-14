@@ -22,9 +22,6 @@
     ],
     "main": [
       "com.mineblock11.skinshuffle.SkinShuffle"
-    ],
-    "server": [
-      "com.mineblock11.skinshuffle.dedicated.SkinShuffleDedicated"
     ]
   },
   "mixins": [

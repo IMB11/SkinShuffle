@@ -37,12 +37,12 @@ import kong.unirest.Unirest;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
-import org.apache.commons.codec.binary.Base64;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 public class MojangSkinAPI {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -68,7 +68,6 @@ public class MojangSkinAPI {
                         .contentType("application/json")
                         .header("Authorization", "Bearer " + token).asString().getBody();
                 SkinShuffle.LOGGER.info("Set player skin: " + skinURL);
-                SkinShuffle.LOGGER.info(result);
             } catch (Exception e) {
                 throw new RuntimeException("Cannot connect to Mojang API.", e);
             }
@@ -104,7 +103,7 @@ public class MojangSkinAPI {
                     textureSignature = properties.getAsJsonObject().get("signature").getAsString();
                     textureValue = properties.getAsJsonObject().get("value").getAsString();
 
-                    String jsonContent = new String(Base64.decodeBase64(textureValue), StandardCharsets.UTF_8);
+                    String jsonContent = new String(Base64.getDecoder().decode(textureValue), StandardCharsets.UTF_8);
                     textureJSON = gson.fromJson(jsonContent, JsonObject.class);
                     break;
                 }
