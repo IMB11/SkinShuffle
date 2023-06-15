@@ -45,13 +45,12 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 
 public class SkinShuffleConfig {
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final Path PRESETS = SkinShuffle.DATA_DIR.resolve("presets.json");
     public static final Path PERSISTENT_SKINS_DIR = SkinShuffle.DATA_DIR.resolve("skins");
     public static final Path CONFIG_FILE = SkinShuffle.DATA_DIR.resolve("config.json");
-
-    private static SkinPreset chosenPreset = null;
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final Path PRESETS = SkinShuffle.DATA_DIR.resolve("presets.json");
     private static final ArrayList<SkinPreset> loadedPresets = new ArrayList<>();
+    private static SkinPreset chosenPreset = null;
     private static boolean cooldownActive;
 
     /**
@@ -69,10 +68,23 @@ public class SkinShuffleConfig {
     }
 
     /**
+     * Set a chosen preset, and apply it.
+     *
+     * @param preset The preset to apply.
+     */
+    public static void setChosenPreset(SkinPreset preset) {
+        if (chosenPreset == preset) return;
+        chosenPreset = preset;
+        savePresets();
+
+        apply();
+    }
+
+    /**
      * Save the currently loaded presets to the presets.json file.
      */
     public static void savePresets() {
-        if(chosenPreset == null) {
+        if (chosenPreset == null) {
             chosenPreset = SkinPreset.generateDefaultPreset();
             loadedPresets.add(chosenPreset);
         }
@@ -99,7 +111,7 @@ public class SkinShuffleConfig {
      * Load presets from the presets.json file.
      */
     public static void loadPresets() {
-        if(!PRESETS.toFile().exists()) savePresets();
+        if (!PRESETS.toFile().exists()) savePresets();
 
         loadedPresets.clear();
         chosenPreset = null;
@@ -126,7 +138,7 @@ public class SkinShuffleConfig {
      */
     public static void setup() {
         try {
-            if(!PERSISTENT_SKINS_DIR.toFile().exists()) Files.createDirectories(PERSISTENT_SKINS_DIR);
+            if (!PERSISTENT_SKINS_DIR.toFile().exists()) Files.createDirectories(PERSISTENT_SKINS_DIR);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -134,6 +146,7 @@ public class SkinShuffleConfig {
 
     /**
      * Add a preset.
+     *
      * @param preset The preset to add.
      */
     public static void addPreset(SkinPreset preset) {
@@ -142,24 +155,13 @@ public class SkinShuffleConfig {
     }
 
     /**
-     * Set a chosen preset, and apply it.
-     * @param preset The preset to apply.
-     */
-    public static void setChosenPreset(SkinPreset preset) {
-        if(chosenPreset == preset) return;
-        chosenPreset = preset;
-        savePresets();
-
-        apply();
-    }
-
-    /**
      * Delete a preset.
+     *
      * @param skinPreset The skin preset to delete.
      */
     public static void deletePreset(SkinPreset skinPreset) {
         loadedPresets.remove(skinPreset);
-        if(chosenPreset == skinPreset)
+        if (chosenPreset == skinPreset)
             chosenPreset = loadedPresets.get(0);
         savePresets();
     }
@@ -171,22 +173,22 @@ public class SkinShuffleConfig {
         MinecraftClient client = MinecraftClient.getInstance();
         SkinPreset preset = getChosenPreset();
 
-        if(!AuthUtil.isLoggedIn()) {
+        if (!AuthUtil.isLoggedIn()) {
             AuthUtil.warnNotAuthed();
             return;
-        } else if(!ClientSkinHandling.isInstalledOnServer() && client.world != null) {
+        } else if (!ClientSkinHandling.isInstalledOnServer() && client.world != null) {
             ToastHelper.showHandshakeOnChange(client);
         }
 
         try {
-            if(preset.getSkin() instanceof UrlSkin urlSkin) {
+            if (preset.getSkin() instanceof UrlSkin urlSkin) {
                 MojangSkinAPI.setSkinTexture(urlSkin.getUrl(), urlSkin.getModel());
             } else {
                 ConfigSkin configSkin = preset.getSkin().saveToConfig();
                 MojangSkinAPI.setSkinTexture(configSkin.getFile().toFile(), preset.getSkin().getModel());
             }
 
-            if(client.world != null) {
+            if (client.world != null) {
                 sendUpdateToServer(client);
             }
         } catch (Exception e) {
@@ -195,9 +197,8 @@ public class SkinShuffleConfig {
     }
 
 
-
     private static void sendUpdateToServer(MinecraftClient client) {
-        if(cooldownActive) {
+        if (cooldownActive) {
             client.getToastManager().add(SystemToast.create(client,
                     SystemToast.Type.PACK_LOAD_FAILURE,
                     Text.translatable("skinshuffle.cooldown.toast.title"),
