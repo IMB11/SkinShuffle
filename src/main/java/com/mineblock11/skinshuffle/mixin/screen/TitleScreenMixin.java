@@ -21,6 +21,7 @@
 package com.mineblock11.skinshuffle.mixin.screen;
 
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
+import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.widgets.OpenCarouselWidget;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
@@ -33,9 +34,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.function.Consumer;
+
 @Mixin(TitleScreen.class)
 public class TitleScreenMixin extends Screen {
     @Shadow @Final private boolean doBackgroundFade;
+
+    @Unique
+    private OpenCarouselWidget openCarouselWidget;
 
     protected TitleScreenMixin(Text title) {
         super(title);
@@ -44,17 +50,28 @@ public class TitleScreenMixin extends Screen {
     @Unique
     private boolean appliedConfiguration = false;
 
-    @Inject(method = "init", at = @At("HEAD"))
-    public void loadConfig(CallbackInfo ci) {
-        // Config must be refreshed here as it requires resource manager.
-        SkinPresetManager.loadPresets();
-    }
-
     @Inject(method = "render", at = @At("HEAD"))
     public void refreshConfig(CallbackInfo ci) {
         if(!appliedConfiguration && this.doBackgroundFade) {
             appliedConfiguration = true;
             SkinPresetManager.apply();
+        }
+    }
+
+    @Inject(method = "onDisplayed", at = @At("TAIL"), cancellable = false)
+    public void updateVisibility(CallbackInfo ci) {
+        SkinPresetManager.loadPresets();
+
+        if(!SkinShuffleConfig.get().displayInTitleScreen && this.openCarouselWidget != null) {
+            this.children().remove(this.openCarouselWidget);
+            this.openCarouselWidget = null;
+        }
+
+        if(SkinShuffleConfig.get().displayInTitleScreen && this.openCarouselWidget == null) {
+            OpenCarouselWidget.safelyCreateWidget(this, openCarouselWidget -> {
+                this.openCarouselWidget = openCarouselWidget;
+                this.addDrawableChild(openCarouselWidget);
+            });
         }
     }
 
@@ -66,6 +83,9 @@ public class TitleScreenMixin extends Screen {
              - Bedrock-style skin preview
          */
 
-        OpenCarouselWidget.safelyCreateWidget(this, this::addDrawableChild);
+        OpenCarouselWidget.safelyCreateWidget(this, openCarouselWidget -> {
+            this.openCarouselWidget = openCarouselWidget;
+            this.addDrawableChild(openCarouselWidget);
+        });
     }
 }

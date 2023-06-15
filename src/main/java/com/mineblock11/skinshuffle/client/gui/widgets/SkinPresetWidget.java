@@ -86,7 +86,7 @@ public class SkinPresetWidget extends SpruceContainerWidget {
                         if(result) {
                             SkinPresetManager.deletePreset(this.skinPreset);
                         }
-                        this.client.setScreen(new SkinCarouselScreen());
+                        this.client.setScreen(new SkinCarouselScreen(parent));
                     }, Text.translatable("skinshuffle.carousel.confirmations.delete_preset.title"), Text.translatable("skinshuffle.carousel.confirmations.delete_preset.message"));
                     this.client.setScreen(confirmScreen);
                 }

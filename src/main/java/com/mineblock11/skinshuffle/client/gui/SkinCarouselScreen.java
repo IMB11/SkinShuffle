@@ -20,7 +20,9 @@
 
 package com.mineblock11.skinshuffle.client.gui;
 
+import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
+import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.widgets.AddPresetWidget;
 import com.mineblock11.skinshuffle.client.gui.widgets.CarouselMoveButton;
 import com.mineblock11.skinshuffle.client.gui.widgets.SkinPresetWidget;
@@ -30,19 +32,26 @@ import dev.lambdaurora.spruceui.Tooltip;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
 import dev.lambdaurora.spruceui.util.ScissorManager;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
+import dev.lambdaurora.spruceui.widget.SpruceIconButtonWidget;
 import dev.lambdaurora.spruceui.widget.SpruceWidget;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.GlfwUtil;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RotationAxis;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class SkinCarouselScreen extends SpruceScreen {
-    public SkinCarouselScreen() {
+    private final Screen parent;
+
+    public SkinCarouselScreen(Screen parent) {
         super(Text.translatable("skinshuffle.carousel.title"));
+        this.parent = parent;
     }
 
     public CarouselMoveButton leftMoveButton;
@@ -105,6 +114,14 @@ public class SkinCarouselScreen extends SpruceScreen {
             this.close();
         }));
 
+        this.addDrawableChild(new SpruceIconButtonWidget(Position.of(2, 2), 20, 20, Text.empty(), (btn) -> this.client.setScreen(SkinShuffleConfigScreen.get(this))) {
+            @Override
+            protected int renderIcon(DrawContext graphics, int mouseX, int mouseY, float delta) {
+                graphics.drawTexture(SkinShuffle.id("textures/gui/config-button-icon.png"), this.getX() + this.getWidth() / 2 - (14 / 2), this.getY() + this.getHeight() / 2 - (14 / 2), 14, 14, 0, 0, 15, 15, 15, 15);
+                return 14;
+            }
+        });
+
         this.addDrawableChild(new SpruceButtonWidget(Position.of(this.width / 2 + 5, this.height - 23), 128, 20, Text.translatable("skinshuffle.carousel.save_button"), button -> {
             SpruceWidget chosenPresetWidget = this.carouselWidgets.get(cardIndex);
 
@@ -123,6 +140,11 @@ public class SkinCarouselScreen extends SpruceScreen {
 
         this.leftMoveButton.setActive(this.carouselWidgets.size() != 1);
         this.rightMoveButton.setActive(this.carouselWidgets.size() != 1);
+    }
+
+    @Override
+    public void close() {
+        this.client.setScreen(parent);
     }
 
     @Override

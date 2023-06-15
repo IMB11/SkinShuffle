@@ -20,6 +20,7 @@
 
 package com.mineblock11.skinshuffle.util;
 
+import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.mixin.accessor.MinecraftClientAccessor;
 import com.mineblock11.skinshuffle.mixin.accessor.ToastManagerAccessor;
 import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
@@ -37,7 +38,7 @@ public class AuthUtil {
 
     private static boolean toastLock = false;
     public static void warnNotAuthed() {
-        if(toastLock) return;
+        if(toastLock || SkinShuffleConfig.get().disableCooldownToast) return;
         toastLock = true;
         MinecraftClient client = MinecraftClient.getInstance();
 
