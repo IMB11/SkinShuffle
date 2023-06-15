@@ -18,9 +18,21 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class ServerSkinHandling {
+    /**
+     * Player UUIDs that currently have a cooldown.
+     */
     private static final ArrayList<String> LOCKED_PLAYERS = new ArrayList<>();
+
+    /**
+     * Player UUIDs that are currently in the refresh process.
+     */
     private static final ArrayList<String> CURRENTLY_REFRESHING = new ArrayList<>();
+
+    /**
+     * Player UUIDs that are currently waiting for the cooldown to expire before starting the refresh process.
+     */
     private static final ArrayList<String> PLAYERS_WITH_SCHEDULERS = new ArrayList<>();
+
 
     private static void handlePresetChange(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
         String uuidAsString = player.getUuidAsString();

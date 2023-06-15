@@ -16,20 +16,25 @@ public class ClientSkinHandling {
             new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
                     new LinkedBlockingQueue<>());
 
-    public static void init() {
-        ClientPlayNetworking.registerGlobalReceiver(SkinShuffle.id("reset_cooldown"), (client, handler, buf, responseSender) -> {
-            SkinShuffleConfig.setCooldown(true);
+    /**
+     * Handles the "reset_cooldown" packet which resets the skin cooldown.
+     */
+    private static void resetCooldown(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+        SkinShuffleConfig.setCooldown(true);
 
-            if(cooldownExecutor != null) {
-                cooldownExecutor.cancel(true);
-            }
+        if(cooldownExecutor != null) {
+            cooldownExecutor.cancel(true);
+        }
 
-            cooldownExecutor = executorService.submit(() -> {
-                try {
-                    Thread.sleep(30 * 1000);
-                    SkinShuffleConfig.setCooldown(false);
-                } catch (InterruptedException ignored) {}
-            });
+        cooldownExecutor = executorService.submit(() -> {
+            try {
+                Thread.sleep(30 * 1000);
+                SkinShuffleConfig.setCooldown(false);
+            } catch (InterruptedException ignored) {}
         });
+    }
+
+    public static void init() {
+        ClientPlayNetworking.registerGlobalReceiver(SkinShuffle.id("reset_cooldown"), ClientSkinHandling::resetCooldown);
     }
 }
