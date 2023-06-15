@@ -6,14 +6,21 @@ import dev.isxander.yacl3.api.ConfigCategory;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
+import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
+import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
+import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
 import dev.isxander.yacl3.config.ConfigEntry;
 import dev.isxander.yacl3.config.GsonConfigInstance;
+import dev.isxander.yacl3.gui.controllers.slider.FloatSliderController;
 import dev.isxander.yacl3.impl.controller.BooleanControllerBuilderImpl;
 import dev.isxander.yacl3.impl.controller.FloatSliderControllerBuilderImpl;
 import net.minecraft.text.Text;
+import org.apache.commons.lang3.StringUtils;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 import static net.minecraft.text.Text.*;
 
@@ -30,35 +37,45 @@ public class SkinShuffleConfig {
 
     public static YetAnotherConfigLib getInstance() {
         return YetAnotherConfigLib.create(GSON,
-                (defaults, config, builder) -> builder
-                        .title(translatable("skinshuffle.config.title"))
-                        .category(ConfigCategory.createBuilder()
-                            .name(translatable("skinshuffle.config.widget.title"))
-                                .tooltip(translatable("skinshuffle.config.widget.description"))
-                            .options(List.of(
-                                    Option.<Boolean>createBuilder()
-                                            .name(translatable("skinshuffle.config.widget.follow_cursor.name"))
-                                            .description(OptionDescription.createBuilder().text(translatable("skinshuffle.config.widget.follow_cursor.description")).build())
-                                            .binding(defaults.widgetSkinFollowCursor, () -> config.widgetSkinFollowCursor, val -> config.widgetSkinFollowCursor = val)
-                                            .controller(BooleanControllerBuilderImpl::new).build(),
-                                    Option.<Boolean>createBuilder()
-                                            .name(translatable("skinshuffle.config.widget.rotate_widget.name"))
-                                            .description(OptionDescription.createBuilder().text(translatable("skinshuffle.config.rotate_widget.description")).build())
-                                            .binding(defaults.rotateWidgetSkin, () -> config.rotateWidgetSkin, val -> config.rotateWidgetSkin = val)
-                                            .controller(BooleanControllerBuilderImpl::new).build(),
-                                    Option.<Boolean>createBuilder()
-                                            .name(translatable("skinshuffle.config.widget.rotate_carousel.name"))
-                                            .description(OptionDescription.createBuilder().text(translatable("skinshuffle.config.widget.rotate_carousel.description")).build())
-                                            .binding(defaults.rotateCarouselSkin, () -> config.rotateCarouselSkin, val -> config.rotateCarouselSkin = val)
-                                            .controller(BooleanControllerBuilderImpl::new).build(),
-                                    Option.<Float>createBuilder()
-                                            .name(translatable("skinshuffle.config.widget.rotation_speed.name"))
-                                            .description(OptionDescription.createBuilder().text(translatable("skinshuffle.config.widget.rotation_speed.description")).build())
-                                            .binding(defaults.rotationMultiplier, () -> config.rotationMultiplier, val -> config.rotationMultiplier = val)
-                                            .controller(FloatSliderControllerBuilderImpl::new).build()
-                            ))
-                                .build()
-                        )
+                (defaults, config, builder) -> {
+                    // Rendering Options
+                    var carouselRenderStyle = Option.<SkinRenderStyle>createBuilder()
+                            .name(translatable("skinshuffle.config.rendering.carousel_rendering_style.name"))
+                            .description(OptionDescription.createBuilder()
+                                    .text(translatable("skinshuffle.config.rendering.carousel_rendering_style.description"), translatable("skinshuffle.config.rendering.rendering_style")).build())
+                            .binding(defaults.carouselSkinRenderStyle, () -> config.carouselSkinRenderStyle, val -> config.carouselSkinRenderStyle = val)
+                            .controller(opt -> EnumControllerBuilder.create(opt)
+                                    .enumClass(SkinRenderStyle.class)
+                                    .valueFormatter(skinRenderStyle -> Text.translatable("skinshuffle.config.rendering." + skinRenderStyle.name().toLowerCase())))
+                            .build();
+
+                    var widgetRenderStyle = Option.<SkinRenderStyle>createBuilder()
+                            .name(translatable("skinshuffle.config.rendering.widget_rendering_style.name"))
+                            .description(OptionDescription.createBuilder()
+                                    .text(translatable("skinshuffle.config.rendering.widget_rendering_style.description"), translatable("skinshuffle.config.rendering.rendering_style")).build())
+                            .binding(defaults.carouselSkinRenderStyle, () -> config.carouselSkinRenderStyle, val -> config.carouselSkinRenderStyle = val)
+                            .controller(opt -> EnumControllerBuilder.create(opt)
+                                    .enumClass(SkinRenderStyle.class)
+                                    .valueFormatter(skinRenderStyle -> Text.translatable("skinshuffle.config.rendering." + skinRenderStyle.name().toLowerCase())))
+                            .build();
+
+                    var rotationMultiplier = Option.<Float>createBuilder()
+                            .name(translatable("skinshuffle.config.rendering.rotation_speed.name"))
+                            .description(OptionDescription.createBuilder().text(translatable("skinshuffle.config.rendering.rotation_speed.description")).build())
+                            .binding(defaults.rotationMultiplier, () -> config.rotationMultiplier, val -> config.rotationMultiplier = val)
+                            .controller(floatOption -> FloatSliderControllerBuilder.create(floatOption).range(0f, 5f).step(0.5f)).build();
+
+                    return builder
+                            .title(translatable("skinshuffle.config.title"))
+                            .category(ConfigCategory.createBuilder()
+                                    .name(translatable("skinshuffle.config.rendering.title"))
+                                    .tooltip(translatable("skinshuffle.config.rendering.description"))
+
+                                    // Rendering Options
+                                    .options(List.of(carouselRenderStyle, widgetRenderStyle, rotationMultiplier))
+                                    .build()
+                            );
+                }
         );
     }
 
@@ -70,8 +87,12 @@ public class SkinShuffleConfig {
     @ConfigEntry public boolean displayInPauseMenu = true;
     @ConfigEntry public boolean displayInTitleScreen = true;
 
-    @ConfigEntry public boolean widgetSkinFollowCursor = true;
-    @ConfigEntry public boolean rotateWidgetSkin = false;
-    @ConfigEntry public boolean rotateCarouselSkin = true;
+    @ConfigEntry public SkinRenderStyle widgetSkinRenderStyle = SkinRenderStyle.CURSOR;
+    @ConfigEntry public SkinRenderStyle carouselSkinRenderStyle = SkinRenderStyle.ROTATION;
     @ConfigEntry public float rotationMultiplier = 1.0f;
+
+    public enum SkinRenderStyle {
+        ROTATION,
+        CURSOR
+    }
 }

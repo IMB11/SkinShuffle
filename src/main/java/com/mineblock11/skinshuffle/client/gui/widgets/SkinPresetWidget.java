@@ -21,6 +21,7 @@
 package com.mineblock11.skinshuffle.client.gui.widgets;
 
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
+import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.PresetEditScreen;
 import com.mineblock11.skinshuffle.client.gui.SkinCarouselScreen;
 import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
@@ -150,7 +151,7 @@ public class SkinPresetWidget extends SpruceContainerWidget {
 
         GuiEntityRenderer.drawEntity(
                 graphics.getMatrices(), getX() + (this.getWidth() / 2), (int) (this.getY() + this.height / 1.6),
-                this.height / 4, getEntityRotation(), 0, 0, entity
+                this.height / 4, getEntityRotation() * SkinShuffleConfig.get().rotationMultiplier, 0, 0, entity
         );
     }
 
@@ -159,7 +160,7 @@ public class SkinPresetWidget extends SpruceContainerWidget {
     }
 
     private float getEntityRotation() {
-        return isActive() ? (float) (GlfwUtil.getTime() - parent.getLastCardSwitchTime()) * 35.0f : 0.0f;
+        return isActive() && SkinShuffleConfig.get().carouselSkinRenderStyle.equals(SkinShuffleConfig.SkinRenderStyle.ROTATION) ? (float) (GlfwUtil.getTime() - parent.getLastCardSwitchTime()) * 35.0f : 0.0f;
     }
 
     public SkinPreset getPreset() {

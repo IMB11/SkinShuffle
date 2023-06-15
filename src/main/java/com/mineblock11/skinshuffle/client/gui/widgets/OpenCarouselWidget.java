@@ -100,12 +100,12 @@ public class OpenCarouselWidget extends SpruceContainerWidget {
             float followY = (float)(this.getY() - this.height * 1.25) - mouseY;
             float rotation = 0;
 
-            if(SkinShuffleConfig.get().rotateWidgetSkin) {
-                rotation = getEntityRotation();
-            }
+            SkinShuffleConfig.SkinRenderStyle renderStyle = SkinShuffleConfig.get().widgetSkinRenderStyle;
 
-            if(!SkinShuffleConfig.get().widgetSkinFollowCursor) {
-                followX = 0; followY = 0;
+            if(renderStyle == SkinShuffleConfig.SkinRenderStyle.ROTATION) {
+                followX = 0;
+                followY = 0;
+                rotation = getEntityRotation();
             }
 
             GuiEntityRenderer.drawEntity(

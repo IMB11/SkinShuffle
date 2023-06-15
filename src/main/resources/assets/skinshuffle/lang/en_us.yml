@@ -1,26 +1,32 @@
 skinshuffle:
   config:
     title: "SkinShuffle"
-    widget:
-      title: "Skin Preset Rendering"
+    rendering:
+      title: "Rendering Options"
       description: "Configuration options regarding how skin presets are rendered in the title screen, pause menu, carousel and edit screens."
-      follow_cursor:
-        name: "Should Preview Skin Follow Cursor?"
-        description: "Should the skin rendered on the title screen and pause menu always look at the cursor, similarly to the inventory screen?"
-      rotate_widget:
-        name: "Should Preview Skin Rotate?"
-        description: "Should the skin rendered on the title screen and pause menu spin?"
-      rotate_carousel:
-        name: "Should Carousel Skins Rotate?"
-        description: "Should the currently centered skin preset's skin spin in the carousel screen?"
+      rotation: "Rotation"
+      cursor: "Cursor"
+      rendering_style: |-
+        §lROTATION§r rotates the rendered player at a fixed rate specified by the rotation speed multiplier.
+        §lCURSOR§r makes the rendered player look at the mouse cursor at all times, similarly to the inventory screen.
+      carousel_rendering_style:
+        name: "Carousel Rendering Style"
+        description: "How should the currently selected skin preset be rendered in the carousel screen?\n\n"
+      widget_rendering_style:
+        name: "Widget Rendering Style"
+        description: "How should the widget on the title screen and pause screen be rendered?\n\n"
       rotation_speed:
         name: "Rotation Speed Multiplier"
         description: "What rotation speed multiplier should be applied to skins if rotation is enabled?"
   handshake:
     toast:
       title: "SkinShuffle isn't installed on the server."
-      message_initial: "Any changes to your skin will require you to reconnect.\n§7§oYou can disable this toast in the config."
-      message_on_change: "You will have to reconnect to allow other players to see your skin.\n§7§oYou can disable this toast in the config."
+      message_initial: |-
+        Any changes to your skin will require you to reconnect.
+        §7§oYou can disable this toast in the config.
+      message_on_change: |-
+        You will have to reconnect to allow other players to see your skin.
+        §7§oYou can disable this toast in the config.
   cooldown:
     toast:
       title: "Skin refresh has been scheduled."
