@@ -174,7 +174,7 @@ public class SkinShuffleConfig {
         if(!AuthUtil.isLoggedIn()) {
             AuthUtil.warnNotAuthed();
             return;
-        } else if(!ClientSkinHandling.isInstalledOnServer()) {
+        } else if(!ClientSkinHandling.isInstalledOnServer() && client.world != null) {
             ToastHelper.showHandshakeOnChange(client);
         }
 
