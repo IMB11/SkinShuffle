@@ -20,7 +20,7 @@
 
 package com.mineblock11.skinshuffle.client.gui.widgets;
 
-import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
+import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.gui.PresetEditScreen;
 import com.mineblock11.skinshuffle.client.gui.SkinCarouselScreen;
 import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
@@ -72,7 +72,7 @@ public class SkinPresetWidget extends SpruceContainerWidget {
                 Text.translatable("skinshuffle.carousel.preset_widget.copy"),
                 button -> {
                     SkinPreset presetCopy = new SkinPreset(this.skinPreset.getSkin(), this.skinPreset.getName());
-                    SkinShuffleConfig.addPreset(presetCopy);
+                    SkinPresetManager.addPreset(presetCopy);
                     this.parent.refresh();
                 }
         ));
@@ -83,7 +83,7 @@ public class SkinPresetWidget extends SpruceContainerWidget {
                 button -> {
                     ConfirmScreen confirmScreen = new ConfirmScreen(result -> {
                         if(result) {
-                            SkinShuffleConfig.deletePreset(this.skinPreset);
+                            SkinPresetManager.deletePreset(this.skinPreset);
                         }
                         this.client.setScreen(new SkinCarouselScreen());
                     }, Text.translatable("skinshuffle.carousel.confirmations.delete_preset.title"), Text.translatable("skinshuffle.carousel.confirmations.delete_preset.message"));
@@ -91,7 +91,7 @@ public class SkinPresetWidget extends SpruceContainerWidget {
                 }
         );
 
-        if(SkinShuffleConfig.getLoadedPresets().size() < 2) this.deleteButton.setActive(false);
+        if(SkinPresetManager.getLoadedPresets().size() < 2) this.deleteButton.setActive(false);
 
         addChild(deleteButton);
     }
@@ -101,7 +101,7 @@ public class SkinPresetWidget extends SpruceContainerWidget {
         super.setActive(active);
 
         for (SpruceWidget child : this.children()) {
-            if(child.equals(this.deleteButton) && SkinShuffleConfig.getLoadedPresets().size() < 2) continue;
+            if(child.equals(this.deleteButton) && SkinPresetManager.getLoadedPresets().size() < 2) continue;
             child.setActive(active);
         }
     }

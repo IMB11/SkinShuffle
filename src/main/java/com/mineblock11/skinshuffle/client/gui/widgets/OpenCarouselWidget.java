@@ -20,12 +20,11 @@
 
 package com.mineblock11.skinshuffle.client.gui.widgets;
 
-import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
+import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.gui.SkinCarouselScreen;
 import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
-import com.mineblock11.skinshuffle.client.skin.UrlSkin;
 import com.mineblock11.skinshuffle.mixin.accessor.GameMenuScreenAccessor;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import dev.lambdaurora.spruceui.Position;
@@ -33,11 +32,9 @@ import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
 import dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 
 import java.util.UUID;
@@ -54,7 +51,7 @@ public class OpenCarouselWidget extends SpruceContainerWidget {
             this.client.setScreen(new SkinCarouselScreen());
         }));
 
-        setSelectedPreset(SkinShuffleConfig.getChosenPreset());
+        setSelectedPreset(SkinPresetManager.getChosenPreset());
     }
 
 

@@ -4,10 +4,10 @@ import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.api.MojangSkinAPI;
 import com.mineblock11.skinshuffle.util.SkinShufflePlayer;
 import com.mojang.authlib.properties.Property;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.*;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -18,9 +18,21 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class ServerSkinHandling {
+    /**
+     * Player UUIDs that currently have a cooldown.
+     */
     private static final ArrayList<String> LOCKED_PLAYERS = new ArrayList<>();
+
+    /**
+     * Player UUIDs that are currently in the refresh process.
+     */
     private static final ArrayList<String> CURRENTLY_REFRESHING = new ArrayList<>();
+
+    /**
+     * Player UUIDs that are currently waiting for the cooldown to expire before starting the refresh process.
+     */
     private static final ArrayList<String> PLAYERS_WITH_SCHEDULERS = new ArrayList<>();
+
 
     private static void handlePresetChange(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
         String uuidAsString = player.getUuidAsString();
@@ -75,6 +87,10 @@ public class ServerSkinHandling {
             ServerSkinHandling.LOCKED_PLAYERS.clear();
             ServerSkinHandling.CURRENTLY_REFRESHING.clear();
         });
+
+        // Send handshake packet to client.
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> sender.sendPacket(SkinShuffle.id("handshake"), PacketByteBufs.empty()));
+
         ServerPlayNetworking.registerGlobalReceiver(SkinShuffle.id("preset_changed"), ServerSkinHandling::handlePresetChange);
     }
 }

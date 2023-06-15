@@ -20,8 +20,7 @@
 
 package com.mineblock11.skinshuffle.mixin.screen;
 
-import com.mineblock11.skinshuffle.SkinShuffle;
-import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
+import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.gui.widgets.OpenCarouselWidget;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
@@ -48,14 +47,14 @@ public class TitleScreenMixin extends Screen {
     @Inject(method = "init", at = @At("HEAD"))
     public void loadConfig(CallbackInfo ci) {
         // Config must be refreshed here as it requires resource manager.
-        SkinShuffleConfig.loadPresets();
+        SkinPresetManager.loadPresets();
     }
 
     @Inject(method = "render", at = @At("HEAD"))
     public void refreshConfig(CallbackInfo ci) {
         if(!appliedConfiguration && this.doBackgroundFade) {
             appliedConfiguration = true;
-            SkinShuffleConfig.apply();
+            SkinPresetManager.apply();
         }
     }
 

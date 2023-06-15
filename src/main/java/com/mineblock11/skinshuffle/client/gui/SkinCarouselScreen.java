@@ -20,8 +20,7 @@
 
 package com.mineblock11.skinshuffle.client.gui;
 
-import com.mineblock11.skinshuffle.api.MojangSkinAPI;
-import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
+import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.gui.widgets.AddPresetWidget;
 import com.mineblock11.skinshuffle.client.gui.widgets.CarouselMoveButton;
 import com.mineblock11.skinshuffle.client.gui.widgets.SkinPresetWidget;
@@ -80,16 +79,16 @@ public class SkinCarouselScreen extends SpruceScreen {
         addPresetWidget.setCallback(() -> {
             SkinPreset unnamed = SkinPreset.generateDefaultPreset();
             unnamed.setName("Unnamed Preset");
-            SkinShuffleConfig.addPreset(unnamed);
+            SkinPresetManager.addPreset(unnamed);
             this.addDrawableChild(this.loadPreset(unnamed));
             Collections.swap(this.carouselWidgets, this.carouselWidgets.size() - 1, this.carouselWidgets.size() - 2);
         });
 
-        var loadedPresets = SkinShuffleConfig.getLoadedPresets();
+        var loadedPresets = SkinPresetManager.getLoadedPresets();
 
         loadedPresets.forEach(this::loadPreset);
 
-        this.cardIndex = loadedPresets.indexOf(SkinShuffleConfig.getChosenPreset());
+        this.cardIndex = loadedPresets.indexOf(SkinPresetManager.getChosenPreset());
         this.lastCardIndex = this.cardIndex;
 
         this.addDrawableChild(leftMoveButton);
@@ -117,7 +116,7 @@ public class SkinCarouselScreen extends SpruceScreen {
             assert chosenPresetWidget instanceof SkinPresetWidget;
             SkinPresetWidget presetWidget = (SkinPresetWidget) chosenPresetWidget;
 
-            SkinShuffleConfig.setChosenPreset(presetWidget.getPreset());
+            SkinPresetManager.setChosenPreset(presetWidget.getPreset());
 
             this.close();
         }));

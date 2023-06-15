@@ -1,4 +1,9 @@
 skinshuffle:
+  handshake:
+    toast:
+      title: "SkinShuffle isn't installed on the server."
+      message_initial: "Any changes to your skin will require you to reconnect.\n§7§oYou can disable this toast in the config."
+      message_on_change: "You will have to reconnect to allow other players to see your skin.\n§7§oYou can disable this toast in the config."
   cooldown:
     toast:
       title: "Skin refresh has been scheduled."
