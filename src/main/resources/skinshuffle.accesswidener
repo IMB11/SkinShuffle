@@ -8,3 +8,5 @@ accessible class net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTrac
 accessible field net/minecraft/server/world/ThreadedAnvilChunkStorage entityTrackers Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;
 accessible field net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTracker entry Lnet/minecraft/server/network/EntityTrackerEntry;
 accessible field net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTracker listeners Ljava/util/Set;
+
+accessible method net/minecraft/client/gui/widget/ClickableWidget drawScrollableText (Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/Text;IIIII)V

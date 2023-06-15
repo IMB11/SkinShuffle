@@ -20,31 +20,39 @@
 
 package com.mineblock11.skinshuffle.client.gui;
 
+import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
+import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
+import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
+import dev.lambdaurora.spruceui.widget.text.SpruceTextFieldWidget;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.ScreenRect;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.world.CreateWorldScreen;
 import net.minecraft.client.gui.tab.GridScreenTab;
 import net.minecraft.client.gui.tab.TabManager;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.GridWidget;
-import net.minecraft.client.gui.widget.SimplePositioningWidget;
-import net.minecraft.client.gui.widget.TabNavigationWidget;
+import net.minecraft.client.gui.widget.*;
 import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import static net.minecraft.client.gui.screen.world.CreateWorldScreen.FOOTER_SEPARATOR_TEXTURE;
 import static net.minecraft.client.gui.screen.world.CreateWorldScreen.LIGHT_DIRT_BACKGROUND_TEXTURE;
 
 public class PresetEditScreen extends SpruceScreen {
+    public static final int PREVIEW_SPAN_X = 100 / 2;
+    public static final int PREVIEW_SPAN_Y = 160 / 2;
+    private static final int BUTTON_WIDTH = 160;
+
     private final Screen parent;
     private final SkinPreset preset;
     private final SkinPreset originalPreset;
@@ -81,7 +89,9 @@ public class PresetEditScreen extends SpruceScreen {
             this.close();
         }).build());
         adder.add(ButtonWidget.builder(ScreenTexts.OK, (button) -> {
-            // TODO
+            this.originalPreset.copyFrom(this.preset);
+            SkinShuffleConfig.savePresets();
+            this.close();
         }).build());
         this.grid.forEachChild((child) -> {
             child.setNavigationOrder(1);
@@ -110,16 +120,14 @@ public class PresetEditScreen extends SpruceScreen {
     public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
         super.render(graphics, mouseX, mouseY, delta);
 
-        int previewSpanX = 100 / 2;
-        int previewSpanY = 160 / 2;
         int previewCenterX = this.width / 4;
         int previewCenterY = this.height / 2;
-        graphics.drawBorder(previewCenterX - previewSpanX, previewCenterY - previewSpanY,
-                previewSpanX * 2, previewSpanY * 2, 0xDF000000);
-        graphics.fill(previewCenterX - previewSpanX + 1, previewCenterY - previewSpanY + 1,
-                previewCenterX + previewSpanX - 1, previewCenterY + previewSpanY - 1, 0x7F000000);
+        graphics.drawBorder(previewCenterX - PREVIEW_SPAN_X, previewCenterY - PREVIEW_SPAN_Y,
+                PREVIEW_SPAN_X * 2, PREVIEW_SPAN_Y * 2, 0xDF000000);
+        graphics.fill(previewCenterX - PREVIEW_SPAN_X + 1, previewCenterY - PREVIEW_SPAN_Y + 1,
+                previewCenterX + PREVIEW_SPAN_X - 1, previewCenterY + PREVIEW_SPAN_Y - 1, 0x7F000000);
         GuiEntityRenderer.drawEntity(
-                graphics.getMatrices(), previewCenterX, previewCenterY + previewSpanY / 10 * 8, previewSpanY / 10 * 8,
+                graphics.getMatrices(), previewCenterX, previewCenterY + PREVIEW_SPAN_Y / 10 * 8, PREVIEW_SPAN_Y / 10 * 8,
                 getEntityRotation(), 0, 0, entity
         );
 
@@ -145,6 +153,20 @@ public class PresetEditScreen extends SpruceScreen {
     private class GeneralTab extends GridScreenTab {
         public GeneralTab() {
             super(Text.translatable("skinshuffle.edit.general.title"));
+
+            this.grid.getMainPositioner().marginLeft(width / 4 + PREVIEW_SPAN_X);
+            var gridAdder = this.grid.setColumnSpacing(10).setRowSpacing(4).createAdder(1);
+
+            gridAdder.add(new TextWidget(Text.translatable("skinshuffle.edit.general.name"), Objects.requireNonNull(client).textRenderer));
+
+            var nameField = new TextFieldWidget(
+                    MinecraftClient.getInstance().textRenderer,
+                    0, 0, BUTTON_WIDTH, 20,
+                    Text.translatable("skinshuffle.edit.general.name.enter_name")
+            );
+            nameField.setText(preset.getName());
+            nameField.setChangedListener(preset::setName);
+            gridAdder.add(nameField);
         }
     }
 

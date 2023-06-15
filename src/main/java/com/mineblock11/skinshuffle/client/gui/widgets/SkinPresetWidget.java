@@ -32,6 +32,7 @@ import dev.lambdaurora.spruceui.widget.SpruceWidget;
 import dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ConfirmScreen;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.text.Text;
@@ -134,7 +135,18 @@ public class SkinPresetWidget extends SpruceContainerWidget {
     protected void renderWidget(DrawContext graphics, int mouseX, int mouseY, float delta) {
         super.renderWidget(graphics, mouseX, mouseY, delta);
 
-        graphics.drawTextWithShadow(this.client.textRenderer, this.skinPreset.getName() != null ? this.skinPreset.getName() : "Unnamed Preset", getX() + (this.width / 2) - (this.client.textRenderer.getWidth(this.skinPreset.getName() != null ? this.skinPreset.getName() : "Unnamed Preset")) / 2, getY() + this.client.textRenderer.fontHeight / 2, this.active ? 0xFFFFFFFF : 0xFF808080);
+        var margin = this.client.textRenderer.fontHeight / 2;
+        var name = this.skinPreset.getName() != null ? this.skinPreset.getName() : "Unnamed Preset";
+        var nameWidth = this.client.textRenderer.getWidth(name);
+        var halfWidth = this.width / 2;
+        var halfNameWidth = nameWidth / 2;
+        ClickableWidget.drawScrollableText(
+                graphics, this.client.textRenderer,
+                Text.of(name),
+                getX() + halfWidth - Math.min(halfWidth - margin, halfNameWidth), getY() + margin,
+                getX() + halfWidth + Math.min(halfWidth - margin, halfNameWidth), getY() + margin + this.client.textRenderer.fontHeight,
+                this.active ? 0xFFFFFFFF : 0xFF808080
+        );
 
         GuiEntityRenderer.drawEntity(
                 graphics.getMatrices(), getX() + (this.getWidth() / 2), (int) (this.getY() + this.height / 1.6),
