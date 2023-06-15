@@ -11,10 +11,10 @@ skinshuffle:
         §lCURSOR§r makes the rendered player look at the mouse cursor at all times, similarly to the inventory screen.
       carousel_rendering_style:
         name: "Carousel Rendering Style"
-        description: "How should the currently selected skin preset be rendered in the carousel screen?\n\n"
+        description: "How should the currently selected skin preset be rendered in the carousel screen?\n"
       widget_rendering_style:
         name: "Widget Rendering Style"
-        description: "How should the widget on the title screen and pause screen be rendered?\n\n"
+        description: "How should the widget on the title screen and pause screen be rendered?\n"
       rotation_speed:
         name: "Rotation Speed Multiplier"
         description: "What rotation speed multiplier should be applied to skins if rotation is enabled?"

@@ -149,9 +149,27 @@ public class SkinPresetWidget extends SpruceContainerWidget {
                 this.active ? 0xFFFFFFFF : 0xFF808080
         );
 
+        float followX = (float)((getX() + (this.getWidth() / 2))) - mouseX;
+        float followY = (float)((this.getY() + this.client.textRenderer.fontHeight * 2)) - mouseY;
+        float rotation = 0;
+
+        SkinShuffleConfig.SkinRenderStyle renderStyle = SkinShuffleConfig.get().carouselSkinRenderStyle;
+
+        if(renderStyle.equals(SkinShuffleConfig.SkinRenderStyle.ROTATION)) {
+            followX = 0;
+            followY = 0;
+            rotation = getEntityRotation() * SkinShuffleConfig.get().rotationMultiplier;
+        }
+
+        if(!isActive()) {
+            followX = 0;
+            followY = 0;
+            rotation = 0;
+        }
+
         GuiEntityRenderer.drawEntity(
                 graphics.getMatrices(), getX() + (this.getWidth() / 2), (int) (this.getY() + this.height / 1.6),
-                this.height / 4, getEntityRotation() * SkinShuffleConfig.get().rotationMultiplier, 0, 0, entity
+                this.height / 4, rotation, followX, followY, entity
         );
     }
 

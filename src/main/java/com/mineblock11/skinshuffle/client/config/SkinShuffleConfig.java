@@ -53,7 +53,7 @@ public class SkinShuffleConfig {
                             .name(translatable("skinshuffle.config.rendering.widget_rendering_style.name"))
                             .description(OptionDescription.createBuilder()
                                     .text(translatable("skinshuffle.config.rendering.widget_rendering_style.description"), translatable("skinshuffle.config.rendering.rendering_style")).build())
-                            .binding(defaults.carouselSkinRenderStyle, () -> config.carouselSkinRenderStyle, val -> config.carouselSkinRenderStyle = val)
+                            .binding(defaults.widgetSkinRenderStyle, () -> config.widgetSkinRenderStyle, val -> config.widgetSkinRenderStyle = val)
                             .controller(opt -> EnumControllerBuilder.create(opt)
                                     .enumClass(SkinRenderStyle.class)
                                     .valueFormatter(skinRenderStyle -> Text.translatable("skinshuffle.config.rendering." + skinRenderStyle.name().toLowerCase())))

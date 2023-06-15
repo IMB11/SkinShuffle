@@ -90,7 +90,7 @@ public class OpenCarouselWidget extends SpruceContainerWidget {
     }
 
     private float getEntityRotation() {
-        return isActive() ? (float) (GlfwUtil.getTime() - currentTime) * 35.0f : 0.0f;
+        return (float) ((GlfwUtil.getTime() - currentTime) * 35.0f);
     }
 
     @Override
@@ -102,10 +102,10 @@ public class OpenCarouselWidget extends SpruceContainerWidget {
 
             SkinShuffleConfig.SkinRenderStyle renderStyle = SkinShuffleConfig.get().widgetSkinRenderStyle;
 
-            if(renderStyle == SkinShuffleConfig.SkinRenderStyle.ROTATION) {
+            if(renderStyle.equals(SkinShuffleConfig.SkinRenderStyle.ROTATION)) {
                 followX = 0;
                 followY = 0;
-                rotation = getEntityRotation();
+                rotation = getEntityRotation() * SkinShuffleConfig.get().rotationMultiplier;
             }
 
             GuiEntityRenderer.drawEntity(
