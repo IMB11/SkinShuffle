@@ -46,7 +46,6 @@ import java.util.ArrayList;
 
 public class SkinPresetManager {
     public static final Path PERSISTENT_SKINS_DIR = SkinShuffle.DATA_DIR.resolve("skins");
-    public static final Path CONFIG_FILE = SkinShuffle.DATA_DIR.resolve("config.json");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Path PRESETS = SkinShuffle.DATA_DIR.resolve("presets.json");
 

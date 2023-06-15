@@ -44,6 +44,7 @@ dependencies {
     include implementation('com.konghq:unirest-java:3.11.09:standalone')
 
     include modImplementation("dev.lambdaurora:spruceui:${project.spruceui_version}")
+    include modImplementation("dev.isxander.yacl:yet-another-config-lib-fabric:${project.yacl_version}")
 
     include implementation("org.jsoup:jsoup:${project.jsoup_version}")
 }

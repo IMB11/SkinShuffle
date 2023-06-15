@@ -20,6 +20,7 @@
 
 package com.mineblock11.skinshuffle.client.gui;
 
+import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
@@ -90,7 +91,7 @@ public class PresetEditScreen extends SpruceScreen {
         }).build());
         adder.add(ButtonWidget.builder(ScreenTexts.OK, (button) -> {
             this.originalPreset.copyFrom(this.preset);
-            SkinShuffleConfig.savePresets();
+            SkinPresetManager.savePresets();
             this.close();
         }).build());
         this.grid.forEachChild((child) -> {

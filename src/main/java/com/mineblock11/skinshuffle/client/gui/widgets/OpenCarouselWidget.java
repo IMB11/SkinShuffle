@@ -21,6 +21,7 @@
 package com.mineblock11.skinshuffle.client.gui.widgets;
 
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
+import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.SkinCarouselScreen;
 import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
@@ -35,7 +36,9 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
+import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.text.Text;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -43,9 +46,12 @@ import java.util.function.Consumer;
 public class OpenCarouselWidget extends SpruceContainerWidget {
     private SkinPreset selectedPreset;
     private DummyClientPlayerEntity entity;
+    private double currentTime = 0;
 
     private OpenCarouselWidget(Position position, int width, int height) {
         super(position, width, height);
+
+        currentTime = GlfwUtil.getTime();
 
         this.addChild(new SpruceButtonWidget(Position.of(0, 0), width, 20, Text.translatable("skinshuffle.button"), button -> {
             this.client.setScreen(new SkinCarouselScreen());
@@ -83,12 +89,28 @@ public class OpenCarouselWidget extends SpruceContainerWidget {
         );
     }
 
+    private float getEntityRotation() {
+        return isActive() ? (float) (GlfwUtil.getTime() - currentTime) * 35.0f : 0.0f;
+    }
+
     @Override
     protected void renderWidget(DrawContext graphics, int mouseX, int mouseY, float delta) {
         if(this.entity != null) {
+            float followX = (float)(getX() + (this.getWidth() / 2)) - mouseX;
+            float followY = (float)(this.getY() - this.height * 1.25) - mouseY;
+            float rotation = 0;
+
+            if(SkinShuffleConfig.get().rotateWidgetSkin) {
+                rotation = getEntityRotation();
+            }
+
+            if(!SkinShuffleConfig.get().widgetSkinFollowCursor) {
+                followX = 0; followY = 0;
+            }
+
             GuiEntityRenderer.drawEntity(
                     graphics.getMatrices(), getX() + (this.getWidth() / 2), this.getY() - 12,
-                    (int)(45), 0, (float)(getX() + (this.getWidth() / 2)) - mouseX, (float)(this.getY() - this.height * 1.25) - mouseY, entity
+                    45, rotation, followX, followY, entity
             );
         }
 

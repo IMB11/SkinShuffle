@@ -44,6 +44,7 @@ public class ClientSkinHandling {
 
     public static void init() {
         ClientPlayConnectionEvents.INIT.register((handler, client) -> {
+            if(client.world == null) return;
             handshakeTakenPlace = false;
             CompletableFuture.delayedExecutor(10, TimeUnit.SECONDS).execute(() -> {
                 client.execute(() -> {

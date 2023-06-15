@@ -1,4 +1,21 @@
 skinshuffle:
+  config:
+    title: "SkinShuffle"
+    widget:
+      title: "Skin Preset Rendering"
+      description: "Configuration options regarding how skin presets are rendered in the title screen, pause menu, carousel and edit screens."
+      follow_cursor:
+        name: "Should Preview Skin Follow Cursor?"
+        description: "Should the skin rendered on the title screen and pause menu always look at the cursor, similarly to the inventory screen?"
+      rotate_widget:
+        name: "Should Preview Skin Rotate?"
+        description: "Should the skin rendered on the title screen and pause menu spin?"
+      rotate_carousel:
+        name: "Should Carousel Skins Rotate?"
+        description: "Should the currently centered skin preset's skin spin in the carousel screen?"
+      rotation_speed:
+        name: "Rotation Speed Multiplier"
+        description: "What rotation speed multiplier should be applied to skins if rotation is enabled?"
   handshake:
     toast:
       title: "SkinShuffle isn't installed on the server."

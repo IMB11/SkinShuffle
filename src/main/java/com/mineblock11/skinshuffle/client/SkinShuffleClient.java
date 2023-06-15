@@ -21,6 +21,7 @@
 package com.mineblock11.skinshuffle.client;
 
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
+import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.networking.ClientSkinHandling;
 import net.fabricmc.api.ClientModInitializer;
 import org.jsoup.Connection;
@@ -31,6 +32,7 @@ public class SkinShuffleClient implements ClientModInitializer {
     public void onInitializeClient() {
         SkinPresetManager.setup();
         ClientSkinHandling.init();
+        SkinShuffleConfig.GSON.load();
     }
 
     public static Connection jsoupConnection(String url) {

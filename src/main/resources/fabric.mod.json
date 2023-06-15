@@ -22,6 +22,9 @@
     ],
     "main": [
       "com.mineblock11.skinshuffle.SkinShuffle"
+    ],
+    "modmenu": [
+      "com.mineblock11.skinshuffle.compat.ModMenuCompat"
     ]
   },
   "mixins": [
