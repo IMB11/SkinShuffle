@@ -1,19 +1,16 @@
 package com.mineblock11.skinshuffle.networking;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
-import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
+import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.util.ToastHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.toast.SystemToast;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.text.Text;
 
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ClientSkinHandling {
     private static Future<?> cooldownExecutor;
@@ -25,7 +22,7 @@ public class ClientSkinHandling {
      * Handles the "reset_cooldown" packet which resets the skin cooldown.
      */
     private static void resetCooldown(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-        SkinShuffleConfig.setCooldown(true);
+        SkinPresetManager.setCooldown(true);
 
         if(cooldownExecutor != null) {
             cooldownExecutor.cancel(true);
@@ -34,7 +31,7 @@ public class ClientSkinHandling {
         cooldownExecutor = executorService.submit(() -> {
             try {
                 Thread.sleep(30 * 1000);
-                SkinShuffleConfig.setCooldown(false);
+                SkinPresetManager.setCooldown(false);
             } catch (InterruptedException ignored) {}
         });
     }

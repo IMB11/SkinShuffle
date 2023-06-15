@@ -20,10 +20,9 @@
 
 package com.mineblock11.skinshuffle.mixin;
 
-import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
+import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mineblock11.skinshuffle.networking.ClientSkinHandling;
-import com.mineblock11.skinshuffle.util.AuthUtil;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -48,7 +47,7 @@ public abstract class PlayerEntityMixin extends PlayerEntity {
     private void modifySkinTexture(CallbackInfoReturnable<Identifier> cir) {
         if(MinecraftClient.getInstance().world != null) {
             if(this.getUuid().equals(MinecraftClient.getInstance().player.getUuid()) && !ClientSkinHandling.isInstalledOnServer()) {
-                SkinPreset currentPreset = SkinShuffleConfig.getChosenPreset();
+                SkinPreset currentPreset = SkinPresetManager.getChosenPreset();
                 cir.setReturnValue(Objects.requireNonNullElse(currentPreset.getSkin().getTexture(), new Identifier("textures/skins/default/steve.png")));
             }
         }

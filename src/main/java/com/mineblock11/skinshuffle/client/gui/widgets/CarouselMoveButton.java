@@ -21,18 +21,12 @@
 package com.mineblock11.skinshuffle.client.gui.widgets;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
-import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import dev.lambdaurora.spruceui.Position;
-import dev.lambdaurora.spruceui.widget.AbstractSpruceButtonWidget;
-import dev.lambdaurora.spruceui.widget.AbstractSprucePressableButtonWidget;
 import dev.lambdaurora.spruceui.widget.AbstractSpruceWidget;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.concurrent.Callable;
 
 public class CarouselMoveButton extends AbstractSpruceWidget {
     private static Identifier ARROW_TEXTURES = new Identifier(SkinShuffle.MOD_ID, "textures/gui/carousel_arrows.png");

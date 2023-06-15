@@ -44,11 +44,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
-public class SkinShuffleConfig {
+public class SkinPresetManager {
     public static final Path PERSISTENT_SKINS_DIR = SkinShuffle.DATA_DIR.resolve("skins");
     public static final Path CONFIG_FILE = SkinShuffle.DATA_DIR.resolve("config.json");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Path PRESETS = SkinShuffle.DATA_DIR.resolve("presets.json");
+
     private static final ArrayList<SkinPreset> loadedPresets = new ArrayList<>();
     private static SkinPreset chosenPreset = null;
     private static boolean cooldownActive;

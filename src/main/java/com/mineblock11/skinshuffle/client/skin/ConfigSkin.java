@@ -21,7 +21,7 @@
 package com.mineblock11.skinshuffle.client.skin;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
-import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
+import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
@@ -59,6 +59,6 @@ public class ConfigSkin extends FileBackedSkin {
     }
 
     public Path getFile() {
-        return SkinShuffleConfig.PERSISTENT_SKINS_DIR.resolve(skinName + ".png");
+        return SkinPresetManager.PERSISTENT_SKINS_DIR.resolve(skinName + ".png");
     }
 }
