@@ -2,13 +2,18 @@ package com.mineblock11.skinshuffle.networking;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
+import com.mineblock11.skinshuffle.util.ToastHelper;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.toast.SystemToast;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.text.Text;
 
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ClientSkinHandling {
     private static Future<?> cooldownExecutor;
@@ -34,7 +39,28 @@ public class ClientSkinHandling {
         });
     }
 
+    private static boolean handshakeTakenPlace = false;
+
+    public static boolean isInstalledOnServer() {
+        return handshakeTakenPlace;
+    }
+
     public static void init() {
+        ClientPlayConnectionEvents.INIT.register((handler, client) -> {
+            handshakeTakenPlace = false;
+            CompletableFuture.delayedExecutor(10, TimeUnit.SECONDS).execute(() -> {
+                client.execute(() -> {
+                    if(!handshakeTakenPlace) {
+                        ToastHelper.showHandshakeInitial(client);
+                    }
+                });
+            });
+            ClientPlayNetworking.registerReceiver(SkinShuffle.id("handshake"), (client1, handler1, buf, responseSender) -> {
+                ClientPlayNetworking.unregisterReceiver(SkinShuffle.id("handshake"));
+                handshakeTakenPlace = true;
+            });
+        });
+
         ClientPlayNetworking.registerGlobalReceiver(SkinShuffle.id("reset_cooldown"), ClientSkinHandling::resetCooldown);
     }
 }

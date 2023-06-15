@@ -4,10 +4,10 @@ import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.api.MojangSkinAPI;
 import com.mineblock11.skinshuffle.util.SkinShufflePlayer;
 import com.mojang.authlib.properties.Property;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.*;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -87,6 +87,10 @@ public class ServerSkinHandling {
             ServerSkinHandling.LOCKED_PLAYERS.clear();
             ServerSkinHandling.CURRENTLY_REFRESHING.clear();
         });
+
+        // Send handshake packet to client.
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> sender.sendPacket(SkinShuffle.id("handshake"), PacketByteBufs.empty()));
+
         ServerPlayNetworking.registerGlobalReceiver(SkinShuffle.id("preset_changed"), ServerSkinHandling::handlePresetChange);
     }
 }
