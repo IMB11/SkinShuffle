@@ -1,266 +1,233 @@
-/*
- *
- *     Copyright (C) 2023 Calum (mineblock11), enjarai
- *
- *     This library is free software; you can redistribute it and/or
- *     modify it under the terms of the GNU Lesser General Public
- *     License as published by the Free Software Foundation; either
- *     version 2.1 of the License, or (at your option) any later version.
- *
- *     This library is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *     Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public
- *     License along with this library; if not, write to the Free Software
- *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
- *     USA
- */
-
 package com.mineblock11.skinshuffle.client.gui;
 
-import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
-import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
-import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
-import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
+import com.mineblock11.skinshuffle.SkinShuffle;
+import com.mineblock11.skinshuffle.client.gui.widgets.SkinPresetWidget;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mineblock11.skinshuffle.client.skin.*;
-import com.mojang.util.UUIDTypeAdapter;
+import com.mineblock11.skinshuffle.util.ToastHelper;
+import dev.isxander.yacl3.gui.controllers.cycling.CyclingControllerElement;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
-import dev.lambdaurora.spruceui.widget.text.SpruceTextFieldWidget;
+import dev.lambdaurora.spruceui.widget.SpruceLabelWidget;
+import dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget;
+import dev.lambdaurora.spruceui.widget.text.SpruceTextAreaWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.ScreenRect;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.world.CreateWorldScreen;
+import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.tab.GridScreenTab;
+import net.minecraft.client.gui.tab.Tab;
 import net.minecraft.client.gui.tab.TabManager;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.*;
-import net.minecraft.client.util.GlfwUtil;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.client.option.SimpleOption;
 import net.minecraft.screen.ScreenTexts;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.text.Texts;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.util.Objects;
-import java.util.UUID;
-
-import static net.minecraft.client.gui.screen.world.CreateWorldScreen.FOOTER_SEPARATOR_TEXTURE;
-import static net.minecraft.client.gui.screen.world.CreateWorldScreen.LIGHT_DIRT_BACKGROUND_TEXTURE;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class PresetEditScreen extends SpruceScreen {
-    public static final int PREVIEW_SPAN_X = 100 / 2;
-    public static final int PREVIEW_SPAN_Y = 160 / 2;
-    private static final int BUTTON_WIDTH = 160;
-
+    private SkinPreset preset;
     private final Screen parent;
-    private final SkinPreset preset;
-    private final SkinPreset originalPreset;
-    private final LivingEntity entity;
-    private final TabManager tabManager = new TabManager(this::addDrawableChild, this::remove);
+    private SkinPresetWidget presetWidget;
+    public SpruceTextAreaWidget textFieldWidget;
     private TabNavigationWidget tabNavigation;
-    private GridWidget grid;
+    private final TabManager tabManager = new TabManager(this::addDrawableChild, this::remove);
 
     public PresetEditScreen(Screen parent, SkinPreset preset) {
         super(Text.translatable("skinshuffle.edit.title"));
+        this.preset = preset;
         this.parent = parent;
-        this.preset = preset.copy();
-        this.originalPreset = preset;
-        this.entity = new DummyClientPlayerEntity(
-                null, UUID.randomUUID(),
-                () -> this.preset.getSkin().getTexture(),
-                () -> this.preset.getSkin().getModel()
-        );
     }
 
     @Override
     protected void init() {
-        // Setup tabs, selecting the first one by default
+        super.init();
+
         this.tabNavigation = TabNavigationWidget.builder(this.tabManager, this.width)
-                .tabs(new GeneralTab(), new SkinTab())
-                .build();
+                .tabs(new SkinSourceTab(this), new SkinCustomizationTab(this)).build();
         this.addDrawableChild(this.tabNavigation);
         this.tabNavigation.selectTab(0, false);
 
-        // Setup grid layout for cancel and ok buttons
-        this.grid = new GridWidget().setColumnSpacing(10);
-        GridWidget.Adder adder = this.grid.createAdder(2);
-        adder.add(ButtonWidget.builder(ScreenTexts.CANCEL, (button) -> {
+        this.addDrawableChild(new SpruceButtonWidget(Position.of(this.width / 2 - 128 - 5, this.height - 23), 128, 20, ScreenTexts.CANCEL, button -> {
             this.close();
-        }).build());
-        adder.add(ButtonWidget.builder(ScreenTexts.OK, (button) -> {
-            this.originalPreset.copyFrom(this.preset);
-            try {
-                this.originalPreset.setSkin(this.preset.getSkin().saveToConfig());
-            } catch (Exception ignored) {}
-            SkinPresetManager.savePresets();
-            this.close();
-        }).build());
-        this.grid.forEachChild((child) -> {
-            child.setNavigationOrder(1);
-            this.addDrawableChild(child);
-        });
+        }));
 
+        this.addDrawableChild(new SpruceButtonWidget(Position.of(this.width / 2 + 5, this.height - 23), 128, 20, Text.translatable("skinshuffle.carousel.save_button"), button -> {
+            this.close();
+        }));
+
+        this.presetWidget = new SkinPresetWidget(null, this.width / 4, this.height - 45, this.preset, false);
+        this.presetWidget.overridePosition(Position.of(5, 5));
+
+        this.textFieldWidget = new SpruceTextAreaWidget(Position.of(this.width / 4 + 10, 68), this.width - (this.width / 4 + 15),
+                this.height - 68 - 30 - 30, Text.empty());
+        this.textFieldWidget.setText(this.preset.getSkin().getSourceString());
+        this.addDrawableChild(this.textFieldWidget);
+
+        this.addDrawableChild(this.presetWidget);
         this.initTabNavigation();
     }
 
     @Override
     protected void initTabNavigation() {
-        if (this.tabNavigation != null && this.grid != null) {
+        if (this.tabNavigation != null) {
             this.tabNavigation.setWidth(this.width);
             this.tabNavigation.init();
 
-            this.grid.refreshPositions();
-            SimplePositioningWidget.setPos(this.grid, 0, this.height - 36, this.width, 36);
-
             int i = this.tabNavigation.getNavigationFocus().getBottom();
-            ScreenRect screenRect = new ScreenRect(0, i, this.width, this.grid.getY() - i);
+            ScreenRect screenRect = new ScreenRect(0, i, this.width, i);
             this.tabManager.setTabArea(screenRect);
         }
+    }
+
+    public void validate() {
+
     }
 
     @Override
     public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
         super.render(graphics, mouseX, mouseY, delta);
 
-        int previewCenterX = this.width / 4;
-        int previewCenterY = this.height / 2;
-        graphics.drawBorder(previewCenterX - PREVIEW_SPAN_X, previewCenterY - PREVIEW_SPAN_Y,
-                PREVIEW_SPAN_X * 2, PREVIEW_SPAN_Y * 2, 0xDF000000);
-        graphics.fill(previewCenterX - PREVIEW_SPAN_X + 1, previewCenterY - PREVIEW_SPAN_Y + 1,
-                previewCenterX + PREVIEW_SPAN_X - 1, previewCenterY + PREVIEW_SPAN_Y - 1, 0x7F000000);
+        this.presetWidget.overrideDimensions(getCardWidth(), getCardHeight());
+        this.presetWidget.overridePosition(Position.of(5, (this.height / 2) - (getCardHeight() / 2)));
 
-        if (!this.preset.getSkin().isLoading()) {
-            var entityX = previewCenterX;
-            var entityY = previewCenterY + PREVIEW_SPAN_Y / 10 * 8;
-
-            float followX = entityX - mouseX;
-            float followY = entityY - PREVIEW_SPAN_Y - mouseY;
-            float rotation = 0;
-
-            SkinShuffleConfig.SkinRenderStyle renderStyle = SkinShuffleConfig.get().carouselSkinRenderStyle;
-
-            if(renderStyle.equals(SkinShuffleConfig.SkinRenderStyle.ROTATION)) {
-                followX = 0;
-                followY = 0;
-                rotation = getEntityRotation() * SkinShuffleConfig.get().rotationMultiplier;
+        if (this.tabManager.getCurrentTab() instanceof SkinCustomizationTab customizationTab) {
+            if(this.textFieldWidget != null) {
+                this.textFieldWidget.setVisible(true);
             }
 
-            GuiEntityRenderer.drawEntity(
-                    graphics.getMatrices(), entityX, entityY, PREVIEW_SPAN_Y / 10 * 8,
-                    rotation, followX, followY, entity
-            );
+            String text
         } else {
-            // We call getTexture() anyway to make sure the texture is being loaded in the background.
-            this.preset.getSkin().getTexture();
+            if(this.textFieldWidget != null) {
+                this.textFieldWidget.setVisible(false);
+            }
         }
-
-        graphics.drawTexture(FOOTER_SEPARATOR_TEXTURE, 0, MathHelper.roundUpToMultiple(this.height - 36 - 2, 2), 0.0F, 0.0F, this.width, 2, 32, 2);
     }
 
-    @Override
-    public void renderBackgroundTexture(DrawContext context) {
-        context.drawTexture(LIGHT_DIRT_BACKGROUND_TEXTURE, 0, 0, 0, 0.0F, 0.0F, this.width, this.height, 32, 32);
+    private int getCardWidth() {
+        return this.width / 4;
     }
 
-    private float getEntityRotation() {
-        return (float) GlfwUtil.getTime() * 35.0f;
+    private int getCardHeight() {
+        return (int) (this.height / 1.5);
     }
 
     @Override
     public void close() {
-        if (client != null) {
-            client.setScreen(this.parent);
-        }
+        this.client.setScreen(parent);
     }
 
-    private class GeneralTab extends GridScreenTab {
-        public GeneralTab() {
-            super(Text.translatable("skinshuffle.edit.general.title"));
+    private static class SkinSourceTab extends GridScreenTab {
+        public final @NotNull PresetEditScreen parent;
 
-            this.grid.getMainPositioner().marginLeft(width / 4 + PREVIEW_SPAN_X);
-            var gridAdder = this.grid.setColumnSpacing(10).setRowSpacing(4).createAdder(1);
 
-            gridAdder.add(new TextWidget(Text.translatable("skinshuffle.edit.general.name"), Objects.requireNonNull(client).textRenderer));
+        private enum SourceType {
+            USERNAME,
+            UUID,
+            URL,
+            RESOURCE_LOCATION,
+            DEFAULT_SKIN,
+            FILE;
 
-            var nameField = new TextFieldWidget(
-                    MinecraftClient.getInstance().textRenderer,
-                    0, 0, BUTTON_WIDTH, 20,
-                    Text.translatable("skinshuffle.edit.general.name.enter_name")
-            );
-            nameField.setText(preset.getName());
-            nameField.setChangedListener(preset::setName);
-            gridAdder.add(nameField);
-        }
-    }
-
-    private class SkinTab extends GridScreenTab {
-        private final CyclingButtonWidget<String> skinModelButton;
-
-        public SkinTab() {
-            super(Text.translatable("skinshuffle.edit.skin.title"));
-
-            this.grid.getMainPositioner().marginLeft(width / 4 + PREVIEW_SPAN_X);
-            var gridAdder = this.grid.setColumnSpacing(10).setRowSpacing(4).createAdder(1);
-
-            gridAdder.add(new TextWidget(Text.translatable("skinshuffle.edit.skin.skin_source"), Objects.requireNonNull(client).textRenderer));
-
-            var skinSourceField = new TextFieldWidget(
-                    MinecraftClient.getInstance().textRenderer,
-                    0, 0, BUTTON_WIDTH, 20,
-                    Text.translatable("skinshuffle.edit.skin.skin_source.enter_source")
-            );
-            skinSourceField.setMaxLength(1024);
-            gridAdder.add(skinSourceField);
-
-            skinModelButton = new CyclingButtonWidget.Builder<>(Text::of)
-                    .values("default", "slim")
-                    .build(0, 0, BUTTON_WIDTH, 20, Text.translatable("skinshuffle.edit.skin.skin_model"));
-            gridAdder.add(skinModelButton);
-
-            gridAdder.add(ButtonWidget.builder(Text.translatable("skinshuffle.edit.skin.load_source"), (button) -> {
-                var skin = getSkinFromSource(skinSourceField.getText());
-                if (skin != null) {
-                    preset.setSkin(skin);
+            public static SourceType getFromPreset(SkinPreset preset) {
+                var skin = preset.getSkin();
+                switch (skin.getSerializationId().getPath()) {
+                    case "uuid":
+                        return SourceType.UUID;
+                    case "username":
+                        return SourceType.USERNAME;
+                    case "url":
+                        return SourceType.URL;
+                    case "file":
+                        return SourceType.FILE;
+                    case "resource":
+                        return SourceType.RESOURCE_LOCATION;
                 }
-            }).dimensions(0, 0, BUTTON_WIDTH, 20).build());
-        }
+                SkinShuffle.LOGGER.error("Unknown serialization id: " + skin.getSerializationId());
+                return null;
+            }
 
-        private Skin getSkinFromSource(String source) {
-            var model = skinModelButton.getValue();
-
-            if (source.startsWith("http://") || source.startsWith("https://")) {
-                return new UrlSkin(source, model);
-            } else if (source.startsWith("file://")) {
-                try {
-                    return new FileSkin(Path.of(source.substring(7)), model);
-                } catch (InvalidPathException e) {
-                    return null; // TODO: Show error?
-                }
-            } else {
-                try {
-                    UUID uuid;
-                    if (source.contains("-")) {
-                        uuid = UUID.fromString(source);
-                    } else {
-                        uuid = UUIDTypeAdapter.fromString(source);
-                    }
-                    return new UUIDSkin(uuid, model);
-                } catch (IllegalArgumentException e) {
-                    return new UsernameSkin(source, model);
-                }
+            public Text getTranslation() {
+                return Text.translatable("skinshuffle.edit.source." + name().toLowerCase());
             }
         }
+
+        private SkinSourceTab(@NotNull PresetEditScreen parent) {
+            super(Text.translatable("skinshuffle.edit.source.title"));
+            this.parent = parent;
+
+            this.grid.getMainPositioner().marginLeft(parent.width / 4 + 10);
+//            this.grid.setY((parent.height / 2) - (parent.getCardHeight() / 2));
+            var gridAdder = this.grid.createAdder(1);
+
+            Positioner positioner = this.grid.getMainPositioner().alignHorizontalCenter().alignVerticalCenter();
+
+            SourceType defaultSourceType = SourceType.getFromPreset(parent.preset);
+
+            if(defaultSourceType != null) {
+                    gridAdder.add(new CyclingButtonWidget<>(0,
+                            0,
+                            192,
+                            20,
+                            Text.translatable("skinshuffle.edit.source.cycle_prefix").append(": ").append(defaultSourceType.getTranslation()),
+                            Text.translatable("skinshuffle.edit.source.cycle_prefix"),
+                            0,
+                            SourceType.URL,
+                            CyclingButtonWidget.Values.of(List.of(SourceType.values())),
+                            SourceType::getTranslation,
+                            sourceTypeCyclingButtonWidget -> Text.of("").copy(),
+                            (button, value) -> {
+
+                            },
+                            value -> null,
+                            false), positioner.copy().marginTop(18));
+            } else {
+                ToastHelper.showErrorEdit();
+                parent.close();
+                return;
+            }
+        }
+
+        public int getContainerWidth() {
+            return parent.width - (parent.width / 4) - 10;
+        }
+
+        public int getContainerHeight() {
+            return parent.height - (parent.height / 2);
+        }
     }
 
-    private class GamePlayTab extends GridScreenTab {
-        public GamePlayTab() {
-            super(Text.translatable("skinshuffle.edit.gameplay.title"));
+    private static class SkinCustomizationTab implements Tab {
+        public final PresetEditScreen parent;
+
+        private SkinCustomizationTab(PresetEditScreen parent) {
+            this.parent = parent;
+        }
+
+        @Override
+        public Text getTitle() {
+            return Text.of("Skin Customization");
+        }
+
+        @Override
+        public void forEachChild(Consumer<ClickableWidget> consumer) {
+
+        }
+
+        @Override
+        public void refreshGrid(ScreenRect tabArea) {
+
         }
     }
 }
+

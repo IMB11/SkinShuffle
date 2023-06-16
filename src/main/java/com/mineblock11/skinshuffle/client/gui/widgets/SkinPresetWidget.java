@@ -20,6 +20,7 @@
 
 package com.mineblock11.skinshuffle.client.gui.widgets;
 
+import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.PresetEditScreen;
@@ -33,22 +34,27 @@ import dev.lambdaurora.spruceui.widget.SpruceWidget;
 import dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ConfirmScreen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
 public class SkinPresetWidget extends SpruceContainerWidget {
     private final SkinPreset skinPreset;
     private final SkinCarouselScreen parent;
-    private final SpruceButtonWidget deleteButton;
+    private SpruceButtonWidget editButton;
+    private SpruceButtonWidget copyButton;
+    private SpruceButtonWidget deleteButton;
+    private final boolean showButtons;
     private Position position = Position.of(0, 0);
     private LivingEntity entity;
     private double scaleFactor;
 
-    public SkinPresetWidget(SkinCarouselScreen parent, int width, int height, SkinPreset skinPreset) {
+    public SkinPresetWidget(@Nullable SkinCarouselScreen parent, int width, int height, SkinPreset skinPreset, boolean showButtons) {
         super(Position.of(0, 0), width, height);
 
         this.parent = parent;
@@ -60,41 +66,51 @@ public class SkinPresetWidget extends SpruceContainerWidget {
                 skin::getTexture, skin::getModel
         );
 
-        addChild(new SpruceButtonWidget(
-                Position.of(getWidth() / 8, getHeight() - 48), getWidth() - (this.getWidth() / 4), 20,
-                Text.translatable("skinshuffle.carousel.preset_widget.edit"),
-                button -> {
-                    client.setScreen(new PresetEditScreen(this.parent, this.skinPreset));
-                }
-        ));
+        this.showButtons = showButtons;
 
-        addChild(new SpruceButtonWidget(
-                Position.of(3, getHeight() - 24), getWidth() / 2 - 5, 20,
-                Text.translatable("skinshuffle.carousel.preset_widget.copy"),
-                button -> {
-                    SkinPreset presetCopy = new SkinPreset(this.skinPreset.getSkin(), this.skinPreset.getName());
-                    SkinPresetManager.addPreset(presetCopy);
-                    this.parent.refresh();
-                }
-        ));
+        if(showButtons) {
+            this.editButton = new SpruceButtonWidget(
+                    Position.of(getWidth() / 8, getHeight() - 48), getWidth() - (this.getWidth() / 4), 20,
+                    Text.translatable("skinshuffle.carousel.preset_widget.edit"),
+                    button -> client.setScreen(new PresetEditScreen(this.parent, this.skinPreset))
+            );
 
-        this.deleteButton = new SpruceButtonWidget(
-                Position.of(getWidth() / 2 + 2, getHeight() - 24), getWidth() / 2 - 5, 20,
-                Text.translatable("skinshuffle.carousel.preset_widget.delete"),
-                button -> {
-                    ConfirmScreen confirmScreen = new ConfirmScreen(result -> {
-                        if(result) {
-                            SkinPresetManager.deletePreset(this.skinPreset);
-                        }
-                        this.client.setScreen(new SkinCarouselScreen(parent));
-                    }, Text.translatable("skinshuffle.carousel.confirmations.delete_preset.title"), Text.translatable("skinshuffle.carousel.confirmations.delete_preset.message"));
-                    this.client.setScreen(confirmScreen);
-                }
-        );
+            this.copyButton = new SpruceButtonWidget(
+                    Position.of(3, getHeight() - 24), getWidth() / 2 - 5, 20,
+                    Text.translatable("skinshuffle.carousel.preset_widget.copy"),
+                    button -> {
+                        SkinPreset presetCopy = new SkinPreset(this.skinPreset.getSkin(), this.skinPreset.getName());
+                        SkinPresetManager.addPreset(presetCopy);
+                        this.parent.refresh();
+                    }
+            );
 
-        if(SkinPresetManager.getLoadedPresets().size() < 2) this.deleteButton.setActive(false);
+            this.deleteButton = new SpruceButtonWidget(
+                    Position.of(getWidth() / 2 + 2, getHeight() - 24), getWidth() / 2 - 5, 20,
+                    Text.translatable("skinshuffle.carousel.preset_widget.delete"),
+                    button -> {
+                        ConfirmScreen confirmScreen = new ConfirmScreen(result -> {
+                            if(result) {
+                                SkinPresetManager.deletePreset(this.skinPreset);
+                            }
+                            this.client.setScreen(new SkinCarouselScreen(parent));
+                        }, Text.translatable("skinshuffle.carousel.confirmations.delete_preset.title"), Text.translatable("skinshuffle.carousel.confirmations.delete_preset.message"));
+                        this.client.setScreen(confirmScreen);
+                    }
+            );
 
-        addChild(deleteButton);
+            if(SkinPresetManager.getLoadedPresets().size() < 2) this.deleteButton.setActive(false);
+            if(this.skinPreset.getSkin().getSerializationId().getPath().equals("config")) {
+                editButton.setTooltip(Text.translatable("skinshuffle.carousel.default_tooltip"));
+                editButton.setActive(false);
+                copyButton.setActive(false);
+                copyButton.setTooltip(Text.translatable("skinshuffle.carousel.default_tooltip"));
+            }
+
+            addChild(deleteButton);
+            addChild(editButton);
+            addChild(copyButton);
+        }
     }
 
     @Override
@@ -104,6 +120,11 @@ public class SkinPresetWidget extends SpruceContainerWidget {
         for (SpruceWidget child : this.children()) {
             if(child.equals(this.deleteButton) && SkinPresetManager.getLoadedPresets().size() < 2) continue;
             child.setActive(active);
+        }
+
+        if(this.skinPreset.getSkin().getSerializationId().getPath().equals("config")) {
+            editButton.setActive(false);
+            copyButton.setActive(false);
         }
     }
 
@@ -168,7 +189,7 @@ public class SkinPresetWidget extends SpruceContainerWidget {
         }
 
         GuiEntityRenderer.drawEntity(
-                graphics.getMatrices(), getX() + (this.getWidth() / 2), (int) (this.getY() + this.height / 1.6),
+                graphics.getMatrices(), getX() + (this.getWidth() / 2), (int) (this.getY() + (showButtons ? this.height  / 1.6 : this.height * (1.5 / 2))),
                 this.height / 4, rotation, followX, followY, entity
         );
     }
@@ -178,7 +199,7 @@ public class SkinPresetWidget extends SpruceContainerWidget {
     }
 
     private float getEntityRotation() {
-        return isActive() && SkinShuffleConfig.get().carouselSkinRenderStyle.equals(SkinShuffleConfig.SkinRenderStyle.ROTATION) ? (float) (GlfwUtil.getTime() - parent.getLastCardSwitchTime()) * 35.0f : 0.0f;
+        return isActive() && SkinShuffleConfig.get().carouselSkinRenderStyle.equals(SkinShuffleConfig.SkinRenderStyle.ROTATION) ? (float) (GlfwUtil.getTime() - (parent != null ? parent.getLastCardSwitchTime() : 0)) * 35.0f : 0.0f;
     }
 
     public SkinPreset getPreset() {

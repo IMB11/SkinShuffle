@@ -56,11 +56,16 @@ public class FileSkin extends FileBackedSkin {
     }
 
     @Override
+    public String getSourceString() {
+        return this.file.toAbsolutePath().toString();
+    }
+
+    @Override
     public Identifier getSerializationId() {
         return SERIALIZATION_ID;
     }
 
-    protected Path getFile() {
+    public Path getFile() {
         return file;
     }
 }

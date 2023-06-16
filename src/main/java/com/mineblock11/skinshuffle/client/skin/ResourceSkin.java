@@ -56,6 +56,11 @@ public record ResourceSkin(Identifier texture, String model) implements Skin {
     }
 
     @Override
+    public String getSourceString() {
+        return getTexture().toString();
+    }
+
+    @Override
     public Identifier getSerializationId() {
         return SERIALIZATION_ID;
     }

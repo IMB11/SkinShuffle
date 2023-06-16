@@ -22,4 +22,8 @@ public class ToastHelper {
         if(!SkinShuffleConfig.get().disableInstalledToast)
             showToast(client, "skinshuffle.handshake.toast.title", "skinshuffle.handshake.toast.message_on_change");
     }
+
+    public static void showErrorEdit() {
+        showToast(MinecraftClient.getInstance(), "skinshuffle.edit.fail.title", "skinshuffle.edit.fail.message");
+    }
 }

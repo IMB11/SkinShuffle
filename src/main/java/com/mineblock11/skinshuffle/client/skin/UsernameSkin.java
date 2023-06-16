@@ -23,6 +23,11 @@ public class UsernameSkin extends UUIDSkin {
     }
 
     @Override
+    public String getSourceString() {
+        return this.username;
+    }
+
+    @Override
     protected Object getTextureUniqueness() {
         return username;
     }

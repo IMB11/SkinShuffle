@@ -69,6 +69,8 @@ skinshuffle:
   carousel:
     title: "Skin Presets"
 
+    default_tooltip: "§4You cannot modify or copy the default preset."
+
     create: "Create"
     new: "New Preset"
     save_button: "Select Preset"
@@ -88,13 +90,15 @@ skinshuffle:
       delete: "Delete"
 
   edit:
-    general:
-      title: "General"
-      name: "Preset Name"
-    skin:
-      title: "Skin"
-      skin_source: "Skin Source"
-      skin_model: "Skin Model"
-      load_source: "Load Skin From Source"
-    gameplay:
-      title: "Gameplay"
+    fail:
+      title: "There was a failure opening the editor."
+      message: "Please check logs for more information."
+    source:
+      username: "Username"
+      file: "File"
+      url: "URL"
+      uuid: "UUID"
+
+      cycle_prefix: "Source"
+
+      title: "Skin Source"

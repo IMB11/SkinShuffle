@@ -41,6 +41,7 @@ public interface Skin {
     boolean isLoading();
 
     String getModel();
+    String getSourceString();
 
     Identifier getSerializationId();
 

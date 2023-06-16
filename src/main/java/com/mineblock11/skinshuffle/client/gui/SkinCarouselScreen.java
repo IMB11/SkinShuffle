@@ -218,7 +218,7 @@ public class SkinCarouselScreen extends SpruceScreen {
     }
 
     public SkinPresetWidget loadPreset(SkinPreset preset) {
-        var widget = new SkinPresetWidget(this, getCardWidth(), getCardHeight(), preset);
+        var widget = new SkinPresetWidget(this, getCardWidth(), getCardHeight(), preset, true);
         this.carouselWidgets.add(widget);
         return widget;
     }

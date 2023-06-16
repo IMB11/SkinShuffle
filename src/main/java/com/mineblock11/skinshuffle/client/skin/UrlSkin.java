@@ -59,6 +59,11 @@ public class UrlSkin extends BackedSkin {
     }
 
     @Override
+    public String getSourceString() {
+        return url;
+    }
+
+    @Override
     public Identifier getSerializationId() {
         return SERIALIZATION_ID;
     }
