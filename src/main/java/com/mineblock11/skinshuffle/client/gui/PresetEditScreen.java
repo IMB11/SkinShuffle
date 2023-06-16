@@ -101,16 +101,10 @@ public class PresetEditScreen extends SpruceScreen {
         this.presetWidget.overrideDimensions(getCardWidth(), getCardHeight());
         this.presetWidget.overridePosition(Position.of(5, (this.height / 2) - (getCardHeight() / 2)));
 
-        if (this.tabManager.getCurrentTab() instanceof SkinCustomizationTab customizationTab) {
-            if(this.textFieldWidget != null) {
-                this.textFieldWidget.setVisible(true);
-            }
-
-            String text
+        if (this.tabManager.getCurrentTab() instanceof SkinSourceTab sourceTab) {
+            this.textFieldWidget.setVisible(true);
         } else {
-            if(this.textFieldWidget != null) {
-                this.textFieldWidget.setVisible(false);
-            }
+            this.textFieldWidget.setVisible(false);
         }
     }
 
