@@ -185,7 +185,8 @@ public class SkinPresetManager {
                 MojangSkinAPI.setSkinTexture(urlSkin.getUrl(), urlSkin.getModel());
             } else {
                 ConfigSkin configSkin = preset.getSkin().saveToConfig();
-                MojangSkinAPI.setSkinTexture(configSkin.getFile().toFile(), preset.getSkin().getModel());
+                preset.setSkin(configSkin);
+                MojangSkinAPI.setSkinTexture(configSkin.getFile().toFile(), configSkin.getModel());
             }
 
             if (client.world != null) {

@@ -33,6 +33,9 @@ skinshuffle:
       carousel_rendering_style:
         name: "Carousel Rendering Style"
         description: "How should the currently selected skin preset be rendered in the carousel screen?\n"
+      preset_edit_screen_rendering_style:
+        name: "Preview Rendering Style"
+        description: "How should the skin preview be rendered in the preset edit screen?\n"
       widget_rendering_style:
         name: "Widget Rendering Style"
         description: "How should the widget on the title screen and pause screen be rendered?\n"
@@ -87,7 +90,11 @@ skinshuffle:
   edit:
     general:
       title: "General"
+      name: "Preset Name"
     skin:
       title: "Skin"
+      skin_source: "Skin Source"
+      skin_model: "Skin Model"
+      load_source: "Load Skin From Source"
     gameplay:
       title: "Gameplay"

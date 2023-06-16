@@ -25,6 +25,8 @@ import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
+import com.mineblock11.skinshuffle.client.skin.*;
+import com.mojang.util.UUIDTypeAdapter;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
@@ -43,6 +45,8 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -69,8 +73,8 @@ public class PresetEditScreen extends SpruceScreen {
         this.originalPreset = preset;
         this.entity = new DummyClientPlayerEntity(
                 null, UUID.randomUUID(),
-                () -> preset.getSkin().getTexture(),
-                () -> preset.getSkin().getModel()
+                () -> this.preset.getSkin().getTexture(),
+                () -> this.preset.getSkin().getModel()
         );
     }
 
@@ -78,7 +82,7 @@ public class PresetEditScreen extends SpruceScreen {
     protected void init() {
         // Setup tabs, selecting the first one by default
         this.tabNavigation = TabNavigationWidget.builder(this.tabManager, this.width)
-                .tabs(new GeneralTab(), new SkinTab(), new GamePlayTab())
+                .tabs(new GeneralTab(), new SkinTab())
                 .build();
         this.addDrawableChild(this.tabNavigation);
         this.tabNavigation.selectTab(0, false);
@@ -91,6 +95,9 @@ public class PresetEditScreen extends SpruceScreen {
         }).build());
         adder.add(ButtonWidget.builder(ScreenTexts.OK, (button) -> {
             this.originalPreset.copyFrom(this.preset);
+            try {
+                this.originalPreset.setSkin(this.preset.getSkin().saveToConfig());
+            } catch (Exception ignored) {}
             SkinPresetManager.savePresets();
             this.close();
         }).build());
@@ -127,10 +134,31 @@ public class PresetEditScreen extends SpruceScreen {
                 PREVIEW_SPAN_X * 2, PREVIEW_SPAN_Y * 2, 0xDF000000);
         graphics.fill(previewCenterX - PREVIEW_SPAN_X + 1, previewCenterY - PREVIEW_SPAN_Y + 1,
                 previewCenterX + PREVIEW_SPAN_X - 1, previewCenterY + PREVIEW_SPAN_Y - 1, 0x7F000000);
-        GuiEntityRenderer.drawEntity(
-                graphics.getMatrices(), previewCenterX, previewCenterY + PREVIEW_SPAN_Y / 10 * 8, PREVIEW_SPAN_Y / 10 * 8,
-                getEntityRotation(), 0, 0, entity
-        );
+
+        if (!this.preset.getSkin().isLoading()) {
+            var entityX = previewCenterX;
+            var entityY = previewCenterY + PREVIEW_SPAN_Y / 10 * 8;
+
+            float followX = entityX - mouseX;
+            float followY = entityY - PREVIEW_SPAN_Y - mouseY;
+            float rotation = 0;
+
+            SkinShuffleConfig.SkinRenderStyle renderStyle = SkinShuffleConfig.get().carouselSkinRenderStyle;
+
+            if(renderStyle.equals(SkinShuffleConfig.SkinRenderStyle.ROTATION)) {
+                followX = 0;
+                followY = 0;
+                rotation = getEntityRotation() * SkinShuffleConfig.get().rotationMultiplier;
+            }
+
+            GuiEntityRenderer.drawEntity(
+                    graphics.getMatrices(), entityX, entityY, PREVIEW_SPAN_Y / 10 * 8,
+                    rotation, followX, followY, entity
+            );
+        } else {
+            // We call getTexture() anyway to make sure the texture is being loaded in the background.
+            this.preset.getSkin().getTexture();
+        }
 
         graphics.drawTexture(FOOTER_SEPARATOR_TEXTURE, 0, MathHelper.roundUpToMultiple(this.height - 36 - 2, 2), 0.0F, 0.0F, this.width, 2, 32, 2);
     }
@@ -172,8 +200,61 @@ public class PresetEditScreen extends SpruceScreen {
     }
 
     private class SkinTab extends GridScreenTab {
+        private final CyclingButtonWidget<String> skinModelButton;
+
         public SkinTab() {
             super(Text.translatable("skinshuffle.edit.skin.title"));
+
+            this.grid.getMainPositioner().marginLeft(width / 4 + PREVIEW_SPAN_X);
+            var gridAdder = this.grid.setColumnSpacing(10).setRowSpacing(4).createAdder(1);
+
+            gridAdder.add(new TextWidget(Text.translatable("skinshuffle.edit.skin.skin_source"), Objects.requireNonNull(client).textRenderer));
+
+            var skinSourceField = new TextFieldWidget(
+                    MinecraftClient.getInstance().textRenderer,
+                    0, 0, BUTTON_WIDTH, 20,
+                    Text.translatable("skinshuffle.edit.skin.skin_source.enter_source")
+            );
+            skinSourceField.setMaxLength(1024);
+            gridAdder.add(skinSourceField);
+
+            skinModelButton = new CyclingButtonWidget.Builder<>(Text::of)
+                    .values("default", "slim")
+                    .build(0, 0, BUTTON_WIDTH, 20, Text.translatable("skinshuffle.edit.skin.skin_model"));
+            gridAdder.add(skinModelButton);
+
+            gridAdder.add(ButtonWidget.builder(Text.translatable("skinshuffle.edit.skin.load_source"), (button) -> {
+                var skin = getSkinFromSource(skinSourceField.getText());
+                if (skin != null) {
+                    preset.setSkin(skin);
+                }
+            }).dimensions(0, 0, BUTTON_WIDTH, 20).build());
+        }
+
+        private Skin getSkinFromSource(String source) {
+            var model = skinModelButton.getValue();
+
+            if (source.startsWith("http://") || source.startsWith("https://")) {
+                return new UrlSkin(source, model);
+            } else if (source.startsWith("file://")) {
+                try {
+                    return new FileSkin(Path.of(source.substring(7)), model);
+                } catch (InvalidPathException e) {
+                    return null; // TODO: Show error?
+                }
+            } else {
+                try {
+                    UUID uuid;
+                    if (source.contains("-")) {
+                        uuid = UUID.fromString(source);
+                    } else {
+                        uuid = UUIDTypeAdapter.fromString(source);
+                    }
+                    return new UUIDSkin(uuid, model);
+                } catch (IllegalArgumentException e) {
+                    return new UsernameSkin(source, model);
+                }
+            }
         }
     }
 

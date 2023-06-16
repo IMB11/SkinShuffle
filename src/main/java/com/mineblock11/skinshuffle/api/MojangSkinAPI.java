@@ -32,17 +32,21 @@ import com.mineblock11.skinshuffle.util.AuthUtil;
 import com.mineblock11.skinshuffle.util.SkinCacheRegistry;
 import com.mojang.authlib.minecraft.UserApiService;
 import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
+import com.mojang.util.UUIDTypeAdapter;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.util.Uuids;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Optional;
+import java.util.UUID;
 
 public class MojangSkinAPI {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -89,6 +93,10 @@ public class MojangSkinAPI {
         try {
             String jsonResponse = Unirest.get("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid + "?unsigned=false")
                     .asString().getBody();
+
+            if (jsonResponse.isBlank()) {
+                throw new IOException("Empty response from Mojang API.");
+            }
 
             Gson gson = new Gson();
             JsonObject object = gson.fromJson(jsonResponse, JsonObject.class);
@@ -142,6 +150,31 @@ public class MojangSkinAPI {
         } catch (Exception e) {
             SkinShuffle.LOGGER.error(e.getMessage());
             return SkinQueryResult.EMPTY_RESULT;
+        }
+    }
+
+    /**
+     * Get the player's uuid using their username.
+     * @return An Optional containing the UUID of the provided username, or an empty Optional if the username is invalid.
+     * @param username
+     */
+    public static Optional<UUID> getUUIDFromUsername(String username) {
+        try {
+            String jsonResponse = Unirest.get("https://api.mojang.com/users/profiles/minecraft/" + username)
+                    .asString().getBody();
+
+            Gson gson = new Gson();
+            JsonObject object = gson.fromJson(jsonResponse, JsonObject.class);
+
+            if (object.has("error")) {
+                throw new RuntimeException(object.get("errorMessage").getAsString());
+            }
+
+            var idString = object.get("id").getAsString();
+            return Optional.of(UUIDTypeAdapter.fromString(idString));
+        } catch (Exception e) {
+            SkinShuffle.LOGGER.error(e.getMessage());
+            return Optional.empty();
         }
     }
 

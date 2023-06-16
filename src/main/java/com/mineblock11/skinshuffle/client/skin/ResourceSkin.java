@@ -46,6 +46,11 @@ public record ResourceSkin(Identifier texture, String model) implements Skin {
     }
 
     @Override
+    public boolean isLoading() {
+        return false;
+    }
+
+    @Override
     public String getModel() {
         return model;
     }

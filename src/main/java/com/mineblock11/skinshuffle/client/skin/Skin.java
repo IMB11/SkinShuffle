@@ -38,9 +38,18 @@ public interface Skin {
 
     @Nullable Identifier getTexture();
 
+    boolean isLoading();
+
     String getModel();
 
     Identifier getSerializationId();
 
+    /**
+     * Saves this skin to the config and returns a new reference to it.
+     * THIS METHOD CAN AND WILL THROW, MAKE SURE TO CATCH IT!
+     *
+     * @throws RuntimeException If the skin could not be saved for whatever reason.
+     * @return A new reference to this skin.
+     */
     ConfigSkin saveToConfig();
 }

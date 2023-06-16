@@ -32,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.UUID;
 
 public class UrlSkin extends BackedSkin {
     public static final Identifier SERIALIZATION_ID = SkinShuffle.id("url");
@@ -40,11 +41,15 @@ public class UrlSkin extends BackedSkin {
             Codec.STRING.fieldOf("model").forGetter(UrlSkin::getModel)
     ).apply(instance, UrlSkin::new));
 
-    private final String url;
+    protected String url;
     private final String model;
 
     public UrlSkin(String url, String model) {
         this.url = url;
+        this.model = model;
+    }
+
+    protected UrlSkin(String model) {
         this.model = model;
     }
 
@@ -63,7 +68,6 @@ public class UrlSkin extends BackedSkin {
         return url;
     }
 
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Override
     public ConfigSkin saveToConfig() {
         try {
@@ -80,7 +84,6 @@ public class UrlSkin extends BackedSkin {
         }
     }
 
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Override
     protected @Nullable AbstractTexture loadTexture(Runnable completionCallback) {
         try {
@@ -91,9 +94,10 @@ public class UrlSkin extends BackedSkin {
 
             Path temporaryFilePath = cacheFolder.resolve(Math.abs(url.hashCode()) + ".png");
 
-            var bytes = Unirest.get(this.url).asBytes().getBody();
+            // Downloading the file this way corrupts it, and is not needed, as PlayerSkinTexture will download it for us
+//            var bytes = Unirest.get(this.url).asBytes().getBody();
 
-            Files.write(temporaryFilePath, bytes);
+//            Files.write(temporaryFilePath, bytes);
 
             return new PlayerSkinTexture(temporaryFilePath.toFile(), url, new Identifier("minecraft:textures/entity/player/wide/steve.png"), true, () -> {
                 completionCallback.run();

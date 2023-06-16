@@ -47,16 +47,27 @@ public abstract class BackedSkin implements Skin {
             fetching = true;
 
             new Thread(() -> {
-                var texture = loadTexture(() -> {
+                try {
+                    var texture = loadTexture(() -> {
+                        fetching = false;
+                        fetched = true;
+                        setTexture(id);
+                    });
+
+                    if (texture != null) {
+                        textureManager.registerTexture(id, texture);
+                    } else {
+                        fetching = false;
+                        fetched = true;
+                        setTexture(null);
+                    }
+                } catch (Exception e) {
+                    SkinShuffle.LOGGER.warn("Failed to load skin texture", e);
                     fetching = false;
                     fetched = true;
-                    setTexture(id);
-                });
-
-                if (texture != null) {
-                    textureManager.registerTexture(id, texture);
+                    setTexture(null);
                 }
-            }, getClass().getName() + "Fetcher").start();
+            }, getClass().getTypeName() + "Fetcher").start();
         } else {
             // Texture already exists, we assume it hasn't changed
             fetched = true;
@@ -72,6 +83,11 @@ public abstract class BackedSkin implements Skin {
         }
 
         return textureId;
+    }
+
+    @Override
+    public boolean isLoading() {
+        return !fetched || fetching;
     }
 
     protected void setTexture(Identifier textureId) {

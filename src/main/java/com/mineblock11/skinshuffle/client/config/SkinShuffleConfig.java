@@ -51,6 +51,16 @@ public class SkinShuffleConfig {
                                     .valueFormatter(skinRenderStyle -> Text.translatable("skinshuffle.config.rendering." + skinRenderStyle.name().toLowerCase())))
                             .build();
 
+                    var presetEditScreenRenderStyle = Option.<SkinRenderStyle>createBuilder()
+                            .name(translatable("skinshuffle.config.rendering.preset_edit_screen_rendering_style.name"))
+                            .description(OptionDescription.createBuilder()
+                                    .text(translatable("skinshuffle.config.rendering.preset_edit_screen_rendering_style.description"), translatable("skinshuffle.config.rendering.rendering_style")).build())
+                            .binding(defaults.carouselSkinRenderStyle, () -> config.carouselSkinRenderStyle, val -> config.carouselSkinRenderStyle = val)
+                            .controller(opt -> EnumControllerBuilder.create(opt)
+                                    .enumClass(SkinRenderStyle.class)
+                                    .valueFormatter(skinRenderStyle -> Text.translatable("skinshuffle.config.rendering." + skinRenderStyle.name().toLowerCase())))
+                            .build();
+
                     var widgetRenderStyle = Option.<SkinRenderStyle>createBuilder()
                             .name(translatable("skinshuffle.config.rendering.widget_rendering_style.name"))
                             .description(OptionDescription.createBuilder()
@@ -103,7 +113,7 @@ public class SkinShuffleConfig {
                             .category(ConfigCategory.createBuilder()
                                     .name(translatable("skinshuffle.config.rendering.title"))
                                     .tooltip(translatable("skinshuffle.config.rendering.description"))
-                                    .options(List.of(carouselRenderStyle, widgetRenderStyle, rotationMultiplier, renderSkinRegardless, displayWidgetPause, displayWidgetTitleScreen))
+                                    .options(List.of(carouselRenderStyle, presetEditScreenRenderStyle, widgetRenderStyle, rotationMultiplier, renderSkinRegardless, displayWidgetPause, displayWidgetTitleScreen))
                                     .build()
                             ).category(ConfigCategory.createBuilder()
                                     .name(translatable("skinshuffle.config.popups.title"))
@@ -124,6 +134,7 @@ public class SkinShuffleConfig {
 
     @ConfigEntry public SkinRenderStyle widgetSkinRenderStyle = SkinRenderStyle.CURSOR;
     @ConfigEntry public SkinRenderStyle carouselSkinRenderStyle = SkinRenderStyle.ROTATION;
+    @ConfigEntry public SkinRenderStyle presetEditScreenRenderStyle = SkinRenderStyle.ROTATION;
     @ConfigEntry public float rotationMultiplier = 1.0f;
 
     public enum SkinRenderStyle {

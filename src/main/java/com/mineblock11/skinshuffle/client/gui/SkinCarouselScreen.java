@@ -56,7 +56,7 @@ public class SkinCarouselScreen extends SpruceScreen {
 
     public CarouselMoveButton leftMoveButton;
     public CarouselMoveButton rightMoveButton;
-    private int cardIndex = 0;
+    private int cardIndex = -1;
     private double lastCardIndex = 0;
     private double lastCardSwitchTime = 0;
     public ArrayList<SpruceWidget> carouselWidgets = new ArrayList<>();
@@ -97,7 +97,10 @@ public class SkinCarouselScreen extends SpruceScreen {
 
         loadedPresets.forEach(this::loadPreset);
 
-        this.cardIndex = loadedPresets.indexOf(SkinPresetManager.getChosenPreset());
+        // We don't want to switch back to the selected preset when we return from a subscreen.
+        if (this.cardIndex == -1) {
+            this.cardIndex = loadedPresets.indexOf(SkinPresetManager.getChosenPreset());
+        }
         this.lastCardIndex = this.cardIndex;
 
         this.addDrawableChild(leftMoveButton);
