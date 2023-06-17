@@ -47,7 +47,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class SkinCarouselScreen extends SpruceScreen {
-    private final Screen parent;
+    public final Screen parent;
     public boolean hasEditedPreset = false;
 
     public SkinCarouselScreen(Screen parent) {
