@@ -49,20 +49,15 @@ public class GameMenuScreenMixin extends Screen {
             this.children().remove(this.openCarouselWidget);
             this.openCarouselWidget = null;
         }
+    }
 
-        if(SkinShuffleConfig.get().displayInPauseMenu && this.openCarouselWidget == null) {
+    @Inject(method = "init", cancellable = false, at = @At("TAIL"))
+    private void addButton(CallbackInfo ci) {
+        if(SkinShuffleConfig.get().displayInPauseMenu) {
             OpenCarouselWidget.safelyCreateWidget(this, openCarouselWidget -> {
                 this.openCarouselWidget = openCarouselWidget;
                 this.addDrawableChild(openCarouselWidget);
             });
         }
-    }
-
-    @Inject(method = "init", cancellable = false, at = @At("TAIL"))
-    private void addButton(CallbackInfo ci) {
-        OpenCarouselWidget.safelyCreateWidget(this, openCarouselWidget -> {
-            this.openCarouselWidget = openCarouselWidget;
-            this.addDrawableChild(openCarouselWidget);
-        });
     }
 }
