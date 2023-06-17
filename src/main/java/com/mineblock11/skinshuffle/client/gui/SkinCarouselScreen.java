@@ -22,10 +22,10 @@ package com.mineblock11.skinshuffle.client.gui;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
-import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.widgets.AddPresetWidget;
 import com.mineblock11.skinshuffle.client.gui.widgets.CarouselMoveButton;
 import com.mineblock11.skinshuffle.client.gui.widgets.SkinPresetWidget;
+import com.mineblock11.skinshuffle.client.gui.widgets.TexturedIconButtonWidget;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.Tooltip;
@@ -37,11 +37,9 @@ import dev.lambdaurora.spruceui.widget.SpruceWidget;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.GlfwUtil;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RotationAxis;
 
 import java.util.ArrayList;
 import java.util.Collections;
