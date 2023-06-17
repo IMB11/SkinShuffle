@@ -72,8 +72,8 @@ public class SkinPresetManager {
      *
      * @param preset The preset to apply.
      */
-    public static void setChosenPreset(SkinPreset preset) {
-        if (chosenPreset == preset) return;
+    public static void setChosenPreset(SkinPreset preset, boolean ignoreMatch) {
+        if (chosenPreset == preset && !ignoreMatch) return;
         chosenPreset = preset;
         savePresets();
 

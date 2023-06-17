@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class PresetEditScreen extends SpruceScreen {
-    private final Screen parent;
+    private final SkinCarouselScreen parent;
     private final TabManager tabManager = new TabManager(this::addDrawableChild, this::remove);
     private final UrlValidator urlValidator = new UrlValidator(new String[]{"http", "https"});
     private final SkinPreset originalPreset;
@@ -39,7 +39,7 @@ public class PresetEditScreen extends SpruceScreen {
     private GridWidget grid;
     private ButtonWidget exitButton;
 
-    public PresetEditScreen(Screen parent, SkinPreset preset) {
+    public PresetEditScreen(SkinCarouselScreen parent, SkinPreset preset) {
         super(Text.translatable("skinshuffle.edit.title"));
         this.preset = preset.copy();
         this.originalPreset = preset;
@@ -64,6 +64,20 @@ public class PresetEditScreen extends SpruceScreen {
         }).build());
 
         this.exitButton = ButtonWidget.builder(ScreenTexts.OK, (button) -> {
+            // Username validation.
+            if(this.skinSourceTab.currentSourceType == SourceType.USERNAME) {
+                boolean playerExists = MojangSkinAPI.getUUIDFromUsername(this.skinSourceTab.textFieldWidget.getText()).isPresent();
+
+                if(!playerExists) {
+                    this.exitButton.active = false;
+                    this.isValid = false;
+                    this.skinSourceTab.errorLabel.setMessage(SourceType.USERNAME.getInvalidInputText());
+                    this.skinSourceTab.getGrid().refreshPositions();
+                    return;
+                }
+            }
+
+
             String skinSource = this.skinSourceTab.textFieldWidget.getText();
             String model = this.originalPreset.getSkin().getModel(); // TODO: Model type cycling button in customize tab.
 
@@ -93,6 +107,7 @@ public class PresetEditScreen extends SpruceScreen {
             }
 
             SkinPresetManager.savePresets();
+            parent.hasEditedPreset = true;
             this.close();
         }).build();
 
@@ -147,9 +162,7 @@ public class PresetEditScreen extends SpruceScreen {
     }
 
     private boolean isValidUsername(String username) {
-        if(username.matches("([a-zA-Z0-9]|_)*") && username.length() >= 3 && username.length() <= 16) {
-            return MojangSkinAPI.getUUIDFromUsername(username).isPresent();
-        } else return false;
+        return username.matches("([a-zA-Z0-9]|_)*") && username.length() >= 3 && username.length() <= 16;
     }
 
     public boolean validate() {
@@ -255,6 +268,10 @@ public class PresetEditScreen extends SpruceScreen {
         private final TextFieldWidget textFieldWidget;
         private final MultilineTextWidget errorLabel;
         public PresetEditScreen.SourceType currentSourceType;
+
+        public GridWidget getGrid() {
+            return grid;
+        }
 
         private SkinSourceTab(@NotNull PresetEditScreen parent) {
             super(Text.translatable("skinshuffle.edit.source.title"));

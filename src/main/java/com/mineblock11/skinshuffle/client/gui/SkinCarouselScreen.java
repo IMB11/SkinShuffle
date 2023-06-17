@@ -48,6 +48,7 @@ import java.util.Collections;
 
 public class SkinCarouselScreen extends SpruceScreen {
     private final Screen parent;
+    public boolean hasEditedPreset = false;
 
     public SkinCarouselScreen(Screen parent) {
         super(Text.translatable("skinshuffle.carousel.title"));
@@ -136,7 +137,7 @@ public class SkinCarouselScreen extends SpruceScreen {
             assert chosenPresetWidget instanceof SkinPresetWidget;
             SkinPresetWidget presetWidget = (SkinPresetWidget) chosenPresetWidget;
 
-            SkinPresetManager.setChosenPreset(presetWidget.getPreset());
+            SkinPresetManager.setChosenPreset(presetWidget.getPreset(), this.hasEditedPreset);
 
             this.close();
         }));
