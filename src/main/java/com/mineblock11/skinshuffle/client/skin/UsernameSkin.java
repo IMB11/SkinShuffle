@@ -9,6 +9,7 @@ import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -56,5 +57,23 @@ public class UsernameSkin extends UUIDSkin {
     @Override
     public Identifier getSerializationId() {
         return SERIALIZATION_ID;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        UsernameSkin that = (UsernameSkin) o;
+
+        return Objects.equals(username, that.username) && super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (username != null ? username.hashCode() : 0);
+        return result;
     }
 }

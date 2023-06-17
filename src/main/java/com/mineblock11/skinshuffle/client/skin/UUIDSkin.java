@@ -8,6 +8,7 @@ import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class UUIDSkin extends UrlSkin {
@@ -44,5 +45,20 @@ public class UUIDSkin extends UrlSkin {
         url = profile.skinURL();
 
         return super.loadTexture(completionCallback);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UUIDSkin uuidSkin = (UUIDSkin) o;
+
+        return Objects.equals(uuid, uuidSkin.uuid) && super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return uuid != null ? uuid.hashCode() : 0;
     }
 }

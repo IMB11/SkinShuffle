@@ -135,3 +135,5 @@ skinshuffle:
       unchanged: "Keep Current"
       cycle_prefix: "Source"
       title: "Skin Source"
+      skin_model: "Skin Model"
+      load_skin: "Load Skin"

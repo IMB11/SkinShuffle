@@ -27,6 +27,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
 
 import java.nio.file.Path;
+import java.util.Objects;
 
 public class FileSkin extends FileBackedSkin {
     public static final Identifier SERIALIZATION_ID = SkinShuffle.id("file");
@@ -66,5 +67,23 @@ public class FileSkin extends FileBackedSkin {
 
     public Path getFile() {
         return file;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FileSkin fileSkin = (FileSkin) o;
+
+        if (!Objects.equals(file, fileSkin.file)) return false;
+        return Objects.equals(model, fileSkin.model);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = file != null ? file.hashCode() : 0;
+        result = 31 * result + (model != null ? model.hashCode() : 0);
+        return result;
     }
 }

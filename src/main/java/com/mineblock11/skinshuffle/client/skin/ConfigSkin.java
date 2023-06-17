@@ -27,6 +27,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
 
 import java.nio.file.Path;
+import java.util.Objects;
 
 public class ConfigSkin extends FileBackedSkin {
     public static final Identifier SERIALIZATION_ID = SkinShuffle.id("config");
@@ -65,5 +66,23 @@ public class ConfigSkin extends FileBackedSkin {
 
     public Path getFile() {
         return SkinPresetManager.PERSISTENT_SKINS_DIR.resolve(skinName + ".png");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ConfigSkin that = (ConfigSkin) o;
+
+        if (!Objects.equals(skinName, that.skinName)) return false;
+        return Objects.equals(model, that.model);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = skinName != null ? skinName.hashCode() : 0;
+        result = 31 * result + (model != null ? model.hashCode() : 0);
+        return result;
     }
 }

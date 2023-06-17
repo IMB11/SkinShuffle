@@ -98,4 +98,22 @@ public class SkinPreset {
     public SkinPreset copy() {
         return new SkinPreset(this.skin, this.name);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SkinPreset that = (SkinPreset) o;
+
+        if (!name.equals(that.name)) return false;
+        return skin.equals(that.skin);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + skin.hashCode();
+        return result;
+    }
 }
