@@ -2,11 +2,15 @@ package com.mineblock11.skinshuffle.client.skin;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.api.MojangSkinAPI;
+import com.mineblock11.skinshuffle.api.SkinQueryResult;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
+import java.util.UUID;
 
 public class UsernameSkin extends UUIDSkin {
     public static final Identifier SERIALIZATION_ID = SkinShuffle.id("username");
@@ -23,8 +27,12 @@ public class UsernameSkin extends UUIDSkin {
     }
 
     @Override
-    public String getSourceString() {
-        return this.username;
+    public ConfigSkin saveToConfig() {
+        Optional<UUID> uuid = MojangSkinAPI.getUUIDFromUsername(this.username);
+        if(uuid.isEmpty()) throw new RuntimeException("UUID is not a valid player UUID.");
+        SkinQueryResult queryResult = MojangSkinAPI.getPlayerSkinTexture(uuid.get().toString());
+        this.url = queryResult.skinURL();
+        return super.saveToConfig();
     }
 
     @Override

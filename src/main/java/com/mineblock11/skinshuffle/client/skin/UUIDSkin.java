@@ -24,11 +24,6 @@ public class UUIDSkin extends UrlSkin {
         this.uuid = uuid;
     }
 
-    @Override
-    public String getSourceString() {
-        return this.uuid.toString();
-    }
-
     protected UUIDSkin(String model) {
         super(model);
     }

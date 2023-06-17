@@ -32,7 +32,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.UUID;
 
 public class UrlSkin extends BackedSkin {
     public static final Identifier SERIALIZATION_ID = SkinShuffle.id("url");
@@ -61,11 +60,6 @@ public class UrlSkin extends BackedSkin {
     @Override
     public void setModel(String value) {
         this.model = value;
-    }
-
-    @Override
-    public String getSourceString() {
-        return url;
     }
 
     @Override

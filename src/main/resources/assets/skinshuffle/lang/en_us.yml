@@ -91,7 +91,7 @@ skinshuffle:
 
   edit:
     fail:
-      title: "There was a failure opening the editor."
+      title: "There was a failure with the editor."
       message: "Please check logs for more information."
     customize:
       title: "Skin Customization"
@@ -104,14 +104,15 @@ skinshuffle:
       invalid_username: |-
         §4§nInvalid Username§r
         
-        Usernames must only contain a-Z 0-9.
-        Usernames may contain underscores.
-        Usernames must be between 3-16 characters long.
+        Username must only contain a-Z 0-9.
+        Username may contain underscores.
+        Username must be between 3-16 characters long.
+        Username must exist.
       file: "File"
       invalid_file: |-
         §4§nInvalid File§r
         
-        Files must exist and must be in 
+        File must exist and must be in 
         the §l.png§r format.
       url: "URL"
       invalid_url: |-
@@ -123,7 +124,7 @@ skinshuffle:
       invalid_uuid: |-
         §4§nInvalid UUID§r
         
-        UUIDs must be in the following format:
+        UUID must be in the following format:
         §lxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
       resource_location: "Resource Location"
       invalid_resource_location: |-

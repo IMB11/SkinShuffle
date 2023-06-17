@@ -103,12 +103,6 @@ public class SkinPresetWidget extends SpruceContainerWidget implements Widget {
             );
 
             if(SkinPresetManager.getLoadedPresets().size() < 2) this.deleteButton.setActive(false);
-            if(this.skinPreset.getSkin().getSerializationId().getPath().equals("config")) {
-                editButton.setTooltip(Text.translatable("skinshuffle.carousel.default_tooltip"));
-                editButton.setActive(false);
-                copyButton.setActive(false);
-                copyButton.setTooltip(Text.translatable("skinshuffle.carousel.default_tooltip"));
-            }
 
             addChild(deleteButton);
             addChild(editButton);
@@ -123,11 +117,6 @@ public class SkinPresetWidget extends SpruceContainerWidget implements Widget {
         for (SpruceWidget child : this.children()) {
             if(child.equals(this.deleteButton) && SkinPresetManager.getLoadedPresets().size() < 2) continue;
             child.setActive(active);
-        }
-
-        if(this.skinPreset.getSkin().getSerializationId().getPath().equals("config")) {
-            editButton.setActive(false);
-            copyButton.setActive(false);
         }
     }
 

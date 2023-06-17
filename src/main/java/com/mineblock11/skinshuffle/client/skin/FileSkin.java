@@ -21,7 +21,6 @@
 package com.mineblock11.skinshuffle.client.skin;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
-import com.mineblock11.skinshuffle.client.SkinShuffleClient;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -58,11 +57,6 @@ public class FileSkin extends FileBackedSkin {
     @Override
     public void setModel(String value) {
         this.model = value;
-    }
-
-    @Override
-    public String getSourceString() {
-        return this.file.toAbsolutePath().toString();
     }
 
     @Override

@@ -24,14 +24,11 @@ import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.texture.ResourceTexture;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
 public final class ResourceSkin implements Skin {
@@ -66,11 +63,6 @@ public final class ResourceSkin implements Skin {
     @Override
     public void setModel(String value) {
         this.model = value;
-    }
-
-    @Override
-    public String getSourceString() {
-        return getTexture().toString();
     }
 
     @Override

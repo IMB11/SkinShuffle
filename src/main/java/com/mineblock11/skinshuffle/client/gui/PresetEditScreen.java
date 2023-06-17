@@ -1,6 +1,7 @@
 package com.mineblock11.skinshuffle.client.gui;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
+import com.mineblock11.skinshuffle.api.MojangSkinAPI;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mineblock11.skinshuffle.client.skin.*;
@@ -78,7 +79,13 @@ public class PresetEditScreen extends SpruceScreen {
                     default -> preset = SkinPreset.generateDefaultPreset();
                 }
 
-                this.originalPreset.setSkin(skin.saveToConfig());
+                try {
+                    this.originalPreset.setSkin(skin.saveToConfig());
+                } catch (Exception e) {
+                    SkinShuffle.LOGGER.error(String.valueOf(e));
+                    ToastHelper.showErrorEdit();
+                    this.close();
+                }
             }
 
             if(!model.equals(this.skinCustomizationTab.currentModelType.value)) {
@@ -127,7 +134,7 @@ public class PresetEditScreen extends SpruceScreen {
 
     private boolean isValidFilePath(String path) {
         File f = new File(path);
-        return f.exists() && FilenameUtils.getExtension(path).equals(".png");
+        return f.exists() && FilenameUtils.getExtension(path).equals("png");
     }
 
     private boolean isValidUUID(String uuid) {
@@ -140,7 +147,9 @@ public class PresetEditScreen extends SpruceScreen {
     }
 
     private boolean isValidUsername(String username) {
-        return username.matches("([a-zA-Z0-9]|_)*") && username.length() >= 3 && username.length() <= 16;
+        if(username.matches("([a-zA-Z0-9]|_)*") && username.length() >= 3 && username.length() <= 16) {
+            return MojangSkinAPI.getUUIDFromUsername(username).isPresent();
+        } else return false;
     }
 
     public boolean validate() {

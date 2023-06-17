@@ -54,11 +54,6 @@ public class ConfigSkin extends FileBackedSkin {
     }
 
     @Override
-    public String getSourceString() {
-        return skinName;
-    }
-
-    @Override
     public Identifier getSerializationId() {
         return SERIALIZATION_ID;
     }
