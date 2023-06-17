@@ -66,7 +66,7 @@ public class PresetEditScreen extends SpruceScreen {
             String skinSource = this.skinSourceTab.textFieldWidget.getText();
             String model = this.originalPreset.getSkin().getModel(); // TODO: Model type cycling button in customize tab.
 
-            if (!skinSource.equals(this.originalPreset.getSkin().getSourceString())) {
+            if (!skinSource.isEmpty() && this.skinSourceTab.currentSourceType != SourceType.UNCHANGED) {
                 Skin skin = null;
 
                 switch (this.skinSourceTab.currentSourceType) {
@@ -78,7 +78,7 @@ public class PresetEditScreen extends SpruceScreen {
                     default -> preset = SkinPreset.generateDefaultPreset();
                 }
 
-                this.originalPreset.setSkin(skin);
+                this.originalPreset.setSkin(skin.saveToConfig());
             }
 
             if(!model.equals(this.skinCustomizationTab.currentModelType.value)) {
@@ -112,12 +112,17 @@ public class PresetEditScreen extends SpruceScreen {
             this.tabManager.setTabArea(screenRect);
         }
 
-        this.isValid = validate();
-        if (!this.isValid) {
-            this.skinSourceTab.errorLabel.setMessage(this.skinSourceTab.currentSourceType.getInvalidInputText());
-        } else {
-            this.skinSourceTab.errorLabel.setMessage(Text.empty());
+        if(skinSourceTab.currentSourceType != SourceType.UNCHANGED) {
+            this.isValid = this.validate();
+            if (!this.isValid) {
+                this.skinSourceTab.errorLabel.setMessage(skinSourceTab.currentSourceType.getInvalidInputText());
+            } else {
+                this.skinSourceTab.errorLabel.setMessage(Text.empty());
+            }
+            this.grid.refreshPositions();
         }
+
+        this.skinSourceTab.textFieldWidget.setVisible(skinSourceTab.currentSourceType != SourceType.UNCHANGED);
     }
 
     private boolean isValidFilePath(String path) {
@@ -172,7 +177,7 @@ public class PresetEditScreen extends SpruceScreen {
     public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
         super.render(graphics, mouseX, mouseY, delta);
 
-        this.exitButton.active = isValid;
+        this.exitButton.active = isValid || this.skinSourceTab.currentSourceType == SourceType.UNCHANGED;
     }
 
     private int getCardWidth() {
@@ -189,29 +194,12 @@ public class PresetEditScreen extends SpruceScreen {
     }
 
     private enum SourceType {
+        UNCHANGED,
         USERNAME,
         UUID,
         URL,
         RESOURCE_LOCATION,
         FILE;
-
-        public static SourceType getFromPreset(SkinPreset preset) {
-            var skin = preset.getSkin();
-            switch (skin.getSerializationId().getPath()) {
-                case "uuid":
-                    return SourceType.UUID;
-                case "username":
-                    return SourceType.USERNAME;
-                case "url":
-                    return SourceType.URL;
-                case "file":
-                    return SourceType.FILE;
-                case "resource":
-                    return SourceType.RESOURCE_LOCATION;
-            }
-            SkinShuffle.LOGGER.error("Unknown serialization id: " + skin.getSerializationId());
-            return null;
-        }
 
         public Text getInvalidInputText() {
             return Text.translatable("skinshuffle.edit.source.invalid_" + name().toLowerCase());
@@ -267,7 +255,7 @@ public class PresetEditScreen extends SpruceScreen {
 
             Positioner positioner = this.grid.getMainPositioner().alignHorizontalCenter().alignVerticalCenter();
 
-            this.currentSourceType = PresetEditScreen.SourceType.getFromPreset(parent.preset);
+            this.currentSourceType = SourceType.UNCHANGED;
 
             this.textFieldWidget = new TextFieldWidget(parent.textRenderer, 0, 0, 256, 20, Text.empty());
             this.textFieldWidget.setMaxLength(2048);
@@ -284,9 +272,6 @@ public class PresetEditScreen extends SpruceScreen {
                 this.grid.refreshPositions();
             });
 
-            this.textFieldWidget.setText(parent.preset.getSkin().getSourceString());
-            this.textFieldWidget.setCursor(0);
-
             if (currentSourceType != null) {
                 gridAdder.add(new CyclingButtonWidget<>(0,
                         0,
@@ -301,13 +286,19 @@ public class PresetEditScreen extends SpruceScreen {
                         sourceTypeCyclingButtonWidget -> Text.of("").copy(),
                         (button, value) -> {
                             this.currentSourceType = value;
-                            parent.isValid = parent.validate();
-                            if (!parent.isValid) {
-                                this.errorLabel.setMessage(currentSourceType.getInvalidInputText());
-                            } else {
-                                errorLabel.setMessage(Text.empty());
+                            this.errorLabel.setMessage(Text.empty());
+
+                            textFieldWidget.setVisible(currentSourceType != SourceType.UNCHANGED);
+
+                            if(currentSourceType != SourceType.UNCHANGED) {
+                                parent.isValid = parent.validate();
+                                if (!parent.isValid) {
+                                    this.errorLabel.setMessage(currentSourceType.getInvalidInputText());
+                                } else {
+                                    errorLabel.setMessage(Text.empty());
+                                }
+                                this.grid.refreshPositions();
                             }
-                            this.grid.refreshPositions();
                         },
                         value -> null,
                         false), positioner.copy());
