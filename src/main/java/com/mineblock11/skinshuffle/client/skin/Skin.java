@@ -32,7 +32,9 @@ public interface Skin {
             UrlSkin.SERIALIZATION_ID, UrlSkin.CODEC,
             ResourceSkin.SERIALIZATION_ID, ResourceSkin.CODEC,
             ConfigSkin.SERIALIZATION_ID, ConfigSkin.CODEC,
-            FileSkin.SERIALIZATION_ID, FileSkin.CODEC
+            FileSkin.SERIALIZATION_ID, FileSkin.CODEC,
+            UsernameSkin.SERIALIZATION_ID, UsernameSkin.CODEC,
+            UUIDSkin.SERIALIZATION_ID, UUIDSkin.CODEC
     );
     Codec<Skin> CODEC = Identifier.CODEC.dispatch("type", Skin::getSerializationId, TYPES::get);
 

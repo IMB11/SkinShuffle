@@ -3,6 +3,7 @@ package com.mineblock11.skinshuffle.client.gui;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
+import com.mineblock11.skinshuffle.client.skin.*;
 import com.mineblock11.skinshuffle.util.ToastHelper;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
 import net.minecraft.client.gui.DrawContext;
@@ -20,6 +21,7 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -61,11 +63,32 @@ public class PresetEditScreen extends SpruceScreen {
         }).build());
 
         this.exitButton = ButtonWidget.builder(ScreenTexts.OK, (button) -> {
-            this.originalPreset.copyFrom(this.preset);
-            try {
-                this.originalPreset.setSkin(this.preset.getSkin().saveToConfig());
-            } catch (Exception ignored) {}
-            SkinPresetManager.savePresets();
+            String skinSource = this.skinSourceTab.textFieldWidget.getText();
+            String model = this.originalPreset.getSkin().getModel(); // TODO: Model type cycling button in customize tab.
+
+            if(!skinSource.equals(this.originalPreset.getSkin().getSourceString())) {
+                Skin skin = null;
+
+                switch (this.skinSourceTab.currentSourceType) {
+                    case URL -> skin = new UrlSkin(skinSource, model);
+                    case FILE -> skin = new FileSkin(Path.of(skinSource), model);
+                    case UUID -> skin = new UUIDSkin(UUID.fromString(skinSource), model);
+                    case USERNAME -> skin = new UsernameSkin(skinSource, model);
+                    case RESOURCE_LOCATION -> skin = new ResourceSkin(new Identifier(skinSource), model);
+                    default -> preset = SkinPreset.generateDefaultPreset();
+                }
+
+                preset.setSkin(skin);
+                this.originalPreset.copyFrom(this.preset);
+            }
+
+            if(!this.originalPreset.equals(this.preset)) {
+                try {
+                    this.originalPreset.setSkin(this.preset.getSkin().saveToConfig());
+                } catch (Exception ignored) {}
+                SkinPresetManager.savePresets();
+            }
+
             this.close();
         }).build();
 
