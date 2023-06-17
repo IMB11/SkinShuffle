@@ -94,7 +94,7 @@ skinshuffle:
       title: "There was a failure with the editor."
       message: "Please check logs for more information."
     customize:
-      title: "Skin Customization"
+      title: "Preset Settings"
       classic: "Classic"
       slim: "Slim"
       model_cycle_prefix: "Model Type"
