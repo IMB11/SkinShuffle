@@ -32,8 +32,9 @@ public class PresetEditScreen extends SpruceScreen {
     private final TabManager tabManager = new TabManager(this::addDrawableChild, this::remove);
     private SkinSourceTab skinSourceTab;
     private SkinCustomizationTab skinCustomizationTab;
-    private boolean isValid = false;
+    private boolean isValid = true;
     private GridWidget grid;
+    private ButtonWidget exitButton;
 
     public PresetEditScreen(Screen parent, SkinPreset preset) {
         super(Text.translatable("skinshuffle.edit.title"));
@@ -58,14 +59,17 @@ public class PresetEditScreen extends SpruceScreen {
         adder.add(ButtonWidget.builder(ScreenTexts.CANCEL, (button) -> {
             this.close();
         }).build());
-        adder.add(ButtonWidget.builder(ScreenTexts.OK, (button) -> {
+
+        this.exitButton = ButtonWidget.builder(ScreenTexts.OK, (button) -> {
             this.originalPreset.copyFrom(this.preset);
             try {
                 this.originalPreset.setSkin(this.preset.getSkin().saveToConfig());
             } catch (Exception ignored) {}
             SkinPresetManager.savePresets();
             this.close();
-        }).build());
+        }).build();
+
+        adder.add(exitButton);
         this.grid.forEachChild((child) -> {
             child.setNavigationOrder(1);
             this.addDrawableChild(child);
@@ -89,6 +93,11 @@ public class PresetEditScreen extends SpruceScreen {
         }
 
         this.isValid = validate();
+        if(!this.isValid) {
+            this.skinSourceTab.errorLabel.setMessage(this.skinSourceTab.currentSourceType.getInvalidInputText());
+        } else {
+            this.skinSourceTab.errorLabel.setMessage(Text.empty());
+        }
     }
 
     private final UrlValidator urlValidator = new UrlValidator(new String[] { "http", "https" });
@@ -145,11 +154,7 @@ public class PresetEditScreen extends SpruceScreen {
     public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
         super.render(graphics, mouseX, mouseY, delta);
 
-        if(!isValid) {
-            this.skinSourceTab.errorLabel.setMessage(this.skinSourceTab.currentSourceType.getInvalidInputText());
-        } else {
-            this.skinSourceTab.errorLabel.setMessage(Text.empty());
-        }
+        this.exitButton.active = isValid;
     }
 
     private int getCardWidth() {
@@ -217,11 +222,21 @@ public class PresetEditScreen extends SpruceScreen {
 
             this.textFieldWidget = new TextFieldWidget(parent.textRenderer, 0, 0, 256, 20, Text.empty());
             this.textFieldWidget.setMaxLength(2048);
-            this.textFieldWidget.setChangedListener(str -> parent.isValid = parent.validate());
-            this.textFieldWidget.setText(parent.preset.getSkin().getSourceString());
-            this.textFieldWidget.setCursor(0);
 
             this.errorLabel = new MultilineTextWidget(0, 0, Text.empty(), parent.textRenderer);
+
+            this.textFieldWidget.setChangedListener(str -> {
+                parent.isValid = parent.validate();
+                if(!parent.isValid) {
+                    this.errorLabel.setMessage(currentSourceType.getInvalidInputText());
+                } else {
+                    errorLabel.setMessage(Text.empty());
+                }
+                this.grid.refreshPositions();
+            });
+
+            this.textFieldWidget.setText(parent.preset.getSkin().getSourceString());
+            this.textFieldWidget.setCursor(0);
 
             if(currentSourceType != null) {
                     gridAdder.add(new CyclingButtonWidget<>(0,
@@ -238,6 +253,12 @@ public class PresetEditScreen extends SpruceScreen {
                             (button, value) -> {
                                 this.currentSourceType = value;
                                 parent.isValid = parent.validate();
+                                if(!parent.isValid) {
+                                    this.errorLabel.setMessage(currentSourceType.getInvalidInputText());
+                                } else {
+                                    errorLabel.setMessage(Text.empty());
+                                }
+                                this.grid.refreshPositions();
                             },
                             value -> null,
                             false), positioner.copy());

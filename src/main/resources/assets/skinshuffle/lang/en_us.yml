@@ -98,25 +98,32 @@ skinshuffle:
       invalid_username: |-
         §4§nInvalid Username§r
         
-        Usernames must consist of only alphanumeric characters, underscores and must be between 3-16 characters long.
+        Usernames must only contain a-Z 0-9.
+        Usernames may contain underscores.
+        Usernames must be between 3-16 characters long.
       file: "File"
       invalid_file: |-
         §4§nInvalid File§r
         
-        Files must exist and must be in the §l.png§r format.
+        Files must exist and must be in 
+        the §l.png§r format.
       url: "URL"
       invalid_url: |-
         §4§nInvalid URL§r
         
-        URL is invalid. Must be either a valid §lhttp§r or §lhttps§r URL.
+        URL is invalid. Must be either a 
+        valid §lhttp§r or §lhttps§r URL.
       uuid: "UUID"
-      invalid_uuid:
+      invalid_uuid: |-
         §4§nInvalid UUID§r
+        
+        UUIDs must be in the following format:
+        §lxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
       resource_location: "Resource Location"
-      invalid_resource_location:
+      invalid_resource_location: |-
         §4§nInvalid Resource Location§r
       
-        Resource location must be a valid texture file that is loaded by the game.
-
+        Resource location must be a valid
+        texture file that is loaded by the game.
       cycle_prefix: "Source"
       title: "Skin Source"
