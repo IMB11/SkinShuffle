@@ -1,51 +1,44 @@
 package com.mineblock11.skinshuffle.client.gui;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
-import com.mineblock11.skinshuffle.client.gui.widgets.SkinPresetWidget;
+import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
-import com.mineblock11.skinshuffle.client.skin.*;
 import com.mineblock11.skinshuffle.util.ToastHelper;
-import dev.isxander.yacl3.gui.controllers.cycling.CyclingControllerElement;
-import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
-import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
-import dev.lambdaurora.spruceui.widget.SpruceLabelWidget;
-import dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget;
-import dev.lambdaurora.spruceui.widget.text.SpruceTextAreaWidget;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.ScreenRect;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.tab.GridScreenTab;
 import net.minecraft.client.gui.tab.Tab;
 import net.minecraft.client.gui.tab.TabManager;
-import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.*;
-import net.minecraft.client.option.SimpleOption;
 import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.text.Texts;
+import net.minecraft.util.Identifier;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 public class PresetEditScreen extends SpruceScreen {
     private SkinPreset preset;
+    private SkinPreset originalPreset;
     private final Screen parent;
-    private SkinPresetWidget presetWidget;
-    public SpruceTextAreaWidget textFieldWidget;
     private TabNavigationWidget tabNavigation;
     private final TabManager tabManager = new TabManager(this::addDrawableChild, this::remove);
+    private SkinSourceTab skinSourceTab;
+    private SkinCustomizationTab skinCustomizationTab;
+    private boolean isValid = false;
+    private GridWidget grid;
 
     public PresetEditScreen(Screen parent, SkinPreset preset) {
         super(Text.translatable("skinshuffle.edit.title"));
-        this.preset = preset;
+        this.preset = preset.copy();
+        this.originalPreset = preset;
         this.parent = parent;
     }
 
@@ -53,58 +46,109 @@ public class PresetEditScreen extends SpruceScreen {
     protected void init() {
         super.init();
 
+        this.skinSourceTab = new SkinSourceTab(this);
+        this.skinCustomizationTab = new SkinCustomizationTab(this);
         this.tabNavigation = TabNavigationWidget.builder(this.tabManager, this.width)
-                .tabs(new SkinSourceTab(this), new SkinCustomizationTab(this)).build();
+                .tabs(skinSourceTab, skinCustomizationTab).build();
         this.addDrawableChild(this.tabNavigation);
         this.tabNavigation.selectTab(0, false);
 
-        this.addDrawableChild(new SpruceButtonWidget(Position.of(this.width / 2 - 128 - 5, this.height - 23), 128, 20, ScreenTexts.CANCEL, button -> {
+        this.grid = new GridWidget().setColumnSpacing(10);
+        GridWidget.Adder adder = this.grid.createAdder(2);
+        adder.add(ButtonWidget.builder(ScreenTexts.CANCEL, (button) -> {
             this.close();
-        }));
-
-        this.addDrawableChild(new SpruceButtonWidget(Position.of(this.width / 2 + 5, this.height - 23), 128, 20, Text.translatable("skinshuffle.carousel.save_button"), button -> {
+        }).build());
+        adder.add(ButtonWidget.builder(ScreenTexts.OK, (button) -> {
+            this.originalPreset.copyFrom(this.preset);
+            try {
+                this.originalPreset.setSkin(this.preset.getSkin().saveToConfig());
+            } catch (Exception ignored) {}
+            SkinPresetManager.savePresets();
             this.close();
-        }));
+        }).build());
+        this.grid.forEachChild((child) -> {
+            child.setNavigationOrder(1);
+            this.addDrawableChild(child);
+        });
 
-        this.presetWidget = new SkinPresetWidget(null, this.width / 4, this.height - 45, this.preset, false);
-        this.presetWidget.overridePosition(Position.of(5, 5));
-
-        this.textFieldWidget = new SpruceTextAreaWidget(Position.of(this.width / 4 + 10, 68), this.width - (this.width / 4 + 15),
-                this.height - 68 - 30 - 30, Text.empty());
-        this.textFieldWidget.setText(this.preset.getSkin().getSourceString());
-        this.addDrawableChild(this.textFieldWidget);
-
-        this.addDrawableChild(this.presetWidget);
         this.initTabNavigation();
     }
 
     @Override
     protected void initTabNavigation() {
-        if (this.tabNavigation != null) {
+        if (this.tabNavigation != null && this.grid != null) {
             this.tabNavigation.setWidth(this.width);
             this.tabNavigation.init();
 
+            this.grid.refreshPositions();
+            SimplePositioningWidget.setPos(this.grid, 0, this.height - 36, this.width, 36);
+
             int i = this.tabNavigation.getNavigationFocus().getBottom();
-            ScreenRect screenRect = new ScreenRect(0, i, this.width, i);
+            ScreenRect screenRect = new ScreenRect(0, i, this.width, this.grid.getY() - i);
             this.tabManager.setTabArea(screenRect);
+        }
+
+        this.isValid = validate();
+    }
+
+    private final UrlValidator urlValidator = new UrlValidator(new String[] { "http", "https" });
+
+    private boolean isValidFilePath(String path) {
+        File f = new File(path);
+        return f.exists() && FilenameUtils.getExtension(path).equals(".png");
+    }
+
+    private boolean isValidUUID(String uuid) {
+        try{
+            UUID.fromString(uuid);
+            return true;
+        } catch (IllegalArgumentException exception){
+            return false;
         }
     }
 
-    public void validate() {
+    private boolean isValidUsername(String username) {
+        return username.matches("([a-zA-Z0-9]|_)*") && username.length() >= 3 && username.length() <= 16;
+    }
 
+    public boolean validate() {
+        if(this.skinCustomizationTab != null && this.skinSourceTab != null) {
+            SkinSourceTab.SourceType type = this.skinSourceTab.currentSourceType;
+            TextFieldWidget widget = this.skinSourceTab.textFieldWidget;
+            // URL
+            switch (type) {
+                case URL -> {
+                    return urlValidator.isValid(widget.getText());
+                }
+                case FILE -> {
+                    return isValidFilePath(widget.getText());
+                }
+                case RESOURCE_LOCATION -> {
+                    if(Identifier.isValid(widget.getText())) {
+                        return client.getResourceManager().getResource(new Identifier(widget.getText())).isPresent();
+                    } else return false;
+                }
+                case USERNAME -> {
+                    return isValidUsername(widget.getText());
+                }
+                case UUID -> {
+                    return isValidUUID(widget.getText());
+                }
+                default -> {
+                    return false;
+                }
+            }
+        } else return false;
     }
 
     @Override
     public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
         super.render(graphics, mouseX, mouseY, delta);
 
-        this.presetWidget.overrideDimensions(getCardWidth(), getCardHeight());
-        this.presetWidget.overridePosition(Position.of(5, (this.height / 2) - (getCardHeight() / 2)));
-
-        if (this.tabManager.getCurrentTab() instanceof SkinSourceTab sourceTab) {
-            this.textFieldWidget.setVisible(true);
+        if(!isValid) {
+            this.skinSourceTab.errorLabel.setMessage(this.skinSourceTab.currentSourceType.getInvalidInputText());
         } else {
-            this.textFieldWidget.setVisible(false);
+            this.skinSourceTab.errorLabel.setMessage(Text.empty());
         }
     }
 
@@ -123,14 +167,15 @@ public class PresetEditScreen extends SpruceScreen {
 
     private static class SkinSourceTab extends GridScreenTab {
         public final @NotNull PresetEditScreen parent;
-
+        private final TextFieldWidget textFieldWidget;
+        private final MultilineTextWidget errorLabel;
+        public SourceType currentSourceType;
 
         private enum SourceType {
             USERNAME,
             UUID,
             URL,
             RESOURCE_LOCATION,
-            DEFAULT_SKIN,
             FILE;
 
             public static SourceType getFromPreset(SkinPreset preset) {
@@ -151,6 +196,10 @@ public class PresetEditScreen extends SpruceScreen {
                 return null;
             }
 
+            public Text getInvalidInputText() {
+                return Text.translatable("skinshuffle.edit.source.invalid_" + name().toLowerCase());
+            }
+
             public Text getTranslation() {
                 return Text.translatable("skinshuffle.edit.source." + name().toLowerCase());
             }
@@ -160,44 +209,47 @@ public class PresetEditScreen extends SpruceScreen {
             super(Text.translatable("skinshuffle.edit.source.title"));
             this.parent = parent;
 
-            this.grid.getMainPositioner().marginLeft(parent.width / 4 + 10);
-//            this.grid.setY((parent.height / 2) - (parent.getCardHeight() / 2));
             var gridAdder = this.grid.createAdder(1);
 
             Positioner positioner = this.grid.getMainPositioner().alignHorizontalCenter().alignVerticalCenter();
 
-            SourceType defaultSourceType = SourceType.getFromPreset(parent.preset);
+            this.currentSourceType = SourceType.getFromPreset(parent.preset);
 
-            if(defaultSourceType != null) {
+            this.textFieldWidget = new TextFieldWidget(parent.textRenderer, 0, 0, 256, 20, Text.empty());
+            this.textFieldWidget.setMaxLength(2048);
+            this.textFieldWidget.setChangedListener(str -> parent.isValid = parent.validate());
+            this.textFieldWidget.setText(parent.preset.getSkin().getSourceString());
+            this.textFieldWidget.setCursor(0);
+
+            this.errorLabel = new MultilineTextWidget(0, 0, Text.empty(), parent.textRenderer);
+
+            if(currentSourceType != null) {
                     gridAdder.add(new CyclingButtonWidget<>(0,
                             0,
                             192,
                             20,
-                            Text.translatable("skinshuffle.edit.source.cycle_prefix").append(": ").append(defaultSourceType.getTranslation()),
+                            Text.translatable("skinshuffle.edit.source.cycle_prefix").append(": ").append(currentSourceType.getTranslation()),
                             Text.translatable("skinshuffle.edit.source.cycle_prefix"),
                             0,
-                            SourceType.URL,
+                            currentSourceType,
                             CyclingButtonWidget.Values.of(List.of(SourceType.values())),
                             SourceType::getTranslation,
                             sourceTypeCyclingButtonWidget -> Text.of("").copy(),
                             (button, value) -> {
-
+                                this.currentSourceType = value;
+                                parent.isValid = parent.validate();
                             },
                             value -> null,
-                            false), positioner.copy().marginTop(18));
+                            false), positioner.copy());
             } else {
                 ToastHelper.showErrorEdit();
                 parent.close();
                 return;
             }
-        }
 
-        public int getContainerWidth() {
-            return parent.width - (parent.width / 4) - 10;
-        }
-
-        public int getContainerHeight() {
-            return parent.height - (parent.height / 2);
+            gridAdder.add(textFieldWidget, positioner.marginTop(10));
+            gridAdder.add(errorLabel, positioner.marginTop(10));
+//            gridAdder.add(new SkinPresetWidget(null, 256, 256, parent.preset, false), positioner);
         }
     }
 

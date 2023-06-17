@@ -47,6 +47,7 @@ dependencies {
     include modImplementation("dev.isxander.yacl:yet-another-config-lib-fabric:${project.yacl_version}")
 
     include implementation("org.jsoup:jsoup:${project.jsoup_version}")
+    include implementation("commons-validator:commons-validator:1.7")
 }
 
 processResources {

@@ -1,4 +1,6 @@
 accessWidener   v1  named
+
+# Minecraft
 accessible class net/minecraft/client/texture/ResourceTexture$TextureData
 
 accessible class net/minecraft/client/toast/ToastManager$Entry

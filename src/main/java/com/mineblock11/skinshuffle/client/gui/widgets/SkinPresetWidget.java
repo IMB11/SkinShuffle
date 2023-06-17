@@ -33,17 +33,20 @@ import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
 import dev.lambdaurora.spruceui.widget.SpruceWidget;
 import dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.ScreenRect;
 import net.minecraft.client.gui.screen.ConfirmScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
-public class SkinPresetWidget extends SpruceContainerWidget {
+public class SkinPresetWidget extends SpruceContainerWidget implements Widget {
     private final SkinPreset skinPreset;
     private final SkinCarouselScreen parent;
     private SpruceButtonWidget editButton;
@@ -138,6 +141,16 @@ public class SkinPresetWidget extends SpruceContainerWidget {
     }
 
     @Override
+    public void setX(int x) {
+        this.position = Position.of(x, position.getY());
+    }
+
+    @Override
+    public void setY(int y) {
+        this.position = Position.of(position.getX(), y);
+    }
+
+    @Override
     public int getX() {
         return this.position.getX();
     }
@@ -146,6 +159,9 @@ public class SkinPresetWidget extends SpruceContainerWidget {
     public int getY() {
         return this.position.getY();
     }
+
+    @Override
+    public void forEachChild(Consumer<ClickableWidget> consumer) {}
 
     @Override
     protected void renderBackground(DrawContext graphics, int mouseX, int mouseY, float delta) {
@@ -204,5 +220,10 @@ public class SkinPresetWidget extends SpruceContainerWidget {
 
     public SkinPreset getPreset() {
         return this.skinPreset;
+    }
+
+    @Override
+    public ScreenRect getNavigationFocus() {
+        return super.getNavigationFocus();
     }
 }
