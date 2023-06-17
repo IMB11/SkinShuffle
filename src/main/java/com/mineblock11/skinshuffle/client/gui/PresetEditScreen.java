@@ -6,6 +6,7 @@ import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
+import com.mineblock11.skinshuffle.client.gui.widgets.TexturedIconButtonWidget;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mineblock11.skinshuffle.client.skin.*;
 import com.mineblock11.skinshuffle.util.ToastHelper;
@@ -85,7 +86,8 @@ public class PresetEditScreen extends SpruceScreen {
             // We try to save the skin to config, but if it fails, it's safe to ignore.
             try {
                 this.originalPreset.setSkin(this.preset.getSkin().saveToConfig());
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
 
             SkinPresetManager.savePresets();
             parent.hasEditedPreset = true;
@@ -167,7 +169,7 @@ public class PresetEditScreen extends SpruceScreen {
     }
 
     private void updateValidity() {
-        if(skinSourceTab.currentSourceType != SourceType.UNCHANGED) {
+        if (skinSourceTab.currentSourceType != SourceType.UNCHANGED) {
             this.isValid = this.validate();
             if (!this.isValid) {
                 this.skinSourceTab.errorLabel.setMessage(skinSourceTab.currentSourceType.getInvalidInputText());
@@ -178,6 +180,7 @@ public class PresetEditScreen extends SpruceScreen {
         }
 
         this.skinSourceTab.textFieldWidget.setVisible(skinSourceTab.currentSourceType != SourceType.UNCHANGED);
+        this.skinSourceTab.loadButton.visible = skinSourceTab.currentSourceType != SourceType.UNCHANGED;
         this.skinSourceTab.loadButton.active = skinSourceTab.currentSourceType != SourceType.UNCHANGED && isValid;
     }
 
@@ -202,7 +205,7 @@ public class PresetEditScreen extends SpruceScreen {
 
             SkinShuffleConfig.SkinRenderStyle renderStyle = SkinShuffleConfig.get().carouselSkinRenderStyle;
 
-            if(renderStyle.equals(SkinShuffleConfig.SkinRenderStyle.ROTATION)) {
+            if (renderStyle.equals(SkinShuffleConfig.SkinRenderStyle.ROTATION)) {
                 followX = 0;
                 followY = 0;
                 rotation = getEntityRotation() * SkinShuffleConfig.get().rotationMultiplier;
@@ -266,7 +269,7 @@ public class PresetEditScreen extends SpruceScreen {
 
             this.currentSourceType = SourceType.UNCHANGED;
 
-            this.textFieldWidget = new TextFieldWidget(textRenderer, 0, 0, 256, 20, Text.empty());
+            this.textFieldWidget = new TextFieldWidget(textRenderer, 0, 0, 230, 20, Text.empty());
             this.textFieldWidget.setMaxLength(2048);
 
             this.errorLabel = new MultilineTextWidget(0, 0, Text.empty(), textRenderer) {
@@ -277,11 +280,16 @@ public class PresetEditScreen extends SpruceScreen {
                 }
             };
 
-            loadButton = ButtonWidget.builder(Text.translatable("skinshuffle.edit.source.load_skin"), button -> {
-                if (currentSourceType != SourceType.UNCHANGED) {
-                    loadSkin();
-                }
-            }).dimensions(0, 0, 192, 20).build();
+            loadButton = new TexturedIconButtonWidget(
+                    0, 0, 0, 2,
+                    16, 16, 16, 16, 32,
+                    SkinShuffle.id("textures/gui/reload-button-icon.png"),
+                    button -> {
+                        if (currentSourceType != SourceType.UNCHANGED) {
+                            loadSkin();
+                        }
+                    }
+            );
 
             this.textFieldWidget.setChangedListener(str -> updateValidity());
 
@@ -315,9 +323,14 @@ public class PresetEditScreen extends SpruceScreen {
             }
 
             gridAdder.add(skinModelButton);
-            gridAdder.add(textFieldWidget, grid.copyPositioner().marginTop(6).marginBottom(6));
+
+            var subGrid = new GridWidget();
+            var subGridAdder = subGrid.setColumnSpacing(4).createAdder(2);
+            gridAdder.add(subGrid, grid.copyPositioner().marginTop(6).marginBottom(6));
+            subGridAdder.add(textFieldWidget);
+            subGridAdder.add(loadButton);
+
             gridAdder.add(errorLabel, grid.copyPositioner().alignLeft());
-            gridAdder.add(loadButton, grid.copyPositioner().marginTop(10).alignBottom());
         }
 
         private void loadSkin() {
@@ -345,7 +358,7 @@ public class PresetEditScreen extends SpruceScreen {
             super(Text.translatable("skinshuffle.edit.customize.title"));
 
             this.grid.getMainPositioner().marginLeft(parent.width / 3).alignHorizontalCenter();
-            var gridAdder = this.grid.createAdder(1);
+            var gridAdder = this.grid.setRowSpacing(8).createAdder(1);
 
             var presetNameField = new TextFieldWidget(textRenderer, 0, 0, 256, 20, Text.empty());
             presetNameField.setText(preset.getName());
