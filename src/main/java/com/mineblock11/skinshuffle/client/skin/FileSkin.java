@@ -43,7 +43,7 @@ public class FileSkin extends FileBackedSkin {
     ).apply(instance, FileSkin::new));
 
     private final Path file;
-    private final String model;
+    private String model;
 
     public FileSkin(Path file, String model) {
         this.file = file;
@@ -53,6 +53,11 @@ public class FileSkin extends FileBackedSkin {
     @Override
     public String getModel() {
         return model;
+    }
+
+    @Override
+    public void setModel(String value) {
+        this.model = value;
     }
 
     @Override

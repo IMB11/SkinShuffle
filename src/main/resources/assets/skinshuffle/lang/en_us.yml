@@ -93,6 +93,12 @@ skinshuffle:
     fail:
       title: "There was a failure opening the editor."
       message: "Please check logs for more information."
+    customize:
+      title: "Skin Customization"
+      classic: "Classic"
+      slim: "Slim"
+      model_cycle_prefix: "Model Type"
+      preset_name: "Preset Name"
     source:
       username: "Username"
       invalid_username: |-

@@ -36,7 +36,7 @@ public class ConfigSkin extends FileBackedSkin {
     ).apply(instance, ConfigSkin::new));
 
     private final String skinName;
-    private final String model;
+    private String model;
 
     public ConfigSkin(String skinName, String model) {
         this.skinName = skinName;
@@ -46,6 +46,11 @@ public class ConfigSkin extends FileBackedSkin {
     @Override
     public String getModel() {
         return model;
+    }
+
+    @Override
+    public void setModel(String value) {
+        this.model = value;
     }
 
     @Override

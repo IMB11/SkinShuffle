@@ -42,7 +42,7 @@ public class UrlSkin extends BackedSkin {
     ).apply(instance, UrlSkin::new));
 
     protected String url;
-    private final String model;
+    private String model;
 
     public UrlSkin(String url, String model) {
         this.url = url;
@@ -56,6 +56,11 @@ public class UrlSkin extends BackedSkin {
     @Override
     public String getModel() {
         return model;
+    }
+
+    @Override
+    public void setModel(String value) {
+        this.model = value;
     }
 
     @Override

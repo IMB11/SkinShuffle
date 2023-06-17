@@ -32,13 +32,21 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.Objects;
 
-public record ResourceSkin(Identifier texture, String model) implements Skin {
+public final class ResourceSkin implements Skin {
     public static final Identifier SERIALIZATION_ID = SkinShuffle.id("resource");
     public static final Codec<ResourceSkin> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Identifier.CODEC.fieldOf("texture").forGetter(ResourceSkin::getTexture),
             Codec.STRING.fieldOf("model").forGetter(ResourceSkin::getModel)
     ).apply(instance, ResourceSkin::new));
+    private final Identifier texture;
+    private String model;
+
+    public ResourceSkin(Identifier texture, String model) {
+        this.texture = texture;
+        this.model = model;
+    }
 
     @Override
     public @Nullable Identifier getTexture() {
@@ -53,6 +61,11 @@ public record ResourceSkin(Identifier texture, String model) implements Skin {
     @Override
     public String getModel() {
         return model;
+    }
+
+    @Override
+    public void setModel(String value) {
+        this.model = value;
     }
 
     @Override
@@ -73,12 +86,42 @@ public record ResourceSkin(Identifier texture, String model) implements Skin {
         var resourceManager = MinecraftClient.getInstance().getResourceManager();
 
         try (ResourceTexture.TextureData data = ResourceTexture.TextureData.load(resourceManager, getTexture())) {
-                var nativeImage = data.getImage();
-                nativeImage.writeTo(configSkin.getFile());
+            var nativeImage = data.getImage();
+            nativeImage.writeTo(configSkin.getFile());
         } catch (IOException e) {
             throw new RuntimeException("Failed to save ResourceSkin to config.", e);
         }
 
         return configSkin;
     }
+
+    public Identifier texture() {
+        return texture;
+    }
+
+    public String model() {
+        return model;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (ResourceSkin) obj;
+        return Objects.equals(this.texture, that.texture) &&
+                Objects.equals(this.model, that.model);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(texture, model);
+    }
+
+    @Override
+    public String toString() {
+        return "ResourceSkin[" +
+                "texture=" + texture + ", " +
+                "model=" + model + ']';
+    }
+
 }

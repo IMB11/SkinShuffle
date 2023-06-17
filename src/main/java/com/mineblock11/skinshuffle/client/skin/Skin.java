@@ -55,4 +55,6 @@ public interface Skin {
      * @return A new reference to this skin.
      */
     ConfigSkin saveToConfig();
+
+    void setModel(String value);
 }

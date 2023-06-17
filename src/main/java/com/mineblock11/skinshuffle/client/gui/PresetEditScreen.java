@@ -10,7 +10,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.ScreenRect;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tab.GridScreenTab;
-import net.minecraft.client.gui.tab.Tab;
 import net.minecraft.client.gui.tab.TabManager;
 import net.minecraft.client.gui.widget.*;
 import net.minecraft.screen.ScreenTexts;
@@ -22,16 +21,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 public class PresetEditScreen extends SpruceScreen {
-    private SkinPreset preset;
-    private SkinPreset originalPreset;
     private final Screen parent;
-    private TabNavigationWidget tabNavigation;
     private final TabManager tabManager = new TabManager(this::addDrawableChild, this::remove);
+    private final UrlValidator urlValidator = new UrlValidator(new String[]{"http", "https"});
+    private final SkinPreset originalPreset;
+    private SkinPreset preset;
+    private TabNavigationWidget tabNavigation;
     private SkinSourceTab skinSourceTab;
     private SkinCustomizationTab skinCustomizationTab;
     private boolean isValid = true;
@@ -66,7 +66,7 @@ public class PresetEditScreen extends SpruceScreen {
             String skinSource = this.skinSourceTab.textFieldWidget.getText();
             String model = this.originalPreset.getSkin().getModel(); // TODO: Model type cycling button in customize tab.
 
-            if(!skinSource.equals(this.originalPreset.getSkin().getSourceString())) {
+            if (!skinSource.equals(this.originalPreset.getSkin().getSourceString())) {
                 Skin skin = null;
 
                 switch (this.skinSourceTab.currentSourceType) {
@@ -78,17 +78,14 @@ public class PresetEditScreen extends SpruceScreen {
                     default -> preset = SkinPreset.generateDefaultPreset();
                 }
 
-                preset.setSkin(skin);
-                this.originalPreset.copyFrom(this.preset);
+                this.originalPreset.setSkin(skin);
             }
 
-            if(!this.originalPreset.equals(this.preset)) {
-                try {
-                    this.originalPreset.setSkin(this.preset.getSkin().saveToConfig());
-                } catch (Exception ignored) {}
-                SkinPresetManager.savePresets();
+            if(!model.equals(this.skinCustomizationTab.currentModelType.value)) {
+                this.originalPreset.getSkin().setModel(this.skinCustomizationTab.currentModelType.value);
             }
 
+            SkinPresetManager.savePresets();
             this.close();
         }).build();
 
@@ -116,14 +113,12 @@ public class PresetEditScreen extends SpruceScreen {
         }
 
         this.isValid = validate();
-        if(!this.isValid) {
+        if (!this.isValid) {
             this.skinSourceTab.errorLabel.setMessage(this.skinSourceTab.currentSourceType.getInvalidInputText());
         } else {
             this.skinSourceTab.errorLabel.setMessage(Text.empty());
         }
     }
-
-    private final UrlValidator urlValidator = new UrlValidator(new String[] { "http", "https" });
 
     private boolean isValidFilePath(String path) {
         File f = new File(path);
@@ -131,10 +126,10 @@ public class PresetEditScreen extends SpruceScreen {
     }
 
     private boolean isValidUUID(String uuid) {
-        try{
+        try {
             UUID.fromString(uuid);
             return true;
-        } catch (IllegalArgumentException exception){
+        } catch (IllegalArgumentException exception) {
             return false;
         }
     }
@@ -144,8 +139,8 @@ public class PresetEditScreen extends SpruceScreen {
     }
 
     public boolean validate() {
-        if(this.skinCustomizationTab != null && this.skinSourceTab != null) {
-            SkinSourceTab.SourceType type = this.skinSourceTab.currentSourceType;
+        if (this.skinCustomizationTab != null && this.skinSourceTab != null) {
+            SourceType type = this.skinSourceTab.currentSourceType;
             TextFieldWidget widget = this.skinSourceTab.textFieldWidget;
             // URL
             switch (type) {
@@ -156,7 +151,7 @@ public class PresetEditScreen extends SpruceScreen {
                     return isValidFilePath(widget.getText());
                 }
                 case RESOURCE_LOCATION -> {
-                    if(Identifier.isValid(widget.getText())) {
+                    if (Identifier.isValid(widget.getText())) {
                         return client.getResourceManager().getResource(new Identifier(widget.getText())).isPresent();
                     } else return false;
                 }
@@ -193,45 +188,76 @@ public class PresetEditScreen extends SpruceScreen {
         this.client.setScreen(parent);
     }
 
+    private enum SourceType {
+        USERNAME,
+        UUID,
+        URL,
+        RESOURCE_LOCATION,
+        FILE;
+
+        public static SourceType getFromPreset(SkinPreset preset) {
+            var skin = preset.getSkin();
+            switch (skin.getSerializationId().getPath()) {
+                case "uuid":
+                    return SourceType.UUID;
+                case "username":
+                    return SourceType.USERNAME;
+                case "url":
+                    return SourceType.URL;
+                case "file":
+                    return SourceType.FILE;
+                case "resource":
+                    return SourceType.RESOURCE_LOCATION;
+            }
+            SkinShuffle.LOGGER.error("Unknown serialization id: " + skin.getSerializationId());
+            return null;
+        }
+
+        public Text getInvalidInputText() {
+            return Text.translatable("skinshuffle.edit.source.invalid_" + name().toLowerCase());
+        }
+
+        public Text getTranslation() {
+            return Text.translatable("skinshuffle.edit.source." + name().toLowerCase());
+        }
+    }
+
+    private enum ModelType {
+        CLASSIC("default"),
+        SLIM("slim");
+
+
+        private final String value;
+
+        ModelType(String value) {
+            this.value = value;
+        }
+
+        public static ModelType from(Skin skin) {
+            switch (skin.getModel()) {
+                case "slim" -> {
+                    return ModelType.SLIM;
+                }
+                default -> {
+                    return ModelType.CLASSIC;
+                }
+            }
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public Text getTranslation() {
+            return Text.translatable("skinshuffle.edit.customize." + name().toLowerCase());
+        }
+    }
+
     private static class SkinSourceTab extends GridScreenTab {
         public final @NotNull PresetEditScreen parent;
         private final TextFieldWidget textFieldWidget;
         private final MultilineTextWidget errorLabel;
-        public SourceType currentSourceType;
-
-        private enum SourceType {
-            USERNAME,
-            UUID,
-            URL,
-            RESOURCE_LOCATION,
-            FILE;
-
-            public static SourceType getFromPreset(SkinPreset preset) {
-                var skin = preset.getSkin();
-                switch (skin.getSerializationId().getPath()) {
-                    case "uuid":
-                        return SourceType.UUID;
-                    case "username":
-                        return SourceType.USERNAME;
-                    case "url":
-                        return SourceType.URL;
-                    case "file":
-                        return SourceType.FILE;
-                    case "resource":
-                        return SourceType.RESOURCE_LOCATION;
-                }
-                SkinShuffle.LOGGER.error("Unknown serialization id: " + skin.getSerializationId());
-                return null;
-            }
-
-            public Text getInvalidInputText() {
-                return Text.translatable("skinshuffle.edit.source.invalid_" + name().toLowerCase());
-            }
-
-            public Text getTranslation() {
-                return Text.translatable("skinshuffle.edit.source." + name().toLowerCase());
-            }
-        }
+        public PresetEditScreen.SourceType currentSourceType;
 
         private SkinSourceTab(@NotNull PresetEditScreen parent) {
             super(Text.translatable("skinshuffle.edit.source.title"));
@@ -241,7 +267,7 @@ public class PresetEditScreen extends SpruceScreen {
 
             Positioner positioner = this.grid.getMainPositioner().alignHorizontalCenter().alignVerticalCenter();
 
-            this.currentSourceType = SourceType.getFromPreset(parent.preset);
+            this.currentSourceType = PresetEditScreen.SourceType.getFromPreset(parent.preset);
 
             this.textFieldWidget = new TextFieldWidget(parent.textRenderer, 0, 0, 256, 20, Text.empty());
             this.textFieldWidget.setMaxLength(2048);
@@ -250,7 +276,7 @@ public class PresetEditScreen extends SpruceScreen {
 
             this.textFieldWidget.setChangedListener(str -> {
                 parent.isValid = parent.validate();
-                if(!parent.isValid) {
+                if (!parent.isValid) {
                     this.errorLabel.setMessage(currentSourceType.getInvalidInputText());
                 } else {
                     errorLabel.setMessage(Text.empty());
@@ -261,30 +287,30 @@ public class PresetEditScreen extends SpruceScreen {
             this.textFieldWidget.setText(parent.preset.getSkin().getSourceString());
             this.textFieldWidget.setCursor(0);
 
-            if(currentSourceType != null) {
-                    gridAdder.add(new CyclingButtonWidget<>(0,
-                            0,
-                            192,
-                            20,
-                            Text.translatable("skinshuffle.edit.source.cycle_prefix").append(": ").append(currentSourceType.getTranslation()),
-                            Text.translatable("skinshuffle.edit.source.cycle_prefix"),
-                            0,
-                            currentSourceType,
-                            CyclingButtonWidget.Values.of(List.of(SourceType.values())),
-                            SourceType::getTranslation,
-                            sourceTypeCyclingButtonWidget -> Text.of("").copy(),
-                            (button, value) -> {
-                                this.currentSourceType = value;
-                                parent.isValid = parent.validate();
-                                if(!parent.isValid) {
-                                    this.errorLabel.setMessage(currentSourceType.getInvalidInputText());
-                                } else {
-                                    errorLabel.setMessage(Text.empty());
-                                }
-                                this.grid.refreshPositions();
-                            },
-                            value -> null,
-                            false), positioner.copy());
+            if (currentSourceType != null) {
+                gridAdder.add(new CyclingButtonWidget<>(0,
+                        0,
+                        192,
+                        20,
+                        Text.translatable("skinshuffle.edit.source.cycle_prefix").append(": ").append(currentSourceType.getTranslation()),
+                        Text.translatable("skinshuffle.edit.source.cycle_prefix"),
+                        Arrays.stream(SourceType.values()).toList().indexOf(this.currentSourceType),
+                        currentSourceType,
+                        CyclingButtonWidget.Values.of(List.of(PresetEditScreen.SourceType.values())),
+                        PresetEditScreen.SourceType::getTranslation,
+                        sourceTypeCyclingButtonWidget -> Text.of("").copy(),
+                        (button, value) -> {
+                            this.currentSourceType = value;
+                            parent.isValid = parent.validate();
+                            if (!parent.isValid) {
+                                this.errorLabel.setMessage(currentSourceType.getInvalidInputText());
+                            } else {
+                                errorLabel.setMessage(Text.empty());
+                            }
+                            this.grid.refreshPositions();
+                        },
+                        value -> null,
+                        false), positioner.copy());
             } else {
                 ToastHelper.showErrorEdit();
                 parent.close();
@@ -297,26 +323,43 @@ public class PresetEditScreen extends SpruceScreen {
         }
     }
 
-    private static class SkinCustomizationTab implements Tab {
-        public final PresetEditScreen parent;
+    private static class SkinCustomizationTab extends GridScreenTab {
 
-        private SkinCustomizationTab(PresetEditScreen parent) {
+        private final PresetEditScreen parent;
+        private final TextFieldWidget presetNameField;
+        private ModelType currentModelType;
+
+        public SkinCustomizationTab(@NotNull PresetEditScreen parent) {
+            super(Text.translatable("skinshuffle.edit.customize.title"));
             this.parent = parent;
-        }
 
-        @Override
-        public Text getTitle() {
-            return Text.of("Skin Customization");
-        }
+            this.currentModelType = ModelType.from(parent.preset.getSkin());
 
-        @Override
-        public void forEachChild(Consumer<ClickableWidget> consumer) {
+            var gridAdder = this.grid.createAdder(1);
+            Positioner positioner = this.grid.getMainPositioner().alignHorizontalCenter().alignVerticalCenter();
 
-        }
+            this.presetNameField = new TextFieldWidget(parent.textRenderer, 0, 0, 256, 20, Text.empty());
+            this.presetNameField.setMaxLength(2048);
 
-        @Override
-        public void refreshGrid(ScreenRect tabArea) {
+            gridAdder.add(new TextWidget(Text.translatable("skinshuffle.edit.customize.preset_name"), parent.textRenderer), positioner);
+            gridAdder.add(presetNameField, positioner);
 
+            gridAdder.add(new CyclingButtonWidget<>(0,
+                    0,
+                    192,
+                    20,
+                    Text.translatable("skinshuffle.edit.customize.model_cycle_prefix").append(": ").append(currentModelType.getTranslation()),
+                    Text.translatable("skinshuffle.edit.customize.model_cycle_prefix"),
+                    Arrays.stream(ModelType.values()).toList().indexOf(this.currentModelType),
+                    currentModelType,
+                    CyclingButtonWidget.Values.of(List.of(ModelType.values())),
+                    ModelType::getTranslation,
+                    sourceTypeCyclingButtonWidget -> Text.of("").copy(),
+                    (button, value) -> {
+                        this.currentModelType = value;
+                    },
+                    value -> null,
+                    false), positioner);
         }
     }
 }
