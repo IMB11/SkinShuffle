@@ -84,6 +84,10 @@ public class OpenCarouselWidget extends SpruceContainerWidget {
         widgetConsumer.accept(new OpenCarouselWidget(Position.of(x, y), 72, screen.height / 4, screen));
     }
 
+    public void disposed() {
+        this.entity.kill();
+    }
+
     public void setSelectedPreset(SkinPreset preset) {
         this.selectedPreset = preset;
         var skin = selectedPreset.getSkin();

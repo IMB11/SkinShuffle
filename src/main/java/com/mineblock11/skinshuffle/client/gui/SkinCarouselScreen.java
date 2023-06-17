@@ -116,7 +116,7 @@ public class SkinCarouselScreen extends SpruceScreen {
             this.close();
         }));
 
-        this.addDrawableChild(new SpruceIconButtonWidget(Position.of(2, 2), 20, 20, Text.empty(), (btn) -> this.client.setScreen(SkinShuffleConfigScreen.get(this))) {
+        this.addDrawableChild(new SpruceIconButtonWidget(Position.of(2, 2), 20, 20, Text.empty(), (btn) -> this.client.setScreenAndRender(SkinShuffleConfigScreen.get(this))) {
             @Override
             protected int renderIcon(DrawContext graphics, int mouseX, int mouseY, float delta) {
                 graphics.drawTexture(SkinShuffle.id("textures/gui/config-button-icon.png"), this.getX() + this.getWidth() / 2 - (14 / 2), this.getY() + this.getHeight() / 2 - (14 / 2), 14, 14, 0, 0, 15, 15, 15, 15);
@@ -146,7 +146,7 @@ public class SkinCarouselScreen extends SpruceScreen {
 
     @Override
     public void close() {
-        this.client.setScreen(parent);
+        this.client.setScreenAndRender(parent);
     }
 
     @Override

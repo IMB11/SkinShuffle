@@ -3,13 +3,12 @@
   "id": "skinshuffle",
   "version": "${version}",
   "name": "SkinShuffle",
-  "description": "TODO: desc",
+  "description": "Choose and change your skin in-game!",
   "authors": [
     "mineblock11",
     "enjarai"
   ],
   "contact": {
-    "website": "TODO: docs.mineblock11.dev page",
     "repo": "https://github.com/mineblock11/skinshuffle"
   },
   "license": "MIT",
@@ -33,6 +32,6 @@
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
-    "minecraft": "${minecraft_version}"
+    "minecraft": ">=1.20"
   }
 }

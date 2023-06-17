@@ -58,6 +58,14 @@ public class TitleScreenMixin extends Screen {
         }
     }
 
+    @Override
+    public void close() {
+        if(this.openCarouselWidget != null) {
+            this.openCarouselWidget.disposed();
+            this.openCarouselWidget = null;
+        }
+    }
+
     @Inject(method = "onDisplayed", at = @At("TAIL"), cancellable = false)
     public void updateVisibility(CallbackInfo ci) {
         SkinPresetManager.loadPresets();
@@ -65,13 +73,6 @@ public class TitleScreenMixin extends Screen {
         if(!SkinShuffleConfig.get().displayInTitleScreen && this.openCarouselWidget != null) {
             this.children().remove(this.openCarouselWidget);
             this.openCarouselWidget = null;
-        }
-
-        if(SkinShuffleConfig.get().displayInTitleScreen && this.openCarouselWidget == null) {
-            OpenCarouselWidget.safelyCreateWidget(this, openCarouselWidget -> {
-                this.openCarouselWidget = openCarouselWidget;
-                this.addDrawableChild(openCarouselWidget);
-            });
         }
     }
 
@@ -84,8 +85,8 @@ public class TitleScreenMixin extends Screen {
          */
 
         OpenCarouselWidget.safelyCreateWidget(this, openCarouselWidget -> {
-            this.openCarouselWidget = openCarouselWidget;
-            this.addDrawableChild(openCarouselWidget);
+                this.openCarouselWidget = openCarouselWidget;
+                this.addDrawableChild(openCarouselWidget);
         });
     }
 }

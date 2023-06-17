@@ -51,6 +51,14 @@ public class GameMenuScreenMixin extends Screen {
         }
     }
 
+    @Override
+    public void close() {
+        if(this.openCarouselWidget != null) {
+            this.openCarouselWidget.disposed();
+            this.openCarouselWidget = null;
+        }
+    }
+
     @Inject(method = "init", cancellable = false, at = @At("TAIL"))
     private void addButton(CallbackInfo ci) {
         if(SkinShuffleConfig.get().displayInPauseMenu) {
