@@ -104,7 +104,7 @@ public class OpenCarouselWidget extends SpruceContainerWidget {
     @Override
     protected void renderWidget(DrawContext graphics, int mouseX, int mouseY, float delta) {
         if(this.entity != null) {
-            float followX = (float)(getX() + (this.getWidth() / 2)) - mouseX;
+            float followX = (float)(this.getX() + (this.getWidth() / 2)) - mouseX;
             float followY = (float)(this.getY() - this.height * 1.25) - mouseY;
             float rotation = 0;
 
@@ -117,7 +117,7 @@ public class OpenCarouselWidget extends SpruceContainerWidget {
             }
 
             GuiEntityRenderer.drawEntity(
-                    graphics.getMatrices(), getX() + (this.getWidth() / 2), this.getY() - 12,
+                    graphics.getMatrices(), this.getX() + (this.getWidth() / 2), this.getY() - 12,
                     45, rotation, followX, followY, entity
             );
         }

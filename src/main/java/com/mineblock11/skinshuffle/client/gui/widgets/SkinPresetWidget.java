@@ -46,7 +46,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class SkinPresetWidget extends SpruceContainerWidget implements Widget {
+public class SkinPresetWidget extends SpruceContainerWidget {
     private final SkinPreset skinPreset;
     private final SkinCarouselScreen parent;
     private SpruceButtonWidget editButton;
@@ -130,16 +130,6 @@ public class SkinPresetWidget extends SpruceContainerWidget implements Widget {
     }
 
     @Override
-    public void setX(int x) {
-        this.position = Position.of(x, position.getY());
-    }
-
-    @Override
-    public void setY(int y) {
-        this.position = Position.of(position.getX(), y);
-    }
-
-    @Override
     public int getX() {
         return this.position.getX();
     }
@@ -148,9 +138,6 @@ public class SkinPresetWidget extends SpruceContainerWidget implements Widget {
     public int getY() {
         return this.position.getY();
     }
-
-    @Override
-    public void forEachChild(Consumer<ClickableWidget> consumer) {}
 
     @Override
     protected void renderBackground(DrawContext graphics, int mouseX, int mouseY, float delta) {
