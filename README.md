@@ -1,4 +1,4 @@
-[![](https://github.com/mineblock11/mineblock11/blob/master/fabric-api_64h.png?raw=true)](https://modrinth.com/mod/fabric-api) [![](https://github.com/intergrav/devins-badges/blob/v2/assets/cozy/social/discord-plural_64h.png?raw=true)](https://discord.gg/UzHtJKqHny)
+[![](https://github.com/mineblock11/mineblock11/blob/master/fabric-api_64h.png?raw=true)](https://modrinth.com/mod/fabric-api) [![](https://cdn.mineblock11.dev/enjarai%20badge_64h.png)](https://discord.gg/WcYsDDQtyR) [![](https://cdn.mineblock11.dev/mineblock%20badge_64h.png)](https://discord.gg/UzHtJKqHny)
 
 # SkinShuffle
 
