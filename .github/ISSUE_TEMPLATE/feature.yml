@@ -1,0 +1,14 @@
+name: Feature Request
+description: Suggest a new feature or change for our mod.
+title: ""
+labels: ["Feature"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe your suggestion
+      description: |
+        A clear and concise description of your suggestion. 
+        Feel free to use references like images or links if it helps explain your idea.
+    validations:
+      required: true
