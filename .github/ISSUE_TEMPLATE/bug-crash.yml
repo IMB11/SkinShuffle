@@ -1,6 +1,5 @@
 name: Bug/Crash Report
 description: Let us know about a crash or bug in our mod.
-title: ""
 labels: ["Bug/Crash"]
 body:
   - type: textarea

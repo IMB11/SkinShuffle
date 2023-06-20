@@ -1,6 +1,5 @@
 name: Feature Request
 description: Suggest a new feature or change for our mod.
-title: ""
 labels: ["Feature"]
 body:
   - type: textarea
