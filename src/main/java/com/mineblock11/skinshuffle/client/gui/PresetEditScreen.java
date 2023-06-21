@@ -204,6 +204,7 @@ public class PresetEditScreen extends SpruceScreen {
         this.skinSourceTab.textFieldWidget.setVisible(skinSourceTab.currentSourceType != SourceType.UNCHANGED);
         this.skinSourceTab.loadButton.visible = skinSourceTab.currentSourceType != SourceType.UNCHANGED;
         this.skinSourceTab.loadButton.active = skinSourceTab.currentSourceType != SourceType.UNCHANGED && isValid;
+        this.skinSourceTab.skinModelButton.visible = skinSourceTab.currentSourceType != SourceType.UNCHANGED;
     }
 
     @Override
@@ -216,7 +217,7 @@ public class PresetEditScreen extends SpruceScreen {
         int previewSpanX = MAX_WIDTH / 6 - leftRightMargin;
         int previewSpanY = Math.min(this.height - topBottomMargin * 2, previewSpanX * 2 * ratioMulTen / 10) / 2;
         int previewCenterX = MAX_WIDTH / 6 + this.sideMargins;
-        int previewCenterY = Math.max(height / 2 - 60, 50) + previewSpanY; // Math.min(this.height / 2, topBottomMargin + previewSpanY * 2);
+        int previewCenterY = Math.max(height / 4 + previewSpanY / 2, 120); // Math.min(this.height / 2, topBottomMargin + previewSpanY * 2);
         graphics.drawBorder(previewCenterX - previewSpanX, previewCenterY - previewSpanY,
                 previewSpanX * 2, previewSpanY * 2, 0xDF000000);
         graphics.fill(previewCenterX - previewSpanX + 1, previewCenterY - previewSpanY + 1,
