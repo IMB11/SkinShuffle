@@ -55,8 +55,7 @@ import java.util.UUID;
 import static net.minecraft.client.gui.screen.world.CreateWorldScreen.LIGHT_DIRT_BACKGROUND_TEXTURE;
 
 public class PresetEditScreen extends SpruceScreen {
-    public static final int PREVIEW_SPAN_X = 100 / 2;
-    public static final int PREVIEW_SPAN_Y = 160 / 2;
+    public static final int MAX_WIDTH = 400;
 
     private final SkinCarouselScreen parent;
     private final LivingEntity entity;
@@ -70,6 +69,7 @@ public class PresetEditScreen extends SpruceScreen {
     private boolean isValid = true;
     private GridWidget grid;
     private ButtonWidget exitButton;
+    private int sideMargins;
 
     public PresetEditScreen(SkinCarouselScreen parent, SkinPreset preset) {
         super(Text.translatable("skinshuffle.edit.title"));
@@ -125,6 +125,8 @@ public class PresetEditScreen extends SpruceScreen {
 
     @Override
     protected void initTabNavigation() {
+        this.sideMargins = Math.max(this.width - MAX_WIDTH, 0) / 2;
+
         if (this.tabNavigation != null && this.grid != null) {
             this.tabNavigation.setWidth(this.width);
             this.tabNavigation.init();
@@ -208,19 +210,24 @@ public class PresetEditScreen extends SpruceScreen {
     public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
         super.render(graphics, mouseX, mouseY, delta);
 
-        int previewCenterX = this.width / 6;
-        int previewCenterY = this.height / 2;
-        graphics.drawBorder(previewCenterX - PREVIEW_SPAN_X, previewCenterY - PREVIEW_SPAN_Y,
-                PREVIEW_SPAN_X * 2, PREVIEW_SPAN_Y * 2, 0xDF000000);
-        graphics.fill(previewCenterX - PREVIEW_SPAN_X + 1, previewCenterY - PREVIEW_SPAN_Y + 1,
-                previewCenterX + PREVIEW_SPAN_X - 1, previewCenterY + PREVIEW_SPAN_Y - 1, 0x7F000000);
+        int ratioMulTen = 16;
+        int topBottomMargin = 40;
+        int leftRightMargin = 20;
+        int previewSpanX = MAX_WIDTH / 6 - leftRightMargin;
+        int previewSpanY = Math.min(this.height - topBottomMargin * 2, previewSpanX * 2 * ratioMulTen / 10) / 2;
+        int previewCenterX = MAX_WIDTH / 6 + this.sideMargins;
+        int previewCenterY = Math.max(height / 2 - 60, 50) + previewSpanY; // Math.min(this.height / 2, topBottomMargin + previewSpanY * 2);
+        graphics.drawBorder(previewCenterX - previewSpanX, previewCenterY - previewSpanY,
+                previewSpanX * 2, previewSpanY * 2, 0xDF000000);
+        graphics.fill(previewCenterX - previewSpanX + 1, previewCenterY - previewSpanY + 1,
+                previewCenterX + previewSpanX - 1, previewCenterY + previewSpanY - 1, 0x7F000000);
 
         if (!this.preset.getSkin().isLoading()) {
             var entityX = previewCenterX;
-            var entityY = previewCenterY + PREVIEW_SPAN_Y / 10 * 8;
+            var entityY = previewCenterY + previewSpanY / 10 * 8;
 
             float followX = entityX - mouseX;
-            float followY = entityY - PREVIEW_SPAN_Y - mouseY;
+            float followY = entityY - previewSpanY - mouseY;
             float rotation = 0;
 
             SkinShuffleConfig.SkinRenderStyle renderStyle = SkinShuffleConfig.get().carouselSkinRenderStyle;
@@ -232,7 +239,7 @@ public class PresetEditScreen extends SpruceScreen {
             }
 
             GuiEntityRenderer.drawEntity(
-                    graphics.getMatrices(), entityX, entityY, PREVIEW_SPAN_Y / 10 * 8,
+                    graphics.getMatrices(), entityX, entityY, previewSpanY / 10 * 8,
                     rotation, followX, followY, entity
             );
         } else {
@@ -284,7 +291,7 @@ public class PresetEditScreen extends SpruceScreen {
         private SkinSourceTab() {
             super(Text.translatable("skinshuffle.edit.source.title"));
 
-            this.grid.getMainPositioner().marginLeft(parent.width / 3).alignHorizontalCenter();
+            this.grid.getMainPositioner().marginLeft(MAX_WIDTH / 3 + sideMargins).marginRight(sideMargins).alignHorizontalCenter();
             var gridAdder = this.grid.setRowSpacing(4).createAdder(1);
 
             this.currentSourceType = SourceType.UNCHANGED;
@@ -336,7 +343,7 @@ public class PresetEditScreen extends SpruceScreen {
                             updateValidity();
                         },
                         value -> null,
-                        false), grid.copyPositioner().marginTop(12));
+                        false), grid.copyPositioner().marginTop(Math.min(height / 2 - 60, 20)));
             } else {
                 ToastHelper.showErrorEdit();
                 close();
