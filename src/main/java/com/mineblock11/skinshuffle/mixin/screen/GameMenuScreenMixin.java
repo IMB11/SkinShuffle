@@ -57,6 +57,7 @@ public class GameMenuScreenMixin extends Screen {
             this.openCarouselWidget.disposed();
             this.openCarouselWidget = null;
         }
+        super.close();
     }
 
     @Inject(method = "init", cancellable = false, at = @At("TAIL"))
