@@ -26,7 +26,7 @@ import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
 
 public class ToastHelper {
-    private static void showToast(MinecraftClient client, String translationKeyTitle, String translationKeyMessage) {
+    public static void showToast(MinecraftClient client, String translationKeyTitle, String translationKeyMessage) {
         client.getToastManager().add(SystemToast.create(client,
                 SystemToast.Type.PACK_LOAD_FAILURE,
                 Text.translatable(translationKeyTitle),
