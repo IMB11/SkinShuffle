@@ -105,7 +105,7 @@ public class OpenCarouselWidget extends SpruceContainerWidget {
     protected void renderWidget(DrawContext graphics, int mouseX, int mouseY, float delta) {
         if(this.entity != null) {
             float followX = (float)(this.getX() + (this.getWidth() / 2)) - mouseX;
-            float followY = (float)(this.getY() - this.height * 1.25) - mouseY;
+            float followY = (float)(this.getY() - 90) - mouseY;
             float rotation = 0;
 
             SkinShuffleConfig.SkinRenderStyle renderStyle = SkinShuffleConfig.get().widgetSkinRenderStyle;

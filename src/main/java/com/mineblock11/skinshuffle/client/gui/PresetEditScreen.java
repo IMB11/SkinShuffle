@@ -228,7 +228,7 @@ public class PresetEditScreen extends SpruceScreen {
             var entityY = previewCenterY + previewSpanY / 10 * 8;
 
             float followX = entityX - mouseX;
-            float followY = entityY - previewSpanY - mouseY;
+            float followY = entityY - previewSpanY * 1.2f - mouseY;
             float rotation = 0;
 
             SkinShuffleConfig.SkinRenderStyle renderStyle = SkinShuffleConfig.get().carouselSkinRenderStyle;
