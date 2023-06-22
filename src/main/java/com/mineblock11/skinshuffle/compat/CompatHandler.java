@@ -18,13 +18,9 @@
  *     USA
  */
 
-package com.mineblock11.skinshuffle.client.gui;
+package com.mineblock11.skinshuffle.compat;
 
-import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
-import net.minecraft.client.gui.screen.Screen;
-
-public class SkinShuffleConfigScreen {
-    public static Screen get(Screen parent) {
-        return SkinShuffleConfig.getInstance().generateScreen(parent);
-    }
+public interface CompatHandler {
+    String getID();
+    void execute();
 }

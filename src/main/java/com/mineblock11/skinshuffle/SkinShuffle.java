@@ -22,6 +22,7 @@ package com.mineblock11.skinshuffle;
 
 import com.mineblock11.skinshuffle.api.MojangSkinAPI;
 import com.mineblock11.skinshuffle.api.SkinQueryResult;
+import com.mineblock11.skinshuffle.compat.CompatLoader;
 import com.mineblock11.skinshuffle.networking.ServerSkinHandling;
 import com.mineblock11.skinshuffle.util.SkinCacheRegistry;
 import com.mineblock11.skinshuffle.util.SkinShufflePlayer;
@@ -46,8 +47,8 @@ public class SkinShuffle implements ModInitializer {
     public void onInitialize() {
         ensureDataDir();
         SkinCacheRegistry.initialize();
-
         ServerSkinHandling.init();
+        CompatLoader.init();
     }
 
     private void ensureDataDir() {

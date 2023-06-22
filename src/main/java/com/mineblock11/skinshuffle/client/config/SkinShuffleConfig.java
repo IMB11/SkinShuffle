@@ -22,6 +22,7 @@ package com.mineblock11.skinshuffle.client.config;
 
 import com.google.gson.GsonBuilder;
 import com.mineblock11.skinshuffle.SkinShuffle;
+import com.mineblock11.skinshuffle.compat.ETFCompatHandler;
 import dev.isxander.yacl3.api.ConfigCategory;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
@@ -99,9 +100,15 @@ public class SkinShuffleConfig {
 
                     var renderSkinRegardless = Option.<Boolean>createBuilder()
                             .name(translatable("skinshuffle.config.rendering.render_skin.name"))
-                            .description(OptionDescription.createBuilder().text(translatable("skinshuffle.config.rendering.render_skin.description")).build())
+                            .description(OptionDescription.createBuilder()
+                                    .text(translatable("skinshuffle.config.rendering.render_skin.description")).build())
                             .binding(defaults.renderClientSkinRegardless, () -> config.renderClientSkinRegardless, val -> config.renderClientSkinRegardless = val)
                             .controller(TickBoxControllerBuilder::create).build();
+
+                    if(ETFCompatHandler.DISABLE_RENDER_DESYNC) {
+                        renderSkinRegardless.setAvailable(false);
+                    }
+
 
                     var displayWidgetPause = Option.<Boolean>createBuilder()
                             .name(translatable("skinshuffle.config.rendering.display_pause_screen.name"))
