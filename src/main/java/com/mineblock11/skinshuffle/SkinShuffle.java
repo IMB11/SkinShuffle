@@ -46,7 +46,6 @@ public class SkinShuffle implements ModInitializer {
     public void onInitialize() {
         ensureDataDir();
         SkinCacheRegistry.initialize();
-
         ServerSkinHandling.init();
     }
 
