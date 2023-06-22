@@ -21,8 +21,6 @@
 package com.mineblock11.skinshuffle.client.gui;
 
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
-import com.mineblock11.skinshuffle.compat.ETFCompatHandler;
-import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import net.minecraft.client.gui.screen.Screen;
 
 public class SkinShuffleConfigScreen {
