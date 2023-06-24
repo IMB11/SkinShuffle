@@ -37,17 +37,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class AddPresetWidget extends SpruceContainerWidget {
-    private final SkinCarouselScreen parent;
+public class AddPresetWidget extends PresetWidget {
 //    private final DummyClientPlayerEntity entity;
     private Runnable action;
     private Position position;
 
     public AddPresetWidget(SkinCarouselScreen parent, Position position, int width, int height) {
-        super(position, width, height);
+        super(position, width, height, parent);
         this.position = position;
-        this.parent = parent;
-
 
         addChild(new SpruceButtonWidget(Position.of(3, getHeight() - 24), width - 6, 20, Text.translatable("skinshuffle.carousel.create"), button -> {
             action.run();
@@ -97,5 +94,10 @@ public class AddPresetWidget extends SpruceContainerWidget {
     @Override
     public int getY() {
         return this.position.getY();
+    }
+
+    @Override
+    public boolean isMovable() {
+        return false;
     }
 }
