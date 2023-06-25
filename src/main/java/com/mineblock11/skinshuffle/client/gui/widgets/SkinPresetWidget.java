@@ -68,7 +68,7 @@ public class SkinPresetWidget extends PresetWidget {
 
         if(showButtons) {
             this.editButton = new SpruceButtonWidget(
-                    Position.of(getWidth() / 8, getHeight() - 48), getWidth() - (this.getWidth() / 4), 20,
+                    Position.of((getWidth() / 8) + 4, getHeight() - 48), getWidth() - (this.getWidth() / 4) - 8, 20,
                     Text.translatable("skinshuffle.carousel.preset_widget.edit"),
                     button -> client.setScreen(new PresetEditScreen(this.parent, this.skinPreset))
             );
@@ -98,8 +98,8 @@ public class SkinPresetWidget extends PresetWidget {
                     }
             );
 
-            this.moveLeftButton = new CarouselMoveButton(Position.of(0, getHeight() - 46), false);
-            this.moveRightButton = new CarouselMoveButton(Position.of(getWidth(), getHeight() - 46), true);
+            this.moveLeftButton = new CarouselMoveButton(Position.of(2, getHeight() - 46), false);
+            this.moveRightButton = new CarouselMoveButton(Position.of(getWidth() - 2, getHeight() - 46), true);
 
             this.moveLeftButton.setCallback(() -> {
                 var i = parent.carouselWidgets.indexOf(this);
@@ -179,7 +179,13 @@ public class SkinPresetWidget extends PresetWidget {
 
     @Override
     protected void renderBackground(DrawContext graphics, int mouseX, int mouseY, float delta) {
-        graphics.drawBorder(getX(), getY(), getWidth(), getHeight(), this.active ? 0xDF000000 : 0x5F000000);
+        int borderColour = this.active ? 0xDF000000 : 0x5F000000;
+
+        if(SkinPresetManager.getChosenPreset().equals(this.skinPreset)) {
+            borderColour = this.active ? 0xDF0096FF : 0x5F0096FF;
+        }
+
+        graphics.drawBorder(getX(), getY(), getWidth(), getHeight(), borderColour);
         graphics.fill(getX() + 1, getY() + 1, getX() + getWidth() - 1, getY() + getHeight() - 1, this.active ? 0x7F000000 : 0x0D000000);
     }
 
