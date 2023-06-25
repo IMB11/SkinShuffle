@@ -29,4 +29,7 @@ public abstract class PresetWidget extends SpruceContainerWidget {
     }
 
     public abstract boolean isMovable();
+
+    public void refreshState() {
+    }
 }

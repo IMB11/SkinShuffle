@@ -173,7 +173,14 @@ public class SkinPresetManager {
         MinecraftClient client = MinecraftClient.getInstance();
         SkinPreset preset = getChosenPreset();
 
+        // Skip applying if the config says to.
+        if (SkinShuffleConfig.get().disableAPIUpload) {
+            SkinShuffle.LOGGER.info("Skipping skin preset application due to config.");
+            return;
+        }
+
         if (!AuthUtil.isLoggedIn()) {
+            SkinShuffle.LOGGER.warn("Skipping skin preset application due to not being logged in.");
             AuthUtil.warnNotAuthed();
             return;
         } else if (!ClientSkinHandling.isInstalledOnServer() && client.world != null) {

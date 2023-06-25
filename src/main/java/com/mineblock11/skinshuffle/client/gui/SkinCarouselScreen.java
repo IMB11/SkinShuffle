@@ -133,6 +133,8 @@ public class SkinCarouselScreen extends SpruceScreen {
 
         this.leftMoveButton.setActive(this.carouselWidgets.size() != 1);
         this.rightMoveButton.setActive(this.carouselWidgets.size() != 1);
+
+        refreshPresetState();
     }
 
     @Override
@@ -253,6 +255,7 @@ public class SkinCarouselScreen extends SpruceScreen {
         var widget = new SkinPresetWidget(this, getCardWidth(), getCardHeight(), preset, true);
         this.carouselWidgets.add(widget);
         widget.lastIndex = this.carouselWidgets.size() - 1;
+        refreshPresetState();
         return widget;
     }
 
@@ -260,6 +263,11 @@ public class SkinCarouselScreen extends SpruceScreen {
         this.carouselWidgets.get(index1).refreshLastIndex();
         this.carouselWidgets.get(index2).refreshLastIndex();
         Collections.swap(this.carouselWidgets, index1, index2);
+        refreshPresetState();
+    }
+
+    public void refreshPresetState() {
+        this.carouselWidgets.forEach(PresetWidget::refreshState);
     }
 
     public void setCardIndex(double index) {

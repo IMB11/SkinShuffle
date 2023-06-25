@@ -98,16 +98,18 @@ public class SkinPresetWidget extends PresetWidget {
                     }
             );
 
-            this.moveLeftButton = new CarouselMoveButton(Position.of(0, 0), false);
-            this.moveRightButton = new CarouselMoveButton(Position.of(getWidth(), 0), true);
+            this.moveLeftButton = new CarouselMoveButton(Position.of(0, getHeight() - 46), false);
+            this.moveRightButton = new CarouselMoveButton(Position.of(getWidth(), getHeight() - 46), true);
 
             this.moveLeftButton.setCallback(() -> {
                 var i = parent.carouselWidgets.indexOf(this);
                 parent.swapPresets(i, i - 1);
+                parent.scrollCarousel(-1, false);
             });
             this.moveRightButton.setCallback(() -> {
                 var i = parent.carouselWidgets.indexOf(this);
                 parent.swapPresets(i, i + 1);
+                parent.scrollCarousel(1, false);
             });
 
             if(SkinPresetManager.getLoadedPresets().size() < 2) this.deleteButton.setActive(false);
@@ -128,6 +130,10 @@ public class SkinPresetWidget extends PresetWidget {
             if(child.equals(this.deleteButton) && SkinPresetManager.getLoadedPresets().size() < 2) continue;
             child.setActive(active);
         }
+
+        int i = this.parent.carouselWidgets.indexOf(this);
+        moveLeftButton.setVisible(active && this.isMovable() && i > 0 && this.parent.carouselWidgets.get(i - 1).isMovable());
+        moveRightButton.setVisible(active && this.isMovable() && i < this.parent.carouselWidgets.size() - 1 && this.parent.carouselWidgets.get(i + 1).isMovable());
     }
 
     public void overridePosition(Position newPosition) {
@@ -236,6 +242,11 @@ public class SkinPresetWidget extends PresetWidget {
     @Override
     public ScreenRect getNavigationFocus() {
         return super.getNavigationFocus();
+    }
+
+    @Override
+    public void refreshState() {
+
     }
 
     @Override
