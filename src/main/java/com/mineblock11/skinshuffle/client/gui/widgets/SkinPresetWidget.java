@@ -77,7 +77,8 @@ public class SkinPresetWidget extends PresetWidget {
                     Position.of(3, getHeight() - 24), getWidth() / 2 - 5, 20,
                     Text.translatable("skinshuffle.carousel.preset_widget.copy"),
                     button -> {
-                        SkinPreset presetCopy = new SkinPreset(this.skinPreset.getSkin(), this.skinPreset.getName());
+                        SkinPreset presetCopy = this.skinPreset.copy();
+                        presetCopy.setName(this.skinPreset.getName() + " (Copy)");
                         SkinPresetManager.addPreset(presetCopy);
                         this.parent.refresh();
                     }
