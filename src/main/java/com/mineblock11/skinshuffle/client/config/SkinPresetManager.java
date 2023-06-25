@@ -72,8 +72,10 @@ public class SkinPresetManager {
      * Swap the positions of two presets.
      */
     public static void swapPresets(int index1, int index2) {
-        Collections.swap(loadedPresets, index1, index2);
+        if(loadedPresets.size() - 1 < index2 || loadedPresets.size() - 1 < index1)
+            return;
 
+        Collections.swap(loadedPresets, index1, index2);
         savePresets();
     }
 
