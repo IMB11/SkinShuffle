@@ -267,6 +267,7 @@ public class SkinCarouselScreen extends SpruceScreen {
         this.carouselWidgets.get(index1).refreshLastIndex();
         this.carouselWidgets.get(index2).refreshLastIndex();
         Collections.swap(this.carouselWidgets, index1, index2);
+        SkinPresetManager.swapPresets(index1, index2);
         refreshPresetState();
     }
 
