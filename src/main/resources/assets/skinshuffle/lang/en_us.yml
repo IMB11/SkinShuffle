@@ -13,6 +13,40 @@ skinshuffle:
           Disable the toast that appears when you have switched skin preset during the cooldown period.
           
           The cooldown period exists due to caching issues related to the Mojang API. If you have switched skin preset during the cooldown period the toast will show - the server will not refresh your skin until the cooldown period is over.
+    general:
+      title: "General Options"
+      description: "General configuration options that change or toggle functionality."
+
+      behaviour.title: "Behaviour"
+      display.title: "Display"
+
+      render_skin:
+        name: "Render Desynchronized Skin"
+        description: |-
+          Should your currently selected preset be applied to your skin regardless of if the server-side refresh has occurred?
+
+          If enabled, this will mean that until a server-side skin refresh has occurred, only you will be able to see your newly set skin.
+
+          §o§7When you change your selected skin preset, SkinShuffle asks the server to refresh your skin for all players.
+          §o§7The refresh might not occur instantly due to the cooldown period imposed by the caching issues of the Mojang API.
+      disable_api:
+        name: "Disable Mojang API Uploading"
+        description: |-
+          Should SkinShuffle not upload your skin to the Mojang API?
+
+          If enabled, this will mean that your skin will not be visible to other players.
+      display_title_screen:
+        name: "Display Widget In Title Screen"
+        description: "Should the currently selected skin preset and the skin preset button be shown on the title screen?"
+      display_pause_screen:
+        name: "Display Widget In Pause Screen"
+        description: "Should the currently selected skin preset and the skin preset button be shown on the pause screen?"
+      carousel_scroll_sensitivity:
+        name: "Carousel Scroll Sensitivity"
+        description: "How sensitive should the carousel be to mouse scrolling?"
+      invert_carousel_scroll:
+        name: "Invert Carousel Scroll"
+        description: "Should the carousel scroll direction be inverted?"
     rendering:
       title: "Rendering Options"
       description: "Configuration options regarding how skin presets are rendered in the title screen, pause menu, carousel and edit screens."
@@ -21,15 +55,6 @@ skinshuffle:
       rendering_style: |-
         §lROTATION§r rotates the rendered player at a fixed rate specified by the rotation speed multiplier.
         §lCURSOR§r makes the rendered player look at the mouse cursor at all times, similarly to the inventory screen.
-      render_skin:
-        name: "Render Desynchronized Skin"
-        description: |-
-          Should your currently selected preset be applied to your skin regardless of if the server-side refresh has occurred?
-          
-          If enabled, this will mean that until a server-side skin refresh has occurred, only you will be able to see your newly set skin.
-          
-          §o§7When you change your selected skin preset, SkinShuffle asks the server to refresh your skin for all players.
-          §o§7The refresh might not occur instantly due to the cooldown period imposed by the caching issues of the Mojang API.
       carousel_rendering_style:
         name: "Carousel Rendering Style"
         description: "How should the currently selected skin preset be rendered in the carousel screen?\n"
@@ -42,12 +67,6 @@ skinshuffle:
       rotation_speed:
         name: "Rotation Speed Multiplier"
         description: "What rotation speed multiplier should be applied to skins if rotation is enabled?"
-      display_title_screen:
-        name: "Display Widget In Title Screen"
-        description: "Should the currently selected skin preset and the skin preset button be shown on the title screen?"
-      display_pause_screen:
-        name: "Display Widget In Pause Screen"
-        description: "Should the currently selected skin preset and the skin preset button be shown on the pause screen?"
   handshake:
     toast:
       title: "SkinShuffle isn't installed on the server."

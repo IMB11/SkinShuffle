@@ -23,10 +23,7 @@ package com.mineblock11.skinshuffle.client.config;
 import com.google.gson.GsonBuilder;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.compat.ETFCompatHandler;
-import dev.isxander.yacl3.api.ConfigCategory;
-import dev.isxander.yacl3.api.Option;
-import dev.isxander.yacl3.api.OptionDescription;
-import dev.isxander.yacl3.api.YetAnotherConfigLib;
+import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
 import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
@@ -99,10 +96,17 @@ public class SkinShuffleConfig {
                             .controller(floatOption -> FloatSliderControllerBuilder.create(floatOption).range(0f, 5f).step(0.5f)).build();
 
                     var renderSkinRegardless = Option.<Boolean>createBuilder()
-                            .name(translatable("skinshuffle.config.rendering.render_skin.name"))
+                            .name(translatable("skinshuffle.config.general.render_skin.name"))
                             .description(OptionDescription.createBuilder()
-                                    .text(translatable("skinshuffle.config.rendering.render_skin.description")).build())
+                                    .text(translatable("skinshuffle.config.general.render_skin.description")).build())
                             .binding(defaults.renderClientSkinRegardless, () -> config.renderClientSkinRegardless, val -> config.renderClientSkinRegardless = val)
+                            .controller(TickBoxControllerBuilder::create).build();
+
+                    var disableApi = Option.<Boolean>createBuilder()
+                            .name(translatable("skinshuffle.config.general.disable_api.name"))
+                            .description(OptionDescription.createBuilder()
+                                    .text(translatable("skinshuffle.config.general.disable_api.description")).build())
+                            .binding(defaults.disableAPIUpload, () -> config.disableAPIUpload, val -> config.disableAPIUpload = val)
                             .controller(TickBoxControllerBuilder::create).build();
 
                     if(ETFCompatHandler.DISABLE_RENDER_DESYNC) {
@@ -111,15 +115,26 @@ public class SkinShuffleConfig {
 
 
                     var displayWidgetPause = Option.<Boolean>createBuilder()
-                            .name(translatable("skinshuffle.config.rendering.display_pause_screen.name"))
-                            .description(OptionDescription.createBuilder().text(translatable("skinshuffle.config.rendering.display_pause_screen.description")).build())
+                            .name(translatable("skinshuffle.config.general.display_pause_screen.name"))
+                            .description(OptionDescription.createBuilder().text(translatable("skinshuffle.config.general.display_pause_screen.description")).build())
                             .binding(defaults.displayInPauseMenu, () -> config.displayInPauseMenu, val -> config.displayInPauseMenu = val)
                             .controller(TickBoxControllerBuilder::create).build();
 
                     var displayWidgetTitleScreen = Option.<Boolean>createBuilder()
-                            .name(translatable("skinshuffle.config.rendering.display_title_screen.name"))
-                            .description(OptionDescription.createBuilder().text(translatable("skinshuffle.config.rendering.display_title_screen.description")).build())
+                            .name(translatable("skinshuffle.config.general.display_title_screen.name"))
+                            .description(OptionDescription.createBuilder().text(translatable("skinshuffle.config.general.display_title_screen.description")).build())
                             .binding(defaults.displayInTitleScreen, () -> config.displayInTitleScreen, val -> config.displayInTitleScreen = val)
+                            .controller(TickBoxControllerBuilder::create).build();
+
+                    var carouselScrollSensitivity = Option.<Float>createBuilder()
+                            .name(translatable("skinshuffle.config.general.carousel_scroll_sensitivity.name"))
+                            .description(OptionDescription.createBuilder().text(translatable("skinshuffle.config.general.carousel_scroll_sensitivity.description")).build())
+                            .binding(defaults.carouselScrollSensitivity, () -> config.carouselScrollSensitivity, val -> config.carouselScrollSensitivity = val)
+                            .controller(floatOption -> FloatSliderControllerBuilder.create(floatOption).range(0.1f, 5f).step(0.1f)).build();
+                    var invertCarouselScroll = Option.<Boolean>createBuilder()
+                            .name(translatable("skinshuffle.config.general.invert_carousel_scroll.name"))
+                            .description(OptionDescription.createBuilder().text(translatable("skinshuffle.config.general.invert_carousel_scroll.description")).build())
+                            .binding(defaults.invertCarouselScroll, () -> config.invertCarouselScroll, val -> config.invertCarouselScroll = val)
                             .controller(TickBoxControllerBuilder::create).build();
 
                     // Popup Options
@@ -138,9 +153,21 @@ public class SkinShuffleConfig {
                     return builder
                             .title(translatable("skinshuffle.config.title"))
                             .category(ConfigCategory.createBuilder()
+                                    .name(translatable("skinshuffle.config.general.title"))
+                                    .tooltip(translatable("skinshuffle.config.general.description"))
+                                    .group(OptionGroup.createBuilder()
+                                            .name(translatable("skinshuffle.config.general.behaviour.title"))
+                                            .options(List.of(renderSkinRegardless, disableApi, carouselScrollSensitivity, invertCarouselScroll))
+                                            .build())
+                                    .group(OptionGroup.createBuilder()
+                                            .name(translatable("skinshuffle.config.general.display.title"))
+                                            .options(List.of(displayWidgetPause, displayWidgetTitleScreen))
+                                            .build())
+                                    .build()
+                            ).category(ConfigCategory.createBuilder()
                                     .name(translatable("skinshuffle.config.rendering.title"))
                                     .tooltip(translatable("skinshuffle.config.rendering.description"))
-                                    .options(List.of(carouselRenderStyle, presetEditScreenRenderStyle, widgetRenderStyle, rotationMultiplier, renderSkinRegardless, displayWidgetPause, displayWidgetTitleScreen))
+                                    .options(List.of(carouselRenderStyle, presetEditScreenRenderStyle, widgetRenderStyle, rotationMultiplier))
                                     .build()
                             ).category(ConfigCategory.createBuilder()
                                     .name(translatable("skinshuffle.config.popups.title"))
@@ -154,10 +181,14 @@ public class SkinShuffleConfig {
     @ConfigEntry public boolean disableInstalledToast = false;
     @ConfigEntry public boolean disableCooldownToast = false;
 
+    @ConfigEntry public boolean disableAPIUpload = false;
     @ConfigEntry public boolean renderClientSkinRegardless = true;
 
     @ConfigEntry public boolean displayInPauseMenu = true;
     @ConfigEntry public boolean displayInTitleScreen = true;
+
+    @ConfigEntry public float carouselScrollSensitivity = 1.0f;
+    @ConfigEntry public boolean invertCarouselScroll = false;
 
     @ConfigEntry public SkinRenderStyle widgetSkinRenderStyle = SkinRenderStyle.CURSOR;
     @ConfigEntry public SkinRenderStyle carouselSkinRenderStyle = SkinRenderStyle.ROTATION;

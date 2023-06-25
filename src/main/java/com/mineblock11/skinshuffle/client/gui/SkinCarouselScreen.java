@@ -22,10 +22,8 @@ package com.mineblock11.skinshuffle.client.gui;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
-import com.mineblock11.skinshuffle.client.gui.widgets.AddPresetWidget;
-import com.mineblock11.skinshuffle.client.gui.widgets.CarouselMoveButton;
-import com.mineblock11.skinshuffle.client.gui.widgets.SkinPresetWidget;
-import com.mineblock11.skinshuffle.client.gui.widgets.TexturedIconButtonWidget;
+import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
+import com.mineblock11.skinshuffle.client.gui.widgets.*;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.Tooltip;
@@ -55,10 +53,10 @@ public class SkinCarouselScreen extends SpruceScreen {
 
     public CarouselMoveButton leftMoveButton;
     public CarouselMoveButton rightMoveButton;
-    private int cardIndex = -1;
+    private double cardIndex = -1;
     private double lastCardIndex = 0;
     private double lastCardSwitchTime = 0;
-    public ArrayList<SpruceWidget> carouselWidgets = new ArrayList<>();
+    public ArrayList<PresetWidget> carouselWidgets = new ArrayList<>();
     @Override
     protected void init() {
         super.init();
@@ -68,18 +66,12 @@ public class SkinCarouselScreen extends SpruceScreen {
         rightMoveButton = new CarouselMoveButton(Position.of(this.width - (getCardWidth() / 2), (this.height / 2) - 8), true);
 
         leftMoveButton.setCallback(() -> {
-            var cardIndex = (this.cardIndex - 1 + (this.carouselWidgets.size())) % (this.carouselWidgets.size());
-            if (cardIndex < 0) {
-                cardIndex = this.carouselWidgets.size() - 1;
-            }
-            setCardIndex(cardIndex);
+            scrollCarousel(-1, true);
+            snapCarousel();
         });
         rightMoveButton.setCallback(() -> {
-            var cardIndex = (this.cardIndex + 1) % (this.carouselWidgets.size());
-            if (cardIndex < 0) {
-                cardIndex = this.carouselWidgets.size();
-            }
-            setCardIndex(cardIndex);
+            scrollCarousel(1, true);
+            snapCarousel();
         });
 
         var addPresetWidget = new AddPresetWidget(this,
@@ -88,8 +80,10 @@ public class SkinCarouselScreen extends SpruceScreen {
             SkinPreset unnamed = SkinPreset.generateDefaultPreset();
             unnamed.setName("Unnamed Preset");
             SkinPresetManager.addPreset(unnamed);
-            this.addDrawableChild(this.loadPreset(unnamed));
-            Collections.swap(this.carouselWidgets, this.carouselWidgets.size() - 1, this.carouselWidgets.size() - 2);
+            var newWidget = this.loadPreset(unnamed);
+            this.addDrawableChild(newWidget);
+            this.swapPresets(this.carouselWidgets.size() - 1, this.carouselWidgets.size() - 2);
+            newWidget.lastIndex = this.carouselWidgets.size() - 2;
         });
 
         var loadedPresets = SkinPresetManager.getLoadedPresets();
@@ -97,7 +91,7 @@ public class SkinCarouselScreen extends SpruceScreen {
         loadedPresets.forEach(this::loadPreset);
 
         // We don't want to switch back to the selected preset when we return from a subscreen.
-        if (this.cardIndex == -1) {
+        if (this.cardIndex < 0) {
             this.cardIndex = loadedPresets.indexOf(SkinPresetManager.getChosenPreset());
         }
         this.lastCardIndex = this.cardIndex;
@@ -125,7 +119,7 @@ public class SkinCarouselScreen extends SpruceScreen {
         });
 
         this.addDrawableChild(new SpruceButtonWidget(Position.of(this.width / 2 + 5, this.height - 23), 128, 20, Text.translatable("skinshuffle.carousel.save_button"), button -> {
-            SpruceWidget chosenPresetWidget = this.carouselWidgets.get(cardIndex);
+            SpruceWidget chosenPresetWidget = this.carouselWidgets.get((int) Math.round(cardIndex));
 
             if(chosenPresetWidget instanceof AddPresetWidget) {
                 this.close();
@@ -142,6 +136,8 @@ public class SkinCarouselScreen extends SpruceScreen {
 
         this.leftMoveButton.setActive(this.carouselWidgets.size() != 1);
         this.rightMoveButton.setActive(this.carouselWidgets.size() != 1);
+
+        refreshPresetState();
     }
 
     @Override
@@ -171,16 +167,25 @@ public class SkinCarouselScreen extends SpruceScreen {
         int xOffset = (int) ((-deltaIndex + 1) * cardAreaWidth);
         int currentX = this.width / 2 - cardAreaWidth - getCardWidth() / 2;
 
-        for (SpruceWidget widget : this.carouselWidgets) {
+        int i = 0;
+        for (PresetWidget widget : this.carouselWidgets) {
+            var widgetDeltaIndex = widget.getDeltaIndex() - i++;
+            var widgetXOffset = (int) (widgetDeltaIndex * cardAreaWidth);
+//            var position = Position.of(
+//                    widget.isDragging() ? mouseX - widget.getWidth() / 2 : currentX + xOffset,
+//                    this.height / 2 - getCardHeight() / 2
+//            );
+            var position = Position.of(currentX + xOffset + widgetXOffset, this.height / 2 - getCardHeight() / 2);
+
 //            graphics.drawTextWithShadow(this.textRenderer, String.valueOf(loadedPresets.indexOf(loadedPreset)), currentX + xOffset, this.height/2 - this.textRenderer.fontHeight /2 , 0xFFFFFFFF);
             if(widget instanceof SkinPresetWidget loadedPreset) {
-                loadedPreset.overridePosition(Position.of(currentX + xOffset, (this.height / 2) - (getCardHeight() / 2)));
+                loadedPreset.overridePosition(position);
                 loadedPreset.setScaleFactor(this.scaleFactor);
             } else if (widget instanceof AddPresetWidget addPresetWidget) {
-                addPresetWidget.overridePosition(Position.of(currentX + xOffset, (this.height / 2) - (getCardHeight() / 2)));
+                addPresetWidget.overridePosition(position);
             }
 
-            widget.setActive(cardIndex == this.carouselWidgets.indexOf(widget));
+            widget.setActive(Math.round(cardIndex) == this.carouselWidgets.indexOf(widget));
 
             currentX += cardAreaWidth;
         }
@@ -195,6 +200,40 @@ public class SkinCarouselScreen extends SpruceScreen {
     @Override
     public void renderTitle(DrawContext graphics, int mouseX, int mouseY, float delta) {
         graphics.drawCenteredTextWithShadow(this.textRenderer, this.getTitle().asOrderedText(), this.width / 2, this.textRenderer.fontHeight, 0xFFFFFFFF);
+    }
+
+    public void scrollCarousel(double amount, boolean wrapAround) {
+        if (this.carouselWidgets.size() == 1) {
+            return;
+        }
+
+        var cardIndex = this.cardIndex + amount;
+
+        if (wrapAround) {
+            cardIndex = (cardIndex + this.carouselWidgets.size()) % this.carouselWidgets.size();
+        }
+        cardIndex = MathHelper.clamp(cardIndex, 0, this.carouselWidgets.size() - 1);
+
+        setCardIndex(cardIndex);
+    }
+
+    public void snapCarousel() {
+        var cardIndex = Math.round(this.cardIndex);
+        setCardIndex(cardIndex);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+        var sign = SkinShuffleConfig.get().invertCarouselScroll ? -1 : 1;
+        scrollCarousel(-amount / 4 * SkinShuffleConfig.get().carouselScrollSensitivity * sign, false);
+        return true;
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        carouselWidgets.forEach(widget -> widget.setDragging(false));
+
+        return super.mouseReleased(mouseX, mouseY, button);
     }
 
     private int getCardWidth() {
@@ -216,13 +255,26 @@ public class SkinCarouselScreen extends SpruceScreen {
         return MathHelper.lerp(deltaTime, lastCardIndex, cardIndex);
     }
 
-    public SkinPresetWidget loadPreset(SkinPreset preset) {
+    public PresetWidget loadPreset(SkinPreset preset) {
         var widget = new SkinPresetWidget(this, getCardWidth(), getCardHeight(), preset, true);
         this.carouselWidgets.add(widget);
+        widget.lastIndex = this.carouselWidgets.size() - 1;
+        refreshPresetState();
         return widget;
     }
 
-    public void setCardIndex(int index) {
+    public void swapPresets(int index1, int index2) {
+        this.carouselWidgets.get(index1).refreshLastIndex();
+        this.carouselWidgets.get(index2).refreshLastIndex();
+        Collections.swap(this.carouselWidgets, index1, index2);
+        refreshPresetState();
+    }
+
+    public void refreshPresetState() {
+        this.carouselWidgets.forEach(PresetWidget::refreshState);
+    }
+
+    public void setCardIndex(double index) {
         lastCardIndex = getDeltaCardIndex();
         lastCardSwitchTime = GlfwUtil.getTime();
         cardIndex = index;
