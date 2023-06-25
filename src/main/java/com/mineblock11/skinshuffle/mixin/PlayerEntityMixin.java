@@ -53,4 +53,14 @@ public abstract class PlayerEntityMixin extends PlayerEntity {
             }
         }
     }
+
+    @Inject(method = "getModel", at = @At("HEAD"), cancellable = true)
+    private void modifySkinModel(CallbackInfoReturnable<String> cir) {
+        if(MinecraftClient.getInstance().world != null) {
+            if(this.getUuid().equals(MinecraftClient.getInstance().player.getUuid()) && SkinShuffleConfig.get().renderClientSkinRegardless) {
+                SkinPreset currentPreset = SkinPresetManager.getChosenPreset();
+                cir.setReturnValue(Objects.requireNonNullElse(currentPreset.getSkin().getModel(), "default"));
+            }
+        }
+    }
 }

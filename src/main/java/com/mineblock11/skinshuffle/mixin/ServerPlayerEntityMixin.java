@@ -63,6 +63,8 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
 
     @Shadow public abstract void sendAbilitiesUpdate();
 
+    @Shadow public abstract boolean isDisconnected();
+
     protected ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
         super(world, pos, yaw, gameProfile);
     }
@@ -78,6 +80,8 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
      */
     @Override
     public void skinShuffle$refreshSkin() {
+        if(this.isDisconnected()) return;
+
         // Refreshing in tablist for each player
         PlayerManager playerManager = this.getServer().getPlayerManager();
         playerManager.sendToAll(new PlayerRemoveS2CPacket(new ArrayList<>(Collections.singleton(this.getUuid()))));

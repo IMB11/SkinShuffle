@@ -109,7 +109,15 @@ public class ServerSkinHandling {
         });
 
         // Send handshake packet to client.
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> sender.sendPacket(SkinShuffle.id("handshake"), PacketByteBufs.empty()));
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            ServerPlayNetworking.send(handler.getPlayer(), SkinShuffle.id("handshake"), PacketByteBufs.empty());
+        });
+
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) ->  {
+            ServerSkinHandling.PLAYERS_WITH_SCHEDULERS.removeIf(uuid -> uuid.equals(handler.getPlayer().getUuidAsString()));
+            ServerSkinHandling.LOCKED_PLAYERS.removeIf(uuid -> uuid.equals(handler.getPlayer().getUuidAsString()));
+            ServerSkinHandling.CURRENTLY_REFRESHING.removeIf(uuid -> uuid.equals(handler.getPlayer().getUuidAsString()));
+        });
 
         ServerPlayNetworking.registerGlobalReceiver(SkinShuffle.id("preset_changed"), ServerSkinHandling::handlePresetChange);
     }

@@ -73,10 +73,10 @@ public class ClientSkinHandling {
                     }
                 });
             });
-            ClientPlayNetworking.registerReceiver(SkinShuffle.id("handshake"), (client1, handler1, buf, responseSender) -> {
-                ClientPlayNetworking.unregisterReceiver(SkinShuffle.id("handshake"));
-                handshakeTakenPlace = true;
-            });
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(SkinShuffle.id("handshake"), (client1, handler1, buf, responseSender) -> {
+            handshakeTakenPlace = true;
         });
 
         ClientPlayNetworking.registerGlobalReceiver(SkinShuffle.id("reset_cooldown"), ClientSkinHandling::resetCooldown);

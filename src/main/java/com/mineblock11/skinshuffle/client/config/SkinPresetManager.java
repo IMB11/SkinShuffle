@@ -43,6 +43,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class SkinPresetManager {
     public static final Path PERSISTENT_SKINS_DIR = SkinShuffle.DATA_DIR.resolve("skins");
@@ -65,6 +66,15 @@ public class SkinPresetManager {
      */
     public static SkinPreset getChosenPreset() {
         return chosenPreset;
+    }
+
+    /**
+     * Swap the positions of two presets.
+     */
+    public static void swapPresets(int index1, int index2) {
+        Collections.swap(loadedPresets, index1, index2);
+
+        savePresets();
     }
 
     /**
