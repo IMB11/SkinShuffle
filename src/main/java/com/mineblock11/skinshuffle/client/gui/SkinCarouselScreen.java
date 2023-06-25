@@ -22,6 +22,7 @@ package com.mineblock11.skinshuffle.client.gui;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
+import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.widgets.*;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import dev.lambdaurora.spruceui.Position;
@@ -223,7 +224,8 @@ public class SkinCarouselScreen extends SpruceScreen {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-        scrollCarousel(-amount / 4, false);
+        var sign = SkinShuffleConfig.get().invertCarouselScroll ? -1 : 1;
+        scrollCarousel(-amount / 4 * SkinShuffleConfig.get().carouselScrollSensitivity * sign, false);
         return true;
     }
 

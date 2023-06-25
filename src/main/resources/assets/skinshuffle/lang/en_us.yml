@@ -16,6 +16,10 @@ skinshuffle:
     general:
       title: "General Options"
       description: "General configuration options that change or toggle functionality."
+
+      behaviour.title: "Behaviour"
+      display.title: "Display"
+
       render_skin:
         name: "Render Desynchronized Skin"
         description: |-
@@ -37,6 +41,12 @@ skinshuffle:
       display_pause_screen:
         name: "Display Widget In Pause Screen"
         description: "Should the currently selected skin preset and the skin preset button be shown on the pause screen?"
+      carousel_scroll_sensitivity:
+        name: "Carousel Scroll Sensitivity"
+        description: "How sensitive should the carousel be to mouse scrolling?"
+      invert_carousel_scroll:
+        name: "Invert Carousel Scroll"
+        description: "Should the carousel scroll direction be inverted?"
     rendering:
       title: "Rendering Options"
       description: "Configuration options regarding how skin presets are rendered in the title screen, pause menu, carousel and edit screens."
