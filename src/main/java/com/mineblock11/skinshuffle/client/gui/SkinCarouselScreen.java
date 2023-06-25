@@ -79,8 +79,10 @@ public class SkinCarouselScreen extends SpruceScreen {
             SkinPreset unnamed = SkinPreset.generateDefaultPreset();
             unnamed.setName("Unnamed Preset");
             SkinPresetManager.addPreset(unnamed);
-            this.addDrawableChild(this.loadPreset(unnamed));
+            var newWidget = this.loadPreset(unnamed);
+            this.addDrawableChild(newWidget);
             this.swapPresets(this.carouselWidgets.size() - 1, this.carouselWidgets.size() - 2);
+            newWidget.lastIndex = this.carouselWidgets.size() - 2;
         });
 
         var loadedPresets = SkinPresetManager.getLoadedPresets();
