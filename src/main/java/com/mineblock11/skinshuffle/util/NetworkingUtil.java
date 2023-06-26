@@ -64,25 +64,26 @@ public class NetworkingUtil {
 
 
         if(client.isInSingleplayer()) {
-            new Thread(() -> {
+            client.executeTask(() -> {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(250);
                     client.execute(() -> QuickPlay.startSingleplayer(client, folderName));
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-            }).start();
+            });
         } else if (isRealms) {
+            // No sodden clue how to reconnect to realms??
             client.setScreen(new RealmsMainScreen(new TitleScreen()));
         } else {
-            new Thread(() -> {
+            client.executeTask(() -> {
                 try {
                     Thread.sleep(250);
                     client.execute(() -> QuickPlay.startMultiplayer(client, serverAddress));
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-            }).start();
+            });
         }
     }
 }
