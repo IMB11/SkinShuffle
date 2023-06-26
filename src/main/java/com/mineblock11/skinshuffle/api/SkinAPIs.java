@@ -38,8 +38,8 @@ import kong.unirest.Unirest;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.Uuids;
 import org.jetbrains.annotations.Nullable;
+import org.mineskin.MineskinClient;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,8 +48,9 @@ import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
 
-public class MojangSkinAPI {
+public class SkinAPIs {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    public static final MineskinClient MINESKIN_CLIENT = new MineskinClient("SkinShuffle", "5283d2b781514355b22b8a18b39c6a289f5e9148a70f0072ae650785b2fb3e26");
 
     /**
      * Set the player's skin texture from a URL.

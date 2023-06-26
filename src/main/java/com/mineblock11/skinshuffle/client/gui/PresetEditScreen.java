@@ -21,7 +21,6 @@
 package com.mineblock11.skinshuffle.client.gui;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
-import com.mineblock11.skinshuffle.api.MojangSkinAPI;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
@@ -33,7 +32,6 @@ import com.mineblock11.skinshuffle.util.ToastHelper;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.ScreenRect;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tab.GridScreenTab;
 import net.minecraft.client.gui.tab.TabManager;
 import net.minecraft.client.gui.widget.*;
@@ -44,7 +42,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.validator.routines.UrlValidator;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.nio.file.Path;

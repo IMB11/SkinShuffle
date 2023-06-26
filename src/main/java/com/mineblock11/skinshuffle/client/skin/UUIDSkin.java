@@ -21,7 +21,7 @@
 package com.mineblock11.skinshuffle.client.skin;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
-import com.mineblock11.skinshuffle.api.MojangSkinAPI;
+import com.mineblock11.skinshuffle.api.SkinAPIs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.texture.AbstractTexture;
@@ -56,7 +56,7 @@ public class UUIDSkin extends UrlSkin {
 
     @Override
     protected @Nullable AbstractTexture loadTexture(Runnable completionCallback) {
-        var profile = MojangSkinAPI.getPlayerSkinTexture(uuid.toString());
+        var profile = SkinAPIs.getPlayerSkinTexture(uuid.toString());
 
         if (profile.skinURL() == null) {
             return null;
