@@ -20,7 +20,7 @@
 
 package com.mineblock11.skinshuffle.client.preset;
 
-import com.mineblock11.skinshuffle.api.MojangSkinAPI;
+import com.mineblock11.skinshuffle.api.SkinAPIs;
 import com.mineblock11.skinshuffle.client.skin.ResourceSkin;
 import com.mineblock11.skinshuffle.client.skin.Skin;
 import com.mineblock11.skinshuffle.client.skin.UrlSkin;
@@ -77,7 +77,7 @@ public class SkinPreset {
 
             return new SkinPreset(skin, name);
         } else {
-            var skinQueryResult = MojangSkinAPI.getPlayerSkinTexture(session.getUuid());
+            var skinQueryResult = SkinAPIs.getPlayerSkinTexture(session.getUuid());
 
             if(skinQueryResult.usesDefaultSkin()) {
                 Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());

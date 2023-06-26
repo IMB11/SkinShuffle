@@ -144,12 +144,6 @@ public class SkinShuffleConfig {
                             .binding(defaults.disableInstalledToast, () -> config.disableInstalledToast, val -> config.disableInstalledToast = val)
                             .controller(TickBoxControllerBuilder::create).build();
 
-                    var disableCoolToast = Option.<Boolean>createBuilder()
-                            .name(translatable("skinshuffle.config.popups.cooldown_toast.name"))
-                            .description(OptionDescription.createBuilder().text(translatable("skinshuffle.config.popups.cooldown_toast.description")).build())
-                            .binding(defaults.disableCooldownToast, () -> config.disableCooldownToast, val -> config.disableCooldownToast = val)
-                            .controller(TickBoxControllerBuilder::create).build();
-
                     return builder
                             .title(translatable("skinshuffle.config.title"))
                             .category(ConfigCategory.createBuilder()
@@ -172,14 +166,13 @@ public class SkinShuffleConfig {
                             ).category(ConfigCategory.createBuilder()
                                     .name(translatable("skinshuffle.config.popups.title"))
                                     .tooltip(translatable("skinshuffle.config.popups.description"))
-                                    .options(List.of(disableCoolToast, disableInstToast))
+                                    .options(List.of(disableInstToast))
                                     .build());
                 }
         );
     }
 
     @ConfigEntry public boolean disableInstalledToast = false;
-    @ConfigEntry public boolean disableCooldownToast = false;
 
     @ConfigEntry public boolean disableAPIUpload = false;
     @ConfigEntry public boolean renderClientSkinRegardless = true;

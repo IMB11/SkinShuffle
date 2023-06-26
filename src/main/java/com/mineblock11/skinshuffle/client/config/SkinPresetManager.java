@@ -22,28 +22,31 @@ package com.mineblock11.skinshuffle.client.config;
 
 import com.google.gson.*;
 import com.mineblock11.skinshuffle.SkinShuffle;
-import com.mineblock11.skinshuffle.api.MojangSkinAPI;
+import com.mineblock11.skinshuffle.api.SkinAPIs;
+import com.mineblock11.skinshuffle.api.SkinQueryResult;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mineblock11.skinshuffle.client.skin.ConfigSkin;
 import com.mineblock11.skinshuffle.client.skin.UrlSkin;
 import com.mineblock11.skinshuffle.networking.ClientSkinHandling;
 import com.mineblock11.skinshuffle.util.AuthUtil;
+import com.mineblock11.skinshuffle.util.SkinCacheRegistry;
 import com.mineblock11.skinshuffle.util.ToastHelper;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
+import org.mineskin.data.Skin;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.concurrent.ExecutionException;
 
 public class SkinPresetManager {
     public static final Path PERSISTENT_SKINS_DIR = SkinShuffle.DATA_DIR.resolve("skins");
@@ -52,7 +55,6 @@ public class SkinPresetManager {
 
     private static final ArrayList<SkinPreset> loadedPresets = new ArrayList<>();
     private static SkinPreset chosenPreset = null;
-    private static boolean cooldownActive;
 
     /**
      * Get all loaded presets.
@@ -200,34 +202,36 @@ public class SkinPresetManager {
         }
 
         try {
+            ConfigSkin configSkin = preset.getSkin().saveToConfig();
+
             if (preset.getSkin() instanceof UrlSkin urlSkin) {
-                MojangSkinAPI.setSkinTexture(urlSkin.getUrl(), urlSkin.getModel());
+                SkinAPIs.setSkinTexture(urlSkin.getUrl(), urlSkin.getModel());
             } else {
-                ConfigSkin configSkin = preset.getSkin().saveToConfig();
-                MojangSkinAPI.setSkinTexture(configSkin.getFile().toFile(), configSkin.getModel());
+                SkinAPIs.setSkinTexture(configSkin.getFile().toFile(), configSkin.getModel());
             }
 
-            if (client.world != null) {
-                sendUpdateToServer(client);
+            if (client.world != null && ClientSkinHandling.isInstalledOnServer()) {
+                new Thread(() -> {
+                    client.executeTask(() -> {
+                        try {
+                            String cachedURL = SkinCacheRegistry.getCachedUploadedSkin(configSkin.getFile().toFile());
+                            Skin result;
+                            if(cachedURL != null) {
+                                result = SkinAPIs.MINESKIN_CLIENT.generateUrl(cachedURL).join();
+                            } else {
+                                result = SkinAPIs.MINESKIN_CLIENT.generateUpload(configSkin.getFile().toFile()).join();
+                            }
+
+                            SkinQueryResult queryResult = new SkinQueryResult(false, null, preset.getSkin().getModel(), result.data.texture.signature,  result.data.texture.value);
+                            ClientSkinHandling.sendRefresh(queryResult);
+                        } catch (Exception e) {
+                            SkinShuffle.LOGGER.error(e.getMessage());
+                        }
+                    });
+                }).start();
             }
         } catch (Exception e) {
             SkinShuffle.LOGGER.error("Failed to apply skin preset.", e);
         }
-    }
-
-
-    private static void sendUpdateToServer(MinecraftClient client) {
-        if (cooldownActive) {
-            client.getToastManager().add(SystemToast.create(client,
-                    SystemToast.Type.PACK_LOAD_FAILURE,
-                    Text.translatable("skinshuffle.cooldown.toast.title"),
-                    Text.translatable("skinshuffle.cooldown.toast.message")));
-        }
-
-        ClientPlayNetworking.send(SkinShuffle.id("preset_changed"), PacketByteBufs.empty());
-    }
-
-    public static void setCooldown(boolean value) {
-        cooldownActive = value;
     }
 }
