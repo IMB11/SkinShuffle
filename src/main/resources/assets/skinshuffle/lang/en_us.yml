@@ -13,22 +13,12 @@ skinshuffle:
 
       behaviour.title: "Behaviour"
       display.title: "Display"
-
-      render_skin:
-        name: "Render Desynchronized Skin"
-        description: |-
-          Should your currently selected preset be applied to your skin regardless of if the server-side refresh has occurred?
-
-          If enabled, this will mean that until a server-side skin refresh has occurred, only you will be able to see your newly set skin.
-
-          §o§7When you change your selected skin preset, SkinShuffle asks the server to refresh your skin for all players.
-          §o§7The refresh might not occur instantly due to the cooldown period imposed by the caching issues of the Mojang API.
       disable_api:
         name: "Disable Mojang API Uploading"
         description: |-
           Should SkinShuffle not upload your skin to the Mojang API?
 
-          If enabled, this will mean that your skin will not be visible to other players.
+          If enabled, this will mean that your skin will not be visible to yourself or other players.
       display_title_screen:
         name: "Display Widget In Title Screen"
         description: "Should the currently selected skin preset and the skin preset button be shown on the title screen?"

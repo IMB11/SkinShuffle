@@ -27,9 +27,7 @@ import java.util.ArrayList;
 public class CompatLoader {
     private static final ArrayList<CompatHandler> HELPERS = new ArrayList<>();
 
-    static {
-        HELPERS.add(new ETFCompatHandler());
-    }
+    static {}
 
     public static void init() {
         for (CompatHandler helper : HELPERS) {
