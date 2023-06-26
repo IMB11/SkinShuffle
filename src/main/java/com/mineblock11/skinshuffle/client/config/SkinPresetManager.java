@@ -35,8 +35,15 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.QuickPlay;
+import net.minecraft.client.gui.screen.ConfirmScreen;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.TitleScreen;
+import net.minecraft.client.realms.RealmsClient;
+import net.minecraft.client.realms.gui.screen.RealmsMainScreen;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
+import net.minecraft.util.WorldSavePath;
 import org.mineskin.data.Skin;
 
 import java.io.FileNotFoundException;
@@ -46,6 +53,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 public class SkinPresetManager {
@@ -229,6 +237,26 @@ public class SkinPresetManager {
                         }
                     });
                 }).start();
+            } else if (client.world != null) {
+                Screen parentScreen = client.currentScreen;
+                client.setScreen(new ConfirmScreen((boolean result) -> {
+                    if(result) {
+                        if(client.isInSingleplayer()) {
+                            assert client.server != null;
+                            String folderName = client.server.getSavePath(WorldSavePath.ROOT).toFile().getName();
+                            client.disconnect();
+                            while(!client.server.isStopped()) {}
+                            QuickPlay.startSingleplayer(client, folderName);
+                        } else if (client.isConnectedToRealms()) {
+                            client.disconnect(new RealmsMainScreen(new TitleScreen()));
+                        } else if (!client.isInSingleplayer()) {
+                            String serverAddress = Objects.requireNonNull(client.getCurrentServerEntry()).address;
+                            client.disconnect();
+                            while(client.world != null) {}
+                            QuickPlay.startMultiplayer(client, serverAddress);
+                        }
+                    }
+                }, Text.translatable("skinshuffle.relog.title"), Text.translatable("skinshuffle.relog.message")));
             }
         } catch (Exception e) {
             SkinShuffle.LOGGER.error("Failed to apply skin preset.", e);

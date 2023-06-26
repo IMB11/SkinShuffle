@@ -130,8 +130,6 @@ public class SkinCarouselScreen extends SpruceScreen {
             SkinPresetWidget presetWidget = (SkinPresetWidget) chosenPresetWidget;
 
             SkinPresetManager.setChosenPreset(presetWidget.getPreset(), this.hasEditedPreset);
-
-            this.close();
         }));
 
         this.leftMoveButton.setActive(this.carouselWidgets.size() != 1);

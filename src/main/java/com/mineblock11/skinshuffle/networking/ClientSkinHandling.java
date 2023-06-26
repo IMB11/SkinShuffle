@@ -60,6 +60,10 @@ public class ClientSkinHandling {
             });
         });
 
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+            handshakeTakenPlace = false;
+        });
+
         ClientPlayNetworking.registerGlobalReceiver(SkinShuffle.id("handshake"), (client1, handler1, buf, responseSender) -> {
             handshakeTakenPlace = true;
         });
