@@ -28,7 +28,7 @@ import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.mixin.accessor.MinecraftClientAccessor;
 import com.mineblock11.skinshuffle.mixin.accessor.MinecraftClientAuthAccessor;
 import com.mineblock11.skinshuffle.mixin.accessor.YggdrasilUserApiServiceAccessor;
-import com.mineblock11.skinshuffle.util.AuthUtil;
+import com.mineblock11.skinshuffle.util.NetworkingUtil;
 import com.mineblock11.skinshuffle.util.SkinCacheRegistry;
 import com.mojang.authlib.minecraft.UserApiService;
 import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
@@ -198,7 +198,7 @@ public class SkinAPIs {
             return;
         }
 
-        if (AuthUtil.isLoggedIn()) {
+        if (NetworkingUtil.isLoggedIn()) {
             try {
                 com.mojang.authlib.minecraft.client.MinecraftClient client = ((YggdrasilUserApiServiceAccessor) service).getMinecraftClient();
                 String token = ((MinecraftClientAuthAccessor) client).getAccessToken();

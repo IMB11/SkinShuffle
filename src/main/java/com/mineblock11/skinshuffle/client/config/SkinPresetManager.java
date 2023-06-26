@@ -28,34 +28,20 @@ import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mineblock11.skinshuffle.client.skin.ConfigSkin;
 import com.mineblock11.skinshuffle.client.skin.UrlSkin;
 import com.mineblock11.skinshuffle.networking.ClientSkinHandling;
-import com.mineblock11.skinshuffle.util.AuthUtil;
+import com.mineblock11.skinshuffle.util.NetworkingUtil;
 import com.mineblock11.skinshuffle.util.SkinCacheRegistry;
-import com.mineblock11.skinshuffle.util.ToastHelper;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.QuickPlay;
-import net.minecraft.client.gui.screen.ConfirmScreen;
-import net.minecraft.client.gui.screen.GameMenuScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.TitleScreen;
-import net.minecraft.client.realms.RealmsClient;
-import net.minecraft.client.realms.gui.screen.RealmsMainScreen;
-import net.minecraft.client.toast.SystemToast;
-import net.minecraft.text.Text;
-import net.minecraft.util.WorldSavePath;
 import org.mineskin.data.Skin;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 
 public class SkinPresetManager {
     public static final Path PERSISTENT_SKINS_DIR = SkinShuffle.DATA_DIR.resolve("skins");
@@ -198,13 +184,12 @@ public class SkinPresetManager {
 
         // Skip applying if the config says to.
         if (SkinShuffleConfig.get().disableAPIUpload) {
-            SkinShuffle.LOGGER.info("Skipping skin preset application due to config.");
+            SkinShuffle.LOGGER.info("Skipping skin preset application due to user preference.");
             return;
         }
 
-        if (!AuthUtil.isLoggedIn()) {
-            SkinShuffle.LOGGER.warn("Skipping skin preset application due to not being logged in.");
-            AuthUtil.warnNotAuthed();
+        if (!NetworkingUtil.isLoggedIn()) {
+            SkinShuffle.LOGGER.warn("Skipping skin preset application due to offline mode being active.");
             return;
         }
 

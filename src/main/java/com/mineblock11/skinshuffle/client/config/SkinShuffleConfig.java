@@ -23,23 +23,15 @@ package com.mineblock11.skinshuffle.client.config;
 import com.google.gson.GsonBuilder;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import dev.isxander.yacl3.api.*;
-import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
 import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
 import dev.isxander.yacl3.config.ConfigEntry;
 import dev.isxander.yacl3.config.GsonConfigInstance;
-import dev.isxander.yacl3.gui.controllers.slider.FloatSliderController;
-import dev.isxander.yacl3.impl.controller.BooleanControllerBuilderImpl;
-import dev.isxander.yacl3.impl.controller.FloatSliderControllerBuilderImpl;
 import net.minecraft.text.Text;
-import org.apache.commons.lang3.StringUtils;
 
 import java.nio.file.Path;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 import static net.minecraft.text.Text.*;
 
@@ -125,10 +117,10 @@ public class SkinShuffleConfig {
                             .controller(TickBoxControllerBuilder::create).build();
 
                     // Popup Options
-                    var disableInstToast = Option.<Boolean>createBuilder()
-                            .name(translatable("skinshuffle.config.popups.installed_toast.name"))
-                            .description(OptionDescription.createBuilder().text(translatable("skinshuffle.config.popups.installed_toast.description")).build())
-                            .binding(defaults.disableInstalledToast, () -> config.disableInstalledToast, val -> config.disableInstalledToast = val)
+                    var disableRnnoctToast = Option.<Boolean>createBuilder()
+                            .name(translatable("skinshuffle.config.popups.reconnect.name"))
+                            .description(OptionDescription.createBuilder().text(translatable("skinshuffle.config.popups.reconnect.description")).build())
+                            .binding(defaults.disableReconnectToast, () -> config.disableReconnectToast, val -> config.disableReconnectToast = val)
                             .controller(TickBoxControllerBuilder::create).build();
 
                     return builder
@@ -153,13 +145,13 @@ public class SkinShuffleConfig {
                             ).category(ConfigCategory.createBuilder()
                                     .name(translatable("skinshuffle.config.popups.title"))
                                     .tooltip(translatable("skinshuffle.config.popups.description"))
-                                    .options(List.of(disableInstToast))
+                                    .options(List.of(disableRnnoctToast))
                                     .build());
                 }
         );
     }
 
-    @ConfigEntry public boolean disableInstalledToast = false;
+    @ConfigEntry public boolean disableReconnectToast = false;
 
     @ConfigEntry public boolean disableAPIUpload = false;
 

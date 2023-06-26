@@ -1,12 +1,42 @@
 skinshuffle:
+  reconnect:
+    reconnecting: Reconnecting...
+    rejoining: Rejoining...
+    rejoin: rejoin
+    c_rejoin: Rejoin
+    reconnect_to: reconnect to
+    reconnect: reconnect
+    c_reconnect: Reconnect
+    world: world
+    server: server
+    realm: realm
+    title: "%s Recommended"
+    message: |-
+      If you want your skin to be visible to you and other players, you must %s the current %s.
+      
+      Do you want to %s?
+  toasts:
+    refused_reconnect:
+      title: "Skin is not visible to others."
+      message: |-
+        You will have to reconnect for your skin to be visible to you and other players.
+        §7§oYou can disable this toast in the config.
+    offline:
+      title: "SkinShuffle cannot apply your skin."
+      message: |-
+        You are not authenticated, your skin will only be visible to you.
+        §7§oYou can disable this toast in the config.
+    editor_failure:
+      title: "There was a failure with the editor."
+      message: "Please check logs for more information."
   config:
     title: "SkinShuffle"
     popups:
       title: "Popup Options"
       description: "Configuration options regarding toasts and other popups that appear in-game in certain circumstances."
-      installed_toast:
-        name: "Disable \"Not Installed\" Toast"
-        description: "Disable the toast that appears when the mod is not installed on the server. We recommend you keep this enabled. However, we accept that it may be annoying if you primarily play on servers that do not have the mod."
+      reconnect:
+        name: "Disable Skin Visibility Toast"
+        description: "Disable the toast that appears when you do not reconnect after changing your skin.\n\nThis only shows on servers without the mod installed."
     general:
       title: "General Options"
       description: "General configuration options that change or toggle functionality."
@@ -51,23 +81,6 @@ skinshuffle:
       rotation_speed:
         name: "Rotation Speed Multiplier"
         description: "What rotation speed multiplier should be applied to skins if rotation is enabled?"
-  handshake:
-    toast:
-      title: "Skin is not visible to others."
-      message_initial: |-
-        Any changes to your skin will require you to reconnect.
-        §7§oYou can disable this toast in the config.
-      message_on_change: |-
-        You will have to reconnect to allow other players to see your skin.
-        §7§oYou can disable this toast in the config.
-  cooldown:
-    toast:
-      title: "Skin refresh has been scheduled."
-      message: "You have already changed your skin in the last 30 seconds. Your skin will be visible to players after the cooldown period has ended."
-  offline:
-    toast:
-      title: "SkinShuffle cannot apply your skin."
-      message: "You are not authenticated, your skin will only be visible to you."
   button: "Skin Presets"
   carousel:
     title: "Skin Presets"
@@ -93,9 +106,6 @@ skinshuffle:
       delete: "Delete"
 
   edit:
-    fail:
-      title: "There was a failure with the editor."
-      message: "Please check logs for more information."
     customize:
       title: "Preset Settings"
       classic: "Classic"

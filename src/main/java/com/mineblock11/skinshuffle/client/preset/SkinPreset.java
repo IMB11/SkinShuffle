@@ -24,7 +24,7 @@ import com.mineblock11.skinshuffle.api.SkinAPIs;
 import com.mineblock11.skinshuffle.client.skin.ResourceSkin;
 import com.mineblock11.skinshuffle.client.skin.Skin;
 import com.mineblock11.skinshuffle.client.skin.UrlSkin;
-import com.mineblock11.skinshuffle.util.AuthUtil;
+import com.mineblock11.skinshuffle.util.NetworkingUtil;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.MinecraftClient;
@@ -71,7 +71,7 @@ public class SkinPreset {
         Session session = client.getSession();
         String name = session.getUsername();
 
-        if(!AuthUtil.isLoggedIn()) {
+        if(!NetworkingUtil.isLoggedIn()) {
             Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
             Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
 

@@ -26,6 +26,7 @@ import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.widgets.*;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mineblock11.skinshuffle.networking.ClientSkinHandling;
+import com.mineblock11.skinshuffle.util.NetworkingUtil;
 import com.mineblock11.skinshuffle.util.ToastHelper;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.Tooltip;
@@ -34,22 +35,17 @@ import dev.lambdaurora.spruceui.util.ScissorManager;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
 import dev.lambdaurora.spruceui.widget.SpruceIconButtonWidget;
 import dev.lambdaurora.spruceui.widget.SpruceWidget;
-import net.minecraft.client.QuickPlay;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ConfirmScreen;
-import net.minecraft.client.gui.screen.GameMenuScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.TitleScreen;
-import net.minecraft.client.realms.gui.screen.RealmsMainScreen;
+import net.minecraft.client.gui.screen.*;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
-import net.minecraft.util.WorldSavePath;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Objects;
 
 public class SkinCarouselScreen extends SpruceScreen {
     public final Screen parent;
@@ -143,28 +139,20 @@ public class SkinCarouselScreen extends SpruceScreen {
             if(this.client.world != null) {
                 this.client.setScreen(new ConfirmScreen((boolean result) -> {
                     if(result) {
-                        if(client.isInSingleplayer()) {
-                            assert client.server != null;
-                            String folderName = client.server.getSavePath(WorldSavePath.ROOT).toFile().getName();
-                            client.disconnect();
-                            while(!client.server.isStopped()) {}
-                            QuickPlay.startSingleplayer(client, folderName);
-                        } else if (client.isConnectedToRealms()) {
-                            client.disconnect(new RealmsMainScreen(new TitleScreen()));
-                        } else if (!client.isInSingleplayer()) {
-                            String serverAddress = Objects.requireNonNull(client.getCurrentServerEntry()).address;
-                            client.disconnect();
-                            while(client.world != null) {}
-                            QuickPlay.startMultiplayer(client, serverAddress);
-                        }
+                        NetworkingUtil.handleReconnect(client);
                     } else {
                         if (!ClientSkinHandling.isInstalledOnServer()) {
-                            ToastHelper.showHandshakeOnChange(client);
+                            ToastHelper.showRefusedReconnectToast();
                         }
 
                         client.setScreen(this.parent);
                     }
-                }, Text.translatable("skinshuffle.relog.title"), Text.translatable("skinshuffle.relog.message")));
+                }, Text.translatable("skinshuffle.reconnect.title",
+                        client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.c_region") : I18n.translate("skinshuffle.reconnect.c_reconnect")).formatted(Formatting.RED, Formatting.BOLD),
+                   Text.translatable("skinshuffle.reconnect.message",
+                        client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.rejoin") : I18n.translate("skinshuffle.reconnect.reconnect_to"),
+                        client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.world") : client.isConnectedToRealms() ? I18n.translate("skinshuffle.reconnect.realm") : I18n.translate("skinshuffle.reconnect.server"),
+                        client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.rejoin") : I18n.translate("skinshuffle.reconnect.reconnect"))));
             } else {
                 this.close();
             }
