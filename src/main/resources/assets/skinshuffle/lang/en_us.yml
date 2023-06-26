@@ -7,12 +7,6 @@ skinshuffle:
       installed_toast:
         name: "Disable \"Not Installed\" Toast"
         description: "Disable the toast that appears when the mod is not installed on the server. We recommend you keep this enabled. However, we accept that it may be annoying if you primarily play on servers that do not have the mod."
-      cooldown_toast:
-        name: "Disable \"Cooldown\" Toast"
-        description: |-
-          Disable the toast that appears when you have switched skin preset during the cooldown period.
-          
-          The cooldown period exists due to caching issues related to the Mojang API. If you have switched skin preset during the cooldown period the toast will show - the server will not refresh your skin until the cooldown period is over.
     general:
       title: "General Options"
       description: "General configuration options that change or toggle functionality."

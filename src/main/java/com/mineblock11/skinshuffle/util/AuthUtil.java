@@ -38,7 +38,7 @@ public class AuthUtil {
 
     private static boolean toastLock = false;
     public static void warnNotAuthed() {
-        if(toastLock || SkinShuffleConfig.get().disableCooldownToast) return;
+        if(toastLock) return;
         toastLock = true;
         MinecraftClient client = MinecraftClient.getInstance();
 
