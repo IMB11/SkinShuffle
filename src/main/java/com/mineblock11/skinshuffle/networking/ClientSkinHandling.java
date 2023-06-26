@@ -51,13 +51,6 @@ public class ClientSkinHandling {
         ClientPlayConnectionEvents.INIT.register((handler, client) -> {
             if(client.world == null) return;
             handshakeTakenPlace = false;
-            CompletableFuture.delayedExecutor(10, TimeUnit.SECONDS).execute(() -> {
-                client.execute(() -> {
-                    if(!handshakeTakenPlace) {
-                        ToastHelper.showHandshakeInitial(client);
-                    }
-                });
-            });
         });
 
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
