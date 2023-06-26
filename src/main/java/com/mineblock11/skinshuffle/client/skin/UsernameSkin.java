@@ -37,14 +37,18 @@ public class UsernameSkin extends UUIDSkin {
     public static final Identifier SERIALIZATION_ID = SkinShuffle.id("username");
     public static final Codec<UsernameSkin> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("username").forGetter(skin -> skin.username),
-            Codec.STRING.fieldOf("model").forGetter(UsernameSkin::getModel)
+            Codec.STRING.optionalFieldOf("model").forGetter(skin -> Optional.ofNullable(skin.model))
     ).apply(instance, UsernameSkin::new));
 
     private final String username;
 
-    public UsernameSkin(String username, String model) {
+    public UsernameSkin(String username, @Nullable String model) {
         super(model);
         this.username = username;
+    }
+
+    private UsernameSkin(String username, Optional<String> model) {
+        this(username, model.orElse(null));
     }
 
     @Override

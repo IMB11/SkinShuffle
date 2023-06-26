@@ -23,6 +23,8 @@ package com.mineblock11.skinshuffle.client.skin;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import kong.unirest.Unirest;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.texture.AbstractTexture;
@@ -33,29 +35,41 @@ import org.jetbrains.annotations.Nullable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.Optional;
 
 public class UrlSkin extends BackedSkin {
+    public static final Int2ObjectMap<String> MODEL_CACHE = new Int2ObjectOpenHashMap<>();
+
     public static final Identifier SERIALIZATION_ID = SkinShuffle.id("url");
     public static final Codec<UrlSkin> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("url").forGetter(skin -> skin.url),
-            Codec.STRING.fieldOf("model").forGetter(UrlSkin::getModel)
+            Codec.STRING.optionalFieldOf("model").forGetter(skin -> Optional.ofNullable(skin.model))
     ).apply(instance, UrlSkin::new));
 
     protected String url;
-    private String model;
+    protected String model;
 
     public UrlSkin(String url, String model) {
         this.url = url;
         this.model = model;
     }
 
-    protected UrlSkin(String model) {
+    private UrlSkin(String url, Optional<String> model) {
+        this.url = url;
+        this.model = model.orElse(null);
+    }
+
+    protected UrlSkin(@Nullable String model) {
         this.model = model;
     }
 
     @Override
     public String getModel() {
-        return model;
+        if (model == null) {
+            tryLoadModelFromCache();
+        }
+
+        return model == null ? "default" : model;
     }
 
     @Override
@@ -76,6 +90,10 @@ public class UrlSkin extends BackedSkin {
     @Override
     public ConfigSkin saveToConfig() {
         try {
+            if (model == null) {
+                throw new RuntimeException("Model is not loaded yet");
+            }
+
             var textureName = String.valueOf(Math.abs(getTextureUniqueness().hashCode()));
             var configSkin = new ConfigSkin(textureName, getModel());
 
@@ -141,5 +159,16 @@ public class UrlSkin extends BackedSkin {
         int result = url != null ? url.hashCode() : 0;
         result = 31 * result + (model != null ? model.hashCode() : 0);
         return result;
+    }
+
+    protected void cacheModel() {
+        MODEL_CACHE.put(getTextureUniqueness().hashCode(), getModel());
+    }
+
+    protected void tryLoadModelFromCache() {
+        var model = MODEL_CACHE.get(getTextureUniqueness().hashCode());
+        if (model != null) {
+            setModel(model);
+        }
     }
 }
