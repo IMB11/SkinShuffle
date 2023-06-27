@@ -27,6 +27,7 @@ import com.mineblock11.skinshuffle.client.gui.SkinCarouselScreen;
 import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
+import com.mineblock11.skinshuffle.util.SkinCacheRegistry;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
 import dev.lambdaurora.spruceui.widget.SpruceWidget;
@@ -182,8 +183,10 @@ public class SkinPresetWidget extends PresetWidget {
     protected void renderBackground(DrawContext graphics, int mouseX, int mouseY, float delta) {
         int borderColour = this.active ? 0xDF000000 : 0x5F000000;
 
-        if(SkinPresetManager.getChosenPreset().equals(this.skinPreset)) {
+        if (SkinPresetManager.getChosenPreset() == this.skinPreset) {
             borderColour = this.active ? 0xDF0096FF : 0x5F0096FF;
+        } else if (SkinPresetManager.getApiPreset() == this.skinPreset) {
+            borderColour = this.active ? 0xDFFF3600 : 0x5FFF3600;
         }
 
         graphics.drawBorder(getX(), getY(), getWidth(), getHeight(), borderColour);

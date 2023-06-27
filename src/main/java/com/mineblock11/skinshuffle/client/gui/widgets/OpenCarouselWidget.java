@@ -87,8 +87,6 @@ public class OpenCarouselWidget extends SpruceContainerWidget {
 
             this.addChild(warningIcon);
         }
-
-        setSelectedPreset(SkinPresetManager.getChosenPreset());
     }
 
 
@@ -132,23 +130,29 @@ public class OpenCarouselWidget extends SpruceContainerWidget {
 
     @Override
     protected void renderWidget(DrawContext graphics, int mouseX, int mouseY, float delta) {
-        if(this.entity != null) {
-            float followX = (float)(this.getX() + (this.getWidth() / 2)) - mouseX;
-            float followY = (float)(this.getY() - 90) - mouseY;
-            float rotation = 0;
+        if (this.entity != null) {
+            // Don't want to render the entity if the skin is still loading
+            if (!selectedPreset.getSkin().isLoading()) {
+                float followX = (float) (this.getX() + (this.getWidth() / 2)) - mouseX;
+                float followY = (float) (this.getY() - 90) - mouseY;
+                float rotation = 0;
 
-            SkinShuffleConfig.SkinRenderStyle renderStyle = SkinShuffleConfig.get().widgetSkinRenderStyle;
+                SkinShuffleConfig.SkinRenderStyle renderStyle = SkinShuffleConfig.get().widgetSkinRenderStyle;
 
-            if(renderStyle.equals(SkinShuffleConfig.SkinRenderStyle.ROTATION)) {
-                followX = 0;
-                followY = 0;
-                rotation = getEntityRotation() * SkinShuffleConfig.get().rotationMultiplier;
+                if (renderStyle.equals(SkinShuffleConfig.SkinRenderStyle.ROTATION)) {
+                    followX = 0;
+                    followY = 0;
+                    rotation = getEntityRotation() * SkinShuffleConfig.get().rotationMultiplier;
+                }
+
+                GuiEntityRenderer.drawEntity(
+                        graphics.getMatrices(), this.getX() + (this.getWidth() / 2), this.getY() - 12,
+                        45, rotation, followX, followY, entity
+                );
+            } else {
+                // Make sure to call getTexture anyway, otherwise the skin will never load
+                selectedPreset.getSkin().getTexture();
             }
-
-            GuiEntityRenderer.drawEntity(
-                    graphics.getMatrices(), this.getX() + (this.getWidth() / 2), this.getY() - 12,
-                    45, rotation, followX, followY, entity
-            );
         }
 
         if(this.warningIcon != null) {

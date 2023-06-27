@@ -43,8 +43,6 @@ public class GameMenuScreenMixin extends Screen {
 
     @Override
     public void onDisplayed() {
-        SkinPresetManager.loadPresets();
-
         if(!SkinShuffleConfig.get().displayInPauseMenu && this.openCarouselWidget != null) {
             this.children().remove(this.openCarouselWidget);
             this.openCarouselWidget = null;
@@ -66,6 +64,11 @@ public class GameMenuScreenMixin extends Screen {
             OpenCarouselWidget.safelyCreateWidget(this, openCarouselWidget -> {
                 this.openCarouselWidget = openCarouselWidget;
                 this.addDrawableChild(openCarouselWidget);
+
+                new Thread(() -> {
+                    SkinPresetManager.loadPresets();
+                    openCarouselWidget.setSelectedPreset(SkinPresetManager.getChosenPreset());
+                }).start();
             });
         }
     }

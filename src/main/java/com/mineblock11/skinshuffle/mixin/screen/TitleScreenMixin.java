@@ -71,8 +71,6 @@ public class TitleScreenMixin extends Screen {
 
     @Inject(method = "onDisplayed", at = @At("TAIL"), cancellable = false)
     public void updateVisibility(CallbackInfo ci) {
-        SkinPresetManager.loadPresets();
-
         if (!SkinShuffleConfig.get().displayInTitleScreen && this.openCarouselWidget != null) {
             this.children().remove(this.openCarouselWidget);
             this.openCarouselWidget = null;
@@ -90,6 +88,11 @@ public class TitleScreenMixin extends Screen {
         OpenCarouselWidget.safelyCreateWidget(this, openCarouselWidget -> {
             this.openCarouselWidget = openCarouselWidget;
             this.addDrawableChild(openCarouselWidget);
+
+            new Thread(() -> {
+                SkinPresetManager.loadPresets();
+                openCarouselWidget.setSelectedPreset(SkinPresetManager.getChosenPreset());
+            }).start();
         });
     }
 }

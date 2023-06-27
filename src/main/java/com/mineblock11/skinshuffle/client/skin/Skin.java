@@ -22,10 +22,12 @@ package com.mineblock11.skinshuffle.client.skin;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.UUID;
 
 public interface Skin {
     Map<Identifier, Codec<? extends Skin>> TYPES = Map.of(
@@ -56,4 +58,9 @@ public interface Skin {
     ConfigSkin saveToConfig();
 
     void setModel(String value);
+
+    static ResourceSkin randomDefaultSkin() {
+        var uuid = UUID.randomUUID();
+        return new ResourceSkin(DefaultSkinHelper.getTexture(uuid), DefaultSkinHelper.getModel(uuid));
+    }
 }
