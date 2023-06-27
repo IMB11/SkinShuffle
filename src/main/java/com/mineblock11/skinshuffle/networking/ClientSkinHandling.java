@@ -37,6 +37,16 @@ import java.util.concurrent.*;
 public class ClientSkinHandling {
     private static boolean handshakeTakenPlace = false;
 
+    private static boolean reconnectRequired = false;
+
+    public static boolean isReconnectRequired() {
+        return reconnectRequired;
+    }
+
+    public static void setReconnectRequired(boolean reconnectRequired) {
+        ClientSkinHandling.reconnectRequired = reconnectRequired;
+    }
+
     public static boolean isInstalledOnServer() {
         return handshakeTakenPlace;
     }
@@ -55,6 +65,7 @@ public class ClientSkinHandling {
 
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             handshakeTakenPlace = false;
+            setReconnectRequired(false);
         });
 
         ClientPlayNetworking.registerGlobalReceiver(SkinShuffle.id("handshake"), (client1, handler1, buf, responseSender) -> {

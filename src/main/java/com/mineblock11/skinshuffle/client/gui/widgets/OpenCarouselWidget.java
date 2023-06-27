@@ -20,30 +20,40 @@
 
 package com.mineblock11.skinshuffle.client.gui.widgets;
 
+import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
+import com.mineblock11.skinshuffle.client.gui.GeneratedScreens;
 import com.mineblock11.skinshuffle.client.gui.SkinCarouselScreen;
 import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mineblock11.skinshuffle.mixin.accessor.GameMenuScreenAccessor;
+import com.mineblock11.skinshuffle.networking.ClientSkinHandling;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import dev.lambdaurora.spruceui.Position;
+import dev.lambdaurora.spruceui.Tooltip;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
+import dev.lambdaurora.spruceui.widget.SpruceTexturedButtonWidget;
 import dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.GlfwUtil;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 import java.util.UUID;
 import java.util.function.Consumer;
 
 public class OpenCarouselWidget extends SpruceContainerWidget {
     private final Screen parent;
+    private final MutableText warningTooltip;
+    private SpruceTexturedButtonWidget warningIcon;
     private SkinPreset selectedPreset;
     private DummyClientPlayerEntity entity;
     private double currentTime = 0;
@@ -55,9 +65,28 @@ public class OpenCarouselWidget extends SpruceContainerWidget {
 
         currentTime = GlfwUtil.getTime();
 
-        this.addChild(new SpruceButtonWidget(Position.of(0, 0), width, 20, Text.translatable("skinshuffle.button"), button -> {
+        this.addChild(new SpruceButtonWidget(Position.of(0, 0), width - 18, 20, Text.translatable("skinshuffle.button"), button -> {
             this.client.setScreen(new SkinCarouselScreen(parent));
         }));
+
+        this.warningTooltip = Text.literal(I18n.translate("skinshuffle.reconnect.warning",
+                client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.rejoin") : I18n.translate("skinshuffle.reconnect.reconnect"))).formatted(Formatting.RED, Formatting.BOLD);
+
+        if(screen instanceof GameMenuScreen) {
+            this.warningIcon = new SpruceTexturedButtonWidget(Position.of(width - 16, 2), 16, 16, Text.empty(), true, btn -> {
+                this.client.setScreen(GeneratedScreens.getReconnectScreen(screen));
+            }, 0, 0, 16, SkinShuffle.id("textures/gui/warning-icon.png"), 16, 32) {
+                @Override
+                public boolean mouseClicked(double mouseX, double mouseY, int button) {
+                    if (!this.isActive() || !this.isVisible() || !this.isMouseHovered())
+                        return false;
+
+                    return this.onMouseClick(mouseX, mouseY, button);
+                }
+            };
+
+            this.addChild(warningIcon);
+        }
 
         setSelectedPreset(SkinPresetManager.getChosenPreset());
     }
@@ -81,7 +110,7 @@ public class OpenCarouselWidget extends SpruceContainerWidget {
             }
         }
 
-        widgetConsumer.accept(new OpenCarouselWidget(Position.of(x, y), 72, screen.height / 4, screen));
+        widgetConsumer.accept(new OpenCarouselWidget(Position.of(x, y), 72 + 20, screen.height / 4, screen));
     }
 
     public void disposed() {
@@ -121,6 +150,13 @@ public class OpenCarouselWidget extends SpruceContainerWidget {
                     45, rotation, followX, followY, entity
             );
         }
+
+        if(this.warningIcon != null) {
+            this.warningIcon.setVisible(ClientSkinHandling.isReconnectRequired());
+            if(this.warningIcon.isMouseHovered())
+                Tooltip.create(mouseX, mouseY, this.warningTooltip, this.width).render(graphics);
+        }
+
 
         super.renderWidget(graphics, mouseX, mouseY, delta);
     }
