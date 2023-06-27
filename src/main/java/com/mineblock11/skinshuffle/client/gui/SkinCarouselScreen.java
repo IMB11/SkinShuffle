@@ -115,7 +115,7 @@ public class SkinCarouselScreen extends SpruceScreen {
             this.close();
         }));
 
-        this.addDrawableChild(new SpruceIconButtonWidget(Position.of(2, 2), 20, 20, Text.empty(), (btn) -> this.client.setScreenAndRender(SkinShuffleConfigScreen.get(this))) {
+        this.addDrawableChild(new SpruceIconButtonWidget(Position.of(2, 2), 20, 20, Text.empty(), (btn) -> this.client.setScreenAndRender(GeneratedScreens.getConfigScreen(this))) {
             @Override
             protected int renderIcon(DrawContext graphics, int mouseX, int mouseY, float delta) {
                 graphics.drawTexture(SkinShuffle.id("textures/gui/config-button-icon.png"), this.getX() + this.getWidth() / 2 - (14 / 2), this.getY() + this.getHeight() / 2 - (14 / 2), 14, 14, 0, 0, 15, 15, 15, 15);
@@ -137,22 +137,7 @@ public class SkinCarouselScreen extends SpruceScreen {
             SkinPresetManager.setChosenPreset(presetWidget.getPreset(), this.hasEditedPreset);
 
             if(this.client.world != null && !ClientSkinHandling.isInstalledOnServer()) {
-                this.client.setScreen(new ConfirmScreen((boolean result) -> {
-                    if(result) {
-                        NetworkingUtil.handleReconnect(client);
-                    } else {
-                        if (!ClientSkinHandling.isInstalledOnServer()) {
-                            ToastHelper.showRefusedReconnectToast();
-                        }
-
-                        client.setScreen(this.parent);
-                    }
-                }, Text.translatable("skinshuffle.reconnect.title",
-                        client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.c_region") : I18n.translate("skinshuffle.reconnect.c_reconnect")).formatted(Formatting.RED, Formatting.BOLD),
-                   Text.translatable("skinshuffle.reconnect.message",
-                        client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.rejoin") : I18n.translate("skinshuffle.reconnect.reconnect_to"),
-                        client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.world") : client.isConnectedToRealms() ? I18n.translate("skinshuffle.reconnect.realm") : I18n.translate("skinshuffle.reconnect.server"),
-                        client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.rejoin") : I18n.translate("skinshuffle.reconnect.reconnect"))));
+                this.client.setScreen(GeneratedScreens.getReconnectScreen(this.parent));
             } else {
                 this.close();
             }
