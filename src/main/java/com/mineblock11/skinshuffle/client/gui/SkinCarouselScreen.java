@@ -25,6 +25,9 @@ import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.widgets.*;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
+import com.mineblock11.skinshuffle.networking.ClientSkinHandling;
+import com.mineblock11.skinshuffle.util.NetworkingUtil;
+import com.mineblock11.skinshuffle.util.ToastHelper;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.Tooltip;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
@@ -33,10 +36,12 @@ import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
 import dev.lambdaurora.spruceui.widget.SpruceIconButtonWidget;
 import dev.lambdaurora.spruceui.widget.SpruceWidget;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.*;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
@@ -131,7 +136,26 @@ public class SkinCarouselScreen extends SpruceScreen {
 
             SkinPresetManager.setChosenPreset(presetWidget.getPreset(), this.hasEditedPreset);
 
-            this.close();
+            if(this.client.world != null && !ClientSkinHandling.isInstalledOnServer()) {
+                this.client.setScreen(new ConfirmScreen((boolean result) -> {
+                    if(result) {
+                        NetworkingUtil.handleReconnect(client);
+                    } else {
+                        if (!ClientSkinHandling.isInstalledOnServer()) {
+                            ToastHelper.showRefusedReconnectToast();
+                        }
+
+                        client.setScreen(this.parent);
+                    }
+                }, Text.translatable("skinshuffle.reconnect.title",
+                        client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.c_region") : I18n.translate("skinshuffle.reconnect.c_reconnect")).formatted(Formatting.RED, Formatting.BOLD),
+                   Text.translatable("skinshuffle.reconnect.message",
+                        client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.rejoin") : I18n.translate("skinshuffle.reconnect.reconnect_to"),
+                        client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.world") : client.isConnectedToRealms() ? I18n.translate("skinshuffle.reconnect.realm") : I18n.translate("skinshuffle.reconnect.server"),
+                        client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.rejoin") : I18n.translate("skinshuffle.reconnect.reconnect"))));
+            } else {
+                this.close();
+            }
         }));
 
         this.leftMoveButton.setActive(this.carouselWidgets.size() != 1);

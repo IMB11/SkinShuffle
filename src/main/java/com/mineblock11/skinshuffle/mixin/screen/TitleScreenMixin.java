@@ -23,6 +23,8 @@ package com.mineblock11.skinshuffle.mixin.screen;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.widgets.OpenCarouselWidget;
+import com.mineblock11.skinshuffle.util.NetworkingUtil;
+import com.mineblock11.skinshuffle.util.ToastHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.text.Text;
@@ -34,12 +36,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.function.Consumer;
-
 @Mixin(TitleScreen.class)
 public class TitleScreenMixin extends Screen {
-    @Shadow @Final private boolean doBackgroundFade;
-
+    private static boolean appliedConfiguration = false;
+    @Shadow
+    @Final
+    private boolean doBackgroundFade;
     @Unique
     private OpenCarouselWidget openCarouselWidget;
 
@@ -47,20 +49,21 @@ public class TitleScreenMixin extends Screen {
         super(title);
     }
 
-    @Unique
-    private boolean appliedConfiguration = false;
-
     @Inject(method = "render", at = @At("HEAD"))
     public void refreshConfig(CallbackInfo ci) {
-        if(!appliedConfiguration && this.doBackgroundFade) {
+        if (!appliedConfiguration && this.doBackgroundFade) {
             appliedConfiguration = true;
             SkinPresetManager.apply();
+
+            if(!NetworkingUtil.isLoggedIn()) {
+                ToastHelper.showOfflineModeToast();
+            }
         }
     }
 
     @Override
     public void close() {
-        if(this.openCarouselWidget != null) {
+        if (this.openCarouselWidget != null) {
             this.openCarouselWidget.disposed();
             this.openCarouselWidget = null;
         }
@@ -70,7 +73,7 @@ public class TitleScreenMixin extends Screen {
     public void updateVisibility(CallbackInfo ci) {
         SkinPresetManager.loadPresets();
 
-        if(!SkinShuffleConfig.get().displayInTitleScreen && this.openCarouselWidget != null) {
+        if (!SkinShuffleConfig.get().displayInTitleScreen && this.openCarouselWidget != null) {
             this.children().remove(this.openCarouselWidget);
             this.openCarouselWidget = null;
         }
@@ -85,8 +88,8 @@ public class TitleScreenMixin extends Screen {
          */
 
         OpenCarouselWidget.safelyCreateWidget(this, openCarouselWidget -> {
-                this.openCarouselWidget = openCarouselWidget;
-                this.addDrawableChild(openCarouselWidget);
+            this.openCarouselWidget = openCarouselWidget;
+            this.addDrawableChild(openCarouselWidget);
         });
     }
 }

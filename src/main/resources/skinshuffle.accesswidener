@@ -3,6 +3,12 @@ accessWidener   v1  named
 # Minecraft
 accessible class net/minecraft/client/texture/ResourceTexture$TextureData
 
+accessible field net/minecraft/client/MinecraftClient server Lnet/minecraft/server/integrated/IntegratedServer;
+
+accessible method net/minecraft/client/QuickPlay startSingleplayer (Lnet/minecraft/client/MinecraftClient;Ljava/lang/String;)V
+accessible method net/minecraft/client/QuickPlay startMultiplayer (Lnet/minecraft/client/MinecraftClient;Ljava/lang/String;)V
+accessible method net/minecraft/client/QuickPlay startRealms (Lnet/minecraft/client/MinecraftClient;Lnet/minecraft/client/realms/RealmsClient;Ljava/lang/String;)V
+
 accessible class net/minecraft/client/toast/ToastManager$Entry
 accessible field net/minecraft/client/toast/SystemToast title Lnet/minecraft/text/Text;
 

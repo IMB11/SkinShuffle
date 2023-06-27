@@ -22,25 +22,16 @@ package com.mineblock11.skinshuffle.client.config;
 
 import com.google.gson.GsonBuilder;
 import com.mineblock11.skinshuffle.SkinShuffle;
-import com.mineblock11.skinshuffle.compat.ETFCompatHandler;
 import dev.isxander.yacl3.api.*;
-import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
 import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
 import dev.isxander.yacl3.config.ConfigEntry;
 import dev.isxander.yacl3.config.GsonConfigInstance;
-import dev.isxander.yacl3.gui.controllers.slider.FloatSliderController;
-import dev.isxander.yacl3.impl.controller.BooleanControllerBuilderImpl;
-import dev.isxander.yacl3.impl.controller.FloatSliderControllerBuilderImpl;
 import net.minecraft.text.Text;
-import org.apache.commons.lang3.StringUtils;
 
 import java.nio.file.Path;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 import static net.minecraft.text.Text.*;
 
@@ -95,24 +86,12 @@ public class SkinShuffleConfig {
                             .binding(defaults.rotationMultiplier, () -> config.rotationMultiplier, val -> config.rotationMultiplier = val)
                             .controller(floatOption -> FloatSliderControllerBuilder.create(floatOption).range(0f, 5f).step(0.5f)).build();
 
-                    var renderSkinRegardless = Option.<Boolean>createBuilder()
-                            .name(translatable("skinshuffle.config.general.render_skin.name"))
-                            .description(OptionDescription.createBuilder()
-                                    .text(translatable("skinshuffle.config.general.render_skin.description")).build())
-                            .binding(defaults.renderClientSkinRegardless, () -> config.renderClientSkinRegardless, val -> config.renderClientSkinRegardless = val)
-                            .controller(TickBoxControllerBuilder::create).build();
-
                     var disableApi = Option.<Boolean>createBuilder()
                             .name(translatable("skinshuffle.config.general.disable_api.name"))
                             .description(OptionDescription.createBuilder()
                                     .text(translatable("skinshuffle.config.general.disable_api.description")).build())
                             .binding(defaults.disableAPIUpload, () -> config.disableAPIUpload, val -> config.disableAPIUpload = val)
                             .controller(TickBoxControllerBuilder::create).build();
-
-                    if(ETFCompatHandler.DISABLE_RENDER_DESYNC) {
-                        renderSkinRegardless.setAvailable(false);
-                    }
-
 
                     var displayWidgetPause = Option.<Boolean>createBuilder()
                             .name(translatable("skinshuffle.config.general.display_pause_screen.name"))
@@ -138,10 +117,10 @@ public class SkinShuffleConfig {
                             .controller(TickBoxControllerBuilder::create).build();
 
                     // Popup Options
-                    var disableInstToast = Option.<Boolean>createBuilder()
-                            .name(translatable("skinshuffle.config.popups.installed_toast.name"))
-                            .description(OptionDescription.createBuilder().text(translatable("skinshuffle.config.popups.installed_toast.description")).build())
-                            .binding(defaults.disableInstalledToast, () -> config.disableInstalledToast, val -> config.disableInstalledToast = val)
+                    var disableRnnoctToast = Option.<Boolean>createBuilder()
+                            .name(translatable("skinshuffle.config.popups.reconnect.name"))
+                            .description(OptionDescription.createBuilder().text(translatable("skinshuffle.config.popups.reconnect.description")).build())
+                            .binding(defaults.disableReconnectToast, () -> config.disableReconnectToast, val -> config.disableReconnectToast = val)
                             .controller(TickBoxControllerBuilder::create).build();
 
                     return builder
@@ -151,7 +130,7 @@ public class SkinShuffleConfig {
                                     .tooltip(translatable("skinshuffle.config.general.description"))
                                     .group(OptionGroup.createBuilder()
                                             .name(translatable("skinshuffle.config.general.behaviour.title"))
-                                            .options(List.of(renderSkinRegardless, disableApi, carouselScrollSensitivity, invertCarouselScroll))
+                                            .options(List.of(disableApi, carouselScrollSensitivity, invertCarouselScroll))
                                             .build())
                                     .group(OptionGroup.createBuilder()
                                             .name(translatable("skinshuffle.config.general.display.title"))
@@ -166,16 +145,15 @@ public class SkinShuffleConfig {
                             ).category(ConfigCategory.createBuilder()
                                     .name(translatable("skinshuffle.config.popups.title"))
                                     .tooltip(translatable("skinshuffle.config.popups.description"))
-                                    .options(List.of(disableInstToast))
+                                    .options(List.of(disableRnnoctToast))
                                     .build());
                 }
         );
     }
 
-    @ConfigEntry public boolean disableInstalledToast = false;
+    @ConfigEntry public boolean disableReconnectToast = false;
 
     @ConfigEntry public boolean disableAPIUpload = false;
-    @ConfigEntry public boolean renderClientSkinRegardless = true;
 
     @ConfigEntry public boolean displayInPauseMenu = true;
     @ConfigEntry public boolean displayInTitleScreen = true;

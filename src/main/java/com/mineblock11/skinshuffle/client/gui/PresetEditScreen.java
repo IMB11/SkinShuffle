@@ -343,7 +343,7 @@ public class PresetEditScreen extends SpruceScreen {
                         value -> null,
                         false), grid.copyPositioner().marginTop(Math.min(height / 2 - 60, 20)));
             } else {
-                ToastHelper.showErrorEdit();
+                ToastHelper.showEditorFailToast();
                 close();
             }
 

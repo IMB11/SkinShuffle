@@ -26,24 +26,24 @@ import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
 
 public class ToastHelper {
-    public static void showToast(MinecraftClient client, String translationKeyTitle, String translationKeyMessage) {
+    public static void showToast(String id) {
+        var client = MinecraftClient.getInstance();
         client.getToastManager().add(SystemToast.create(client,
                 SystemToast.Type.PACK_LOAD_FAILURE,
-                Text.translatable(translationKeyTitle),
-                Text.translatable(translationKeyMessage)));
+                Text.translatable(id + ".title"),
+                Text.translatable(id + ".message")));
     }
 
-    public static void showHandshakeInitial(MinecraftClient client) {
-        if(!SkinShuffleConfig.get().disableInstalledToast)
-            showToast(client, "skinshuffle.handshake.toast.title", "skinshuffle.handshake.toast.message_initial");
+    public static void showRefusedReconnectToast() {
+        if(!SkinShuffleConfig.get().disableReconnectToast)
+            showToast("skinshuffle.toasts.refused_reconnect");
     }
 
-    public static void showHandshakeOnChange(MinecraftClient client) {
-        if(!SkinShuffleConfig.get().disableInstalledToast)
-            showToast(client, "skinshuffle.handshake.toast.title", "skinshuffle.handshake.toast.message_on_change");
+    public static void showOfflineModeToast() {
+        showToast("skinshuffle.toasts.offline");
     }
 
-    public static void showErrorEdit() {
-        showToast(MinecraftClient.getInstance(), "skinshuffle.edit.fail.title", "skinshuffle.edit.fail.message");
+    public static void showEditorFailToast() {
+        showToast("skinshuffle.toasts.editor_failure");
     }
 }
