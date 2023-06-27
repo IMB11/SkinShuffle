@@ -23,10 +23,12 @@ package com.mineblock11.skinshuffle.client.preset;
 import com.mineblock11.skinshuffle.api.SkinAPIs;
 import com.mineblock11.skinshuffle.client.skin.ResourceSkin;
 import com.mineblock11.skinshuffle.client.skin.Skin;
+import com.mineblock11.skinshuffle.client.skin.UUIDSkin;
 import com.mineblock11.skinshuffle.client.skin.UrlSkin;
 import com.mineblock11.skinshuffle.util.NetworkingUtil;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mojang.util.UUIDTypeAdapter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.Session;
 import net.minecraft.util.Identifier;
@@ -77,16 +79,7 @@ public class SkinPreset {
 
             return new SkinPreset(skin, name);
         } else {
-            var skinQueryResult = SkinAPIs.getPlayerSkinTexture(session.getUuid());
-
-            if(skinQueryResult.usesDefaultSkin()) {
-                Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
-                Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
-
-                return new SkinPreset(skin, name);
-            }
-
-            return new SkinPreset(new UrlSkin(skinQueryResult.skinURL(), skinQueryResult.modelType()), name);
+            return new SkinPreset(new UUIDSkin(UUIDTypeAdapter.fromString(session.getUuid()), null), name);
         }
     }
 

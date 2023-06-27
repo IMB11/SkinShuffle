@@ -22,30 +22,33 @@ package com.mineblock11.skinshuffle.client.skin;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.api.SkinAPIs;
+import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 public class UUIDSkin extends UrlSkin {
     public static final Identifier SERIALIZATION_ID = SkinShuffle.id("uuid");
     public static final Codec<UUIDSkin> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("uuid").forGetter(skin -> skin.uuid.toString()),
-            Codec.STRING.fieldOf("model").forGetter(UUIDSkin::getModel)
-    ).apply(instance, (uuid, model) -> new UUIDSkin(UUID.fromString(uuid), model)));
+            Codec.STRING.optionalFieldOf("model").forGetter(skin -> Optional.ofNullable(skin.model))
+    ).apply(instance, (uuid, model) -> new UUIDSkin(UUID.fromString(uuid), model.orElse(null))));
 
     protected UUID uuid;
 
-    public UUIDSkin(UUID uuid, String model) {
+    public UUIDSkin(UUID uuid, @Nullable String model) {
         super(model);
         this.uuid = uuid;
     }
 
-    protected UUIDSkin(String model) {
+    protected UUIDSkin(@Nullable String model) {
         super(model);
     }
 
@@ -63,8 +66,17 @@ public class UUIDSkin extends UrlSkin {
         }
 
         url = profile.skinURL();
+        if (model == null) {
+            model = profile.modelType();
+            cacheModel();
+        }
 
         return super.loadTexture(completionCallback);
+    }
+
+    @Override
+    public Identifier getSerializationId() {
+        return SERIALIZATION_ID;
     }
 
     @Override

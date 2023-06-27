@@ -196,34 +196,38 @@ public class SkinPresetManager {
         try {
             ConfigSkin configSkin = preset.getSkin().saveToConfig();
 
-            if (preset.getSkin() instanceof UrlSkin urlSkin) {
-                SkinAPIs.setSkinTexture(urlSkin.getUrl(), urlSkin.getModel());
-            } else {
-                SkinAPIs.setSkinTexture(configSkin.getFile().toFile(), configSkin.getModel());
-            }
+            try {
+                if (preset.getSkin() instanceof UrlSkin urlSkin) {
+                    SkinAPIs.setSkinTexture(urlSkin.getUrl(), urlSkin.getModel());
+                } else {
+                    SkinAPIs.setSkinTexture(configSkin.getFile().toFile(), configSkin.getModel());
+                }
 
-            if (client.world != null && ClientSkinHandling.isInstalledOnServer()) {
-                new Thread(() -> {
-                    client.executeTask(() -> {
-                        try {
-                            String cachedURL = SkinCacheRegistry.getCachedUploadedSkin(configSkin.getFile().toFile());
-                            Skin result;
-                            if(cachedURL != null) {
-                                result = SkinAPIs.MINESKIN_CLIENT.generateUrl(cachedURL).join();
-                            } else {
-                                result = SkinAPIs.MINESKIN_CLIENT.generateUpload(configSkin.getFile().toFile()).join();
+                if (client.world != null && ClientSkinHandling.isInstalledOnServer()) {
+                    new Thread(() -> {
+                        client.executeTask(() -> {
+                            try {
+                                String cachedURL = SkinCacheRegistry.getCachedUploadedSkin(configSkin.getFile().toFile());
+                                Skin result;
+                                if(cachedURL != null) {
+                                    result = SkinAPIs.MINESKIN_CLIENT.generateUrl(cachedURL).join();
+                                } else {
+                                    result = SkinAPIs.MINESKIN_CLIENT.generateUpload(configSkin.getFile().toFile()).join();
+                                }
+
+                                SkinQueryResult queryResult = new SkinQueryResult(false, null, preset.getSkin().getModel(), result.data.texture.signature,  result.data.texture.value);
+                                ClientSkinHandling.sendRefresh(queryResult);
+                            } catch (Exception e) {
+                                SkinShuffle.LOGGER.error(e.getMessage());
                             }
-
-                            SkinQueryResult queryResult = new SkinQueryResult(false, null, preset.getSkin().getModel(), result.data.texture.signature,  result.data.texture.value);
-                            ClientSkinHandling.sendRefresh(queryResult);
-                        } catch (Exception e) {
-                            SkinShuffle.LOGGER.error(e.getMessage());
-                        }
-                    });
-                }).start();
+                        });
+                    }).start();
+                }
+            } catch (Exception e) {
+                SkinShuffle.LOGGER.error("Failed to apply skin preset.", e);
             }
-        } catch (Exception e) {
-            SkinShuffle.LOGGER.error("Failed to apply skin preset.", e);
+        } catch (Exception ignored) {
+            SkinShuffle.LOGGER.info("Skipping skin preset application due to skin not being fully loaded. If this is first startup, please ignore this message.");
         }
     }
 }
