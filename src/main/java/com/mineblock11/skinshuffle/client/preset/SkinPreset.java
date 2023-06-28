@@ -79,7 +79,16 @@ public class SkinPreset {
 
             return new SkinPreset(skin, name);
         } else {
-            return new SkinPreset(new UUIDSkin(UUIDTypeAdapter.fromString(session.getUuid()), null), name);
+            var skinQueryResult = SkinAPIs.getPlayerSkinTexture(session.getUuid());
+
+            if(skinQueryResult.usesDefaultSkin()) {
+                Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
+                Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
+
+                return new SkinPreset(skin, name);
+            }
+
+            return new SkinPreset(new UrlSkin(skinQueryResult.skinURL(), skinQueryResult.modelType()), name);
         }
     }
 

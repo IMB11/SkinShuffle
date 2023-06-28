@@ -369,7 +369,7 @@ public class PresetEditScreen extends SpruceScreen {
                     case UUID -> new UUIDSkin(UUID.fromString(skinSource), model);
                     case USERNAME -> new UsernameSkin(skinSource, model);
                     case RESOURCE_LOCATION -> new ResourceSkin(new Identifier(skinSource), model);
-                    default -> SkinPreset.generateDefaultPreset().getSkin();
+                    default -> Skin.randomDefaultSkin();
                 };
 
                 preset.setSkin(skin);

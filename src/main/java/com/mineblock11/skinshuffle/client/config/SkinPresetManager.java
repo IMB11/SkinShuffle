@@ -50,6 +50,7 @@ public class SkinPresetManager {
 
     private static final ArrayList<SkinPreset> loadedPresets = new ArrayList<>();
     private static SkinPreset chosenPreset = null;
+    private static SkinPreset apiPreset = null;
 
     /**
      * Get all loaded presets.
@@ -63,6 +64,13 @@ public class SkinPresetManager {
      */
     public static SkinPreset getChosenPreset() {
         return chosenPreset;
+    }
+
+    /**
+     * Get the preset currently uploaded to Mojang API.
+     */
+    public static SkinPreset getApiPreset() {
+        return apiPreset;
     }
 
     /**
@@ -90,16 +98,21 @@ public class SkinPresetManager {
     }
 
     /**
+     * Set the preset currently uploaded to Mojang API.
+     *
+     * @param preset The preset to apply.
+     */
+    public static void setApiPreset(SkinPreset preset) {
+        apiPreset = preset;
+    }
+
+    /**
      * Save the currently loaded presets to the presets.json file.
      */
     public static void savePresets() {
-        if (chosenPreset == null) {
-            chosenPreset = SkinPreset.generateDefaultPreset();
-            loadedPresets.add(chosenPreset);
-        }
-
         JsonObject presetFile = new JsonObject();
         presetFile.addProperty("chosenPreset", loadedPresets.indexOf(chosenPreset));
+        presetFile.addProperty("apiPreset", apiPreset == null ? -1 : loadedPresets.indexOf(apiPreset));
 
         JsonArray array = new JsonArray();
         for (SkinPreset loadedPreset : loadedPresets) {
@@ -120,7 +133,16 @@ public class SkinPresetManager {
      * Load presets from the presets.json file.
      */
     public static void loadPresets() {
-        if (!PRESETS.toFile().exists()) savePresets();
+        if (!PRESETS.toFile().exists()) {
+            // Generate a preset from the currently equipped skin when generating the presets file
+            if (chosenPreset == null) {
+                chosenPreset = SkinPreset.generateDefaultPreset();
+                apiPreset = chosenPreset;
+                loadedPresets.add(chosenPreset);
+            }
+
+            savePresets();
+        }
 
         loadedPresets.clear();
         chosenPreset = null;
@@ -129,6 +151,12 @@ public class SkinPresetManager {
             String jsonString = Files.readString(PRESETS);
             JsonObject presetFile = GSON.fromJson(jsonString, JsonObject.class);
             int chosenPresetIndex = presetFile.get("chosenPreset").getAsInt();
+
+            int apiPresetIndex = -1;
+            if (presetFile.has("apiPreset")) {
+                apiPresetIndex = presetFile.get("apiPreset").getAsInt();
+            }
+
             JsonArray array = presetFile.get("loadedPresets").getAsJsonArray();
             for (JsonElement jsonElement : array) {
                 DataResult<Pair<SkinPreset, JsonElement>> dataResult = SkinPreset.CODEC.decode(JsonOps.INSTANCE, jsonElement);
@@ -137,6 +165,7 @@ public class SkinPresetManager {
                 loadedPresets.add(preset);
             }
             chosenPreset = loadedPresets.get(chosenPresetIndex);
+            apiPreset = apiPresetIndex < 0 ? null : loadedPresets.get(apiPresetIndex);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -202,6 +231,9 @@ public class SkinPresetManager {
                 } else {
                     SkinAPIs.setSkinTexture(configSkin.getFile().toFile(), configSkin.getModel());
                 }
+
+                // Track which preset is on the Mojang API, this is separate from the selected preset.
+                setApiPreset(preset);
 
                 if (client.world != null && ClientSkinHandling.isInstalledOnServer()) {
                     new Thread(() -> {
