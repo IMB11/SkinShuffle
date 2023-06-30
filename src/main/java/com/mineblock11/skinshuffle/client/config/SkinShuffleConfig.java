@@ -23,11 +23,10 @@ package com.mineblock11.skinshuffle.client.config;
 import com.google.gson.GsonBuilder;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import dev.isxander.yacl3.api.*;
-import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
-import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
-import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
+import dev.isxander.yacl3.api.controller.*;
 import dev.isxander.yacl3.config.ConfigEntry;
 import dev.isxander.yacl3.config.GsonConfigInstance;
+import dev.isxander.yacl3.gui.controllers.slider.IntegerSliderController;
 import net.minecraft.text.Text;
 
 import java.nio.file.Path;
@@ -79,6 +78,18 @@ public class SkinShuffleConfig {
                                     .enumClass(SkinRenderStyle.class)
                                     .valueFormatter(skinRenderStyle -> Text.translatable("skinshuffle.config.rendering." + skinRenderStyle.name().toLowerCase())))
                             .build();
+
+                    var widgetYOffset = Option.<Integer>createBuilder()
+                            .name(translatable("skinshuffle.config.rendering.widget_y_offset"))
+                            .description(OptionDescription.createBuilder().build())
+                            .binding(defaults.widgetYOffset, () -> config.widgetYOffset, val -> config.widgetYOffset = val)
+                            .controller(IntegerFieldControllerBuilder::create).build();
+
+                    var widgetXOffset = Option.<Integer>createBuilder()
+                            .name(translatable("skinshuffle.config.rendering.widget_x_offset"))
+                            .description(OptionDescription.createBuilder().build())
+                            .binding(defaults.widgetXOffset, () -> config.widgetXOffset, val -> config.widgetXOffset = val)
+                            .controller(IntegerFieldControllerBuilder::create).build();
 
                     var rotationMultiplier = Option.<Float>createBuilder()
                             .name(translatable("skinshuffle.config.rendering.rotation_speed.name"))
@@ -140,7 +151,7 @@ public class SkinShuffleConfig {
                             ).category(ConfigCategory.createBuilder()
                                     .name(translatable("skinshuffle.config.rendering.title"))
                                     .tooltip(translatable("skinshuffle.config.rendering.description"))
-                                    .options(List.of(carouselRenderStyle, presetEditScreenRenderStyle, widgetRenderStyle, rotationMultiplier))
+                                    .options(List.of(carouselRenderStyle, presetEditScreenRenderStyle, widgetRenderStyle, rotationMultiplier, widgetXOffset, widgetYOffset))
                                     .build()
                             ).category(ConfigCategory.createBuilder()
                                     .name(translatable("skinshuffle.config.popups.title"))
@@ -165,6 +176,8 @@ public class SkinShuffleConfig {
     @ConfigEntry public SkinRenderStyle carouselSkinRenderStyle = SkinRenderStyle.ROTATION;
     @ConfigEntry public SkinRenderStyle presetEditScreenRenderStyle = SkinRenderStyle.ROTATION;
     @ConfigEntry public float rotationMultiplier = 1.0f;
+    @ConfigEntry public int widgetXOffset = 0;
+    @ConfigEntry public int widgetYOffset = 0;
 
     public enum SkinRenderStyle {
         ROTATION,
