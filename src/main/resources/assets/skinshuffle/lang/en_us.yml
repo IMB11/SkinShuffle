@@ -1,4 +1,5 @@
 skinshuffle:
+  indicator: "Warning Indicator"
   reconnect:
     warning: "You must %s to allow other players, including yourself, to see your skin."
     reconnecting: Reconnecting...

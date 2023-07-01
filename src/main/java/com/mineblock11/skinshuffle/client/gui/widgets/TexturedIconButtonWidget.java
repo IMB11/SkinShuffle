@@ -35,11 +35,11 @@ public class TexturedIconButtonWidget extends ButtonWidget {
     protected final int iconTextureHeight;
     private final int iconXOffset;
     private final int iconYOffset;
-    private final int iconWidth;
-    private final int iconHeight;
+    public final int iconWidth;
+    public final int iconHeight;
 
-    public TexturedIconButtonWidget(int iconU, int iconV, int iconXOffset, int iconYOffset, int iconDisabledVOffset, int iconWidth, int iconHeight, int iconTextureWidth, int iconTextureHeight, Identifier iconTexture, ButtonWidget.PressAction onPress) {
-        super(0, 0, 20, 20, Text.of(""), onPress, DEFAULT_NARRATION_SUPPLIER);
+    public TexturedIconButtonWidget(int x, int y, int width, int height, int iconU, int iconV, int iconXOffset, int iconYOffset, int iconDisabledVOffset, int iconWidth, int iconHeight, int iconTextureWidth, int iconTextureHeight, Identifier iconTexture, ButtonWidget.PressAction onPress) {
+        super(x, y, width, height, Text.of(""), onPress, DEFAULT_NARRATION_SUPPLIER);
         this.iconTextureWidth = iconTextureWidth;
         this.iconTextureHeight = iconTextureHeight;
         this.iconU = iconU;
@@ -63,11 +63,11 @@ public class TexturedIconButtonWidget extends ButtonWidget {
         drawScrollableText(context, textRenderer, this.getMessage(), i, this.getY(), j, this.getY() + this.getHeight(), color);
     }
 
-    private int getIconX() {
+    int getIconX() {
         return this.getX() + (this.width / 2 - this.iconWidth / 2) + this.iconXOffset;
     }
 
-    private int getIconY() {
+    int getIconY() {
         return this.getY() + this.iconYOffset;
     }
 }
