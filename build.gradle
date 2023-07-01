@@ -22,6 +22,12 @@ repositories {
     maven { url 'https://maven.shedaniel.me/' }
     maven { url 'https://maven.isxander.dev/releases' }
     maven { url 'https://repo.inventivetalent.org/repository/public/' }
+    maven {
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 loom {
@@ -50,6 +56,10 @@ dependencies {
     include implementation("org.jsoup:jsoup:${project.jsoup_version}")
     include implementation("org.mineskin:java-client:+")
     include implementation("commons-validator:commons-validator:1.7")
+
+    // FancyMenu testing.
+    modImplementation "curse.maven:konkrete-fabric-416797:4581979"
+    modImplementation "curse.maven:fancymenu-fabric-416796:4584010"
 }
 
 processResources {

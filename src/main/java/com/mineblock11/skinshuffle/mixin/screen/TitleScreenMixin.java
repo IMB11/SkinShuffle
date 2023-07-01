@@ -22,11 +22,14 @@ package com.mineblock11.skinshuffle.mixin.screen;
 
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
-import com.mineblock11.skinshuffle.client.gui.widgets.OpenCarouselWidget;
+import com.mineblock11.skinshuffle.client.gui.GeneratedScreens;
+import com.mineblock11.skinshuffle.client.gui.widgets.OpenCarouselButton;
+import com.mineblock11.skinshuffle.client.gui.widgets.WarningIndicatorButton;
 import com.mineblock11.skinshuffle.util.NetworkingUtil;
 import com.mineblock11.skinshuffle.util.ToastHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -36,6 +39,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
+
 @Mixin(TitleScreen.class)
 public class TitleScreenMixin extends Screen {
     private static boolean appliedConfiguration = false;
@@ -43,7 +48,7 @@ public class TitleScreenMixin extends Screen {
     @Final
     private boolean doBackgroundFade;
     @Unique
-    private OpenCarouselWidget openCarouselWidget;
+    private ArrayList<ClickableWidget> openCarouselWidgets;
 
     protected TitleScreenMixin(Text title) {
         super(title);
@@ -63,17 +68,23 @@ public class TitleScreenMixin extends Screen {
 
     @Override
     public void close() {
-        if (this.openCarouselWidget != null) {
-            this.openCarouselWidget.disposed();
-            this.openCarouselWidget = null;
+        if (this.openCarouselWidgets != null) {
+            for (ClickableWidget openCarouselWidget : this.openCarouselWidgets) {
+                if(openCarouselWidget instanceof  OpenCarouselButton button) {
+                    button.disposed();
+                }
+            }
+            this.openCarouselWidgets = null;
         }
     }
 
     @Inject(method = "onDisplayed", at = @At("TAIL"), cancellable = false)
     public void updateVisibility(CallbackInfo ci) {
-        if (!SkinShuffleConfig.get().displayInTitleScreen && this.openCarouselWidget != null) {
-            this.children().remove(this.openCarouselWidget);
-            this.openCarouselWidget = null;
+        if (!SkinShuffleConfig.get().displayInTitleScreen && this.openCarouselWidgets != null) {
+            for (ClickableWidget openCarouselWidget : this.openCarouselWidgets) {
+                this.remove(openCarouselWidget);
+            }
+            this.openCarouselWidgets = null;
         }
     }
 
@@ -85,14 +96,16 @@ public class TitleScreenMixin extends Screen {
              - Bedrock-style skin preview
          */
 
-        OpenCarouselWidget.safelyCreateWidget(this, openCarouselWidget -> {
-            this.openCarouselWidget = openCarouselWidget;
-            this.addDrawableChild(openCarouselWidget);
+        this.openCarouselWidgets = GeneratedScreens.createCarouselWidgets(this);
 
-            new Thread(() -> {
-                SkinPresetManager.loadPresets();
-                openCarouselWidget.setSelectedPreset(SkinPresetManager.getChosenPreset());
-            }).start();
-        });
+        for (ClickableWidget carouselWidget : this.openCarouselWidgets) {
+            this.addDrawableChild(carouselWidget);
+            if(carouselWidget instanceof OpenCarouselButton button) {
+                new Thread(() -> {
+                    SkinPresetManager.loadPresets();
+                    button.setSelectedPreset(SkinPresetManager.getChosenPreset());
+                }).start();
+            }
+        }
     }
 }

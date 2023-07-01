@@ -22,9 +22,14 @@ package com.mineblock11.skinshuffle.mixin.screen;
 
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
-import com.mineblock11.skinshuffle.client.gui.widgets.OpenCarouselWidget;
+import com.mineblock11.skinshuffle.client.gui.GeneratedScreens;
+import com.mineblock11.skinshuffle.client.gui.widgets.OpenCarouselButton;
+import com.mineblock11.skinshuffle.client.gui.widgets.WarningIndicatorButton;
+import com.mineblock11.skinshuffle.networking.ClientSkinHandling;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -32,44 +37,68 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
+
 @Mixin(GameMenuScreen.class)
 public class GameMenuScreenMixin extends Screen {
     @Unique
-    public OpenCarouselWidget openCarouselWidget;
+    private ArrayList<ClickableWidget> openCarouselWidgets;
+    private WarningIndicatorButton warningIndicator;
 
     protected GameMenuScreenMixin(Text title) {
         super(title);
     }
 
-    @Override
-    public void onDisplayed() {
-        if(!SkinShuffleConfig.get().displayInPauseMenu && this.openCarouselWidget != null) {
-            this.children().remove(this.openCarouselWidget);
-            this.openCarouselWidget = null;
+    @Inject(method = "render", at = @At("HEAD"))
+    public void render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+        if(warningIndicator != null) {
+            warningIndicator.visible = ClientSkinHandling.isReconnectRequired();
         }
     }
 
     @Override
     public void close() {
-        if(this.openCarouselWidget != null) {
-            this.openCarouselWidget.disposed();
-            this.openCarouselWidget = null;
+        if (this.openCarouselWidgets != null) {
+            for (ClickableWidget openCarouselWidget : this.openCarouselWidgets) {
+                if(openCarouselWidget instanceof  OpenCarouselButton button) {
+                    button.disposed();
+                }
+            }
+            this.openCarouselWidgets = null;
         }
-        super.close();
     }
 
-    @Inject(method = "init", cancellable = false, at = @At("TAIL"))
-    private void addButton(CallbackInfo ci) {
-        if(SkinShuffleConfig.get().displayInPauseMenu) {
-            OpenCarouselWidget.safelyCreateWidget(this, openCarouselWidget -> {
-                this.openCarouselWidget = openCarouselWidget;
-                this.addDrawableChild(openCarouselWidget);
+    @Override
+    public void onDisplayed() {
+        if (!SkinShuffleConfig.get().displayInTitleScreen && this.openCarouselWidgets != null) {
+            for (ClickableWidget openCarouselWidget : this.openCarouselWidgets) {
+                this.remove(openCarouselWidget);
+            }
+            this.openCarouselWidgets = null;
+        }
+    }
 
+    @Inject(method = "init", at = @At("TAIL"))
+    public void addButton(CallbackInfo ci) {
+        /*
+            TODO: Maybe different types of buttons?
+             - Small icon button
+             - Bedrock-style skin preview
+         */
+
+        this.openCarouselWidgets = GeneratedScreens.createCarouselWidgets(this);
+
+        for (ClickableWidget carouselWidget : this.openCarouselWidgets) {
+            this.addDrawableChild(carouselWidget);
+            if(carouselWidget instanceof OpenCarouselButton button) {
                 new Thread(() -> {
                     SkinPresetManager.loadPresets();
-                    openCarouselWidget.setSelectedPreset(SkinPresetManager.getChosenPreset());
+                    button.setSelectedPreset(SkinPresetManager.getChosenPreset());
                 }).start();
-            });
+            }
+            if(carouselWidget instanceof WarningIndicatorButton warningIndicatorButton) {
+                this.warningIndicator = warningIndicatorButton;
+            }
         }
     }
 }

@@ -305,7 +305,7 @@ public class PresetEditScreen extends SpruceScreen {
                 }
             };
 
-            loadButton = new TexturedIconButtonWidget(
+            loadButton = new TexturedIconButtonWidget(0, 0, 20, 20,
                     0, 0, 0, 2,
                     16, 16, 16, 16, 32,
                     SkinShuffle.id("textures/gui/reload-button-icon.png"),
