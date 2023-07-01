@@ -158,6 +158,7 @@ public class SkinCarouselScreen extends SpruceScreen {
             SkinPresetWidget presetWidget = (SkinPresetWidget) chosenPresetWidget;
 
             SkinPresetManager.setChosenPreset(presetWidget.getPreset(), this.hasEditedPreset);
+            SkinPresetManager.savePresets();
 
             if(this.client.world != null && !ClientSkinHandling.isInstalledOnServer()) {
                 this.client.setScreen(GeneratedScreens.getReconnectScreen(this.parent));

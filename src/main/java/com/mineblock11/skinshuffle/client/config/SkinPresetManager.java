@@ -232,10 +232,8 @@ public class SkinPresetManager {
                     SkinAPIs.setSkinTexture(configSkin.getFile().toFile(), configSkin.getModel());
                 }
 
-                // Track which preset is on the Mojang API, this is separate from the selected preset.
-                setApiPreset(preset);
-
                 if (client.world != null && ClientSkinHandling.isInstalledOnServer()) {
+                    setApiPreset(preset);
                     new Thread(() -> {
                         client.executeTask(() -> {
                             try {

@@ -58,8 +58,8 @@ dependencies {
     include implementation("commons-validator:commons-validator:1.7")
 
     // FancyMenu testing.
-    modImplementation "curse.maven:konkrete-fabric-416797:4581979"
-    modImplementation "curse.maven:fancymenu-fabric-416796:4584010"
+//    modImplementation "curse.maven:konkrete-fabric-416797:4581979"
+//    modImplementation "curse.maven:fancymenu-fabric-416796:4584010"
 }
 
 processResources {
