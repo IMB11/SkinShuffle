@@ -20,8 +20,10 @@
 
 package com.mineblock11.skinshuffle.util;
 
+import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.gui.SkinCarouselScreen;
 import com.mineblock11.skinshuffle.mixin.accessor.MinecraftClientAccessor;
+import com.mineblock11.skinshuffle.networking.ClientSkinHandling;
 import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.QuickPlay;
@@ -42,6 +44,9 @@ public class NetworkingUtil {
     }
 
     public static void handleReconnect(MinecraftClient client) {
+        ClientSkinHandling.setReconnectRequired(false);
+        SkinPresetManager.setApiPreset(null);
+
         boolean isSingleplayer = client.isInSingleplayer();
         boolean isRealms = client.isConnectedToRealms();
         String folderName, serverAddress;
