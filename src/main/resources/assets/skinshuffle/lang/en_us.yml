@@ -70,8 +70,6 @@ skinshuffle:
       rendering_style: |-
         §lROTATION§r rotates the rendered player at a fixed rate specified by the rotation speed multiplier.
         §lCURSOR§r makes the rendered player look at the mouse cursor at all times, similarly to the inventory screen.
-      widget_y_offset: "Widget Y Offset"
-      widget_x_offset: "Widget X Offset"
       carousel_rendering_style:
         name: "Carousel Rendering Style"
         description: "How should the currently selected skin preset be rendered in the carousel screen?\n"

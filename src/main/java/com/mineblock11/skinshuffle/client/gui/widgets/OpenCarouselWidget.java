@@ -108,9 +108,6 @@ public class OpenCarouselWidget extends SpruceContainerWidget {
             }
         }
 
-        x += SkinShuffleConfig.get().widgetXOffset;
-        y += SkinShuffleConfig.get().widgetYOffset;
-
         widgetConsumer.accept(new OpenCarouselWidget(Position.of(x, y), 72 + 20, screen.height / 4, screen));
     }
 
