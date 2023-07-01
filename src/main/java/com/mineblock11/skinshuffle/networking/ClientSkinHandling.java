@@ -58,16 +58,20 @@ public class ClientSkinHandling {
     }
 
     public static void init() {
+
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            SkinPresetManager.setApiPreset(null);
+        });
+
         ClientPlayConnectionEvents.INIT.register((handler, client) -> {
             if(client.world == null) return;
             handshakeTakenPlace = false;
-            SkinPresetManager.setApiPreset(SkinPresetManager.getChosenPreset());
         });
 
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             handshakeTakenPlace = false;
             setReconnectRequired(false);
-            SkinPresetManager.setApiPreset(SkinPresetManager.getChosenPreset());
+            SkinPresetManager.setApiPreset(null);
         });
 
         ClientPlayNetworking.registerGlobalReceiver(SkinShuffle.id("handshake"), (client1, handler1, buf, responseSender) -> {
