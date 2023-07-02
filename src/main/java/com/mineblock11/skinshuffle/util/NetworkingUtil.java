@@ -21,16 +21,13 @@
 package com.mineblock11.skinshuffle.util;
 
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
-import com.mineblock11.skinshuffle.client.gui.SkinCarouselScreen;
 import com.mineblock11.skinshuffle.mixin.accessor.MinecraftClientAccessor;
 import com.mineblock11.skinshuffle.networking.ClientSkinHandling;
 import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.QuickPlay;
-import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.MessageScreen;
 import net.minecraft.client.gui.screen.TitleScreen;
-import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.realms.gui.screen.RealmsMainScreen;
 import net.minecraft.text.Text;
 import net.minecraft.util.WorldSavePath;

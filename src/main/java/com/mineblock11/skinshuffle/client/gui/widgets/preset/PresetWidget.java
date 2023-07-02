@@ -18,18 +18,18 @@
  *     USA
  */
 
-package com.mineblock11.skinshuffle.client.gui.widgets;
+package com.mineblock11.skinshuffle.client.gui.widgets.preset;
 
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.PresetEditScreen;
-import com.mineblock11.skinshuffle.client.gui.SkinCarouselScreen;
+import com.mineblock11.skinshuffle.client.gui.CarouselScreen;
 import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
+import com.mineblock11.skinshuffle.client.gui.widgets.CarouselMoveButton;
+import com.mineblock11.skinshuffle.client.gui.widgets.VariableSpruceButtonWidget;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
-import com.mineblock11.skinshuffle.util.SkinCacheRegistry;
 import dev.lambdaurora.spruceui.Position;
-import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
 import dev.lambdaurora.spruceui.widget.SpruceWidget;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.ScreenRect;
@@ -42,19 +42,18 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.UUID;
 
-public class SkinPresetWidget extends PresetWidget {
-    private final SkinPreset skinPreset;
-    private SpruceButtonWidget editButton;
-    private SpruceButtonWidget copyButton;
-    private SpruceButtonWidget deleteButton;
-    private CarouselMoveButton moveLeftButton;
-    private CarouselMoveButton moveRightButton;
+public abstract class PresetWidget extends AbstractCardWidget {
+    protected final SkinPreset skinPreset;
+    protected VariableSpruceButtonWidget editButton;
+    protected VariableSpruceButtonWidget copyButton;
+    protected VariableSpruceButtonWidget deleteButton;
+    protected CarouselMoveButton moveLeftButton;
+    protected CarouselMoveButton moveRightButton;
     private final boolean showButtons;
-    private Position position = Position.of(0, 0);
-    private LivingEntity entity;
-    private double scaleFactor;
+    protected LivingEntity entity;
+    protected double scaleFactor;
 
-    public SkinPresetWidget(SkinCarouselScreen parent, int width, int height, SkinPreset skinPreset, boolean showButtons) {
+    public PresetWidget(CarouselScreen parent, int width, int height, SkinPreset skinPreset) {
         super(Position.of(0, 0), width, height, parent);
 
         this.skinPreset = skinPreset;
@@ -65,17 +64,17 @@ public class SkinPresetWidget extends PresetWidget {
                 skin::getTexture, skin::getModel
         );
 
-        this.showButtons = showButtons;
+        this.showButtons = true;
 
-        if(showButtons) {
-            this.editButton = new SpruceButtonWidget(
-                    Position.of((getWidth() / 8) + 4, getHeight() - 48), getWidth() - (this.getWidth() / 4) - 8, 20,
+        if (showButtons) {
+            this.editButton = new VariableSpruceButtonWidget(
+                    Position.of(0, 0), 0, 0,
                     Text.translatable("skinshuffle.carousel.preset_widget.edit"),
                     button -> client.setScreen(new PresetEditScreen(this.parent, this.skinPreset))
             );
 
-            this.copyButton = new SpruceButtonWidget(
-                    Position.of(3, getHeight() - 24), getWidth() / 2 - 5, 20,
+            this.copyButton = new VariableSpruceButtonWidget(
+                    Position.of(0, 0), 0, 0,
                     Text.translatable("skinshuffle.carousel.preset_widget.copy"),
                     button -> {
                         SkinPreset presetCopy = this.skinPreset.copy();
@@ -85,8 +84,8 @@ public class SkinPresetWidget extends PresetWidget {
                     }
             );
 
-            this.deleteButton = new SpruceButtonWidget(
-                    Position.of(getWidth() / 2 + 2, getHeight() - 24), getWidth() / 2 - 5, 20,
+            this.deleteButton = new VariableSpruceButtonWidget(
+                    Position.of(0, 0), 0, 0,
                     Text.translatable("skinshuffle.carousel.preset_widget.delete"),
                     button -> {
                         ConfirmScreen confirmScreen = new ConfirmScreen(result -> {
@@ -136,25 +135,6 @@ public class SkinPresetWidget extends PresetWidget {
         int i = this.parent.carouselWidgets.indexOf(this);
         moveLeftButton.setVisible(active && this.isMovable() && i > 0 && this.parent.carouselWidgets.get(i - 1).isMovable());
         moveRightButton.setVisible(active && this.isMovable() && i < this.parent.carouselWidgets.size() - 1 && this.parent.carouselWidgets.get(i + 1).isMovable());
-    }
-
-    public void overridePosition(Position newPosition) {
-        this.position = newPosition;
-    }
-
-    public void overrideDimensions(int newWidth, int newHeight) {
-        this.width = newWidth;
-        this.height = newHeight;
-    }
-
-    @Override
-    public int getX() {
-        return this.position.getX();
-    }
-
-    @Override
-    public int getY() {
-        return this.position.getY();
     }
 
     @Override

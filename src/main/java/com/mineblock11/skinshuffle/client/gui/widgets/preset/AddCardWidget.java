@@ -18,33 +18,24 @@
  *     USA
  */
 
-package com.mineblock11.skinshuffle.client.gui.widgets;
+package com.mineblock11.skinshuffle.client.gui.widgets.preset;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
-import com.mineblock11.skinshuffle.client.gui.SkinCarouselScreen;
-import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
-import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
-import com.mineblock11.skinshuffle.client.skin.ResourceSkin;
+import com.mineblock11.skinshuffle.client.gui.CarouselScreen;
 import dev.lambdaurora.spruceui.Position;
-import dev.lambdaurora.spruceui.widget.AbstractSprucePressableButtonWidget;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
 import dev.lambdaurora.spruceui.widget.SpruceWidget;
-import dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
-
-public class AddPresetWidget extends PresetWidget {
+public class AddCardWidget extends AbstractCardWidget {
 //    private final DummyClientPlayerEntity entity;
     private Runnable action;
-    private Position position;
 
-    public AddPresetWidget(SkinCarouselScreen parent, Position position, int width, int height) {
+    public AddCardWidget(CarouselScreen parent, Position position, int width, int height) {
         super(position, width, height, parent);
-        this.position = position;
 
         addChild(new SpruceButtonWidget(Position.of(3, getHeight() - 24), width - 6, 20, Text.translatable("skinshuffle.carousel.create"), button -> {
             action.run();
@@ -75,25 +66,6 @@ public class AddPresetWidget extends PresetWidget {
 
     private float getEntityRotation() {
         return isActive() ? (float) (GlfwUtil.getTime() - parent.getLastCardSwitchTime()) * 35.0f : 0.0f;
-    }
-
-    public void overridePosition(Position newPosition) {
-        this.position = newPosition;
-    }
-
-    public void overrideDimensions(int newWidth, int newHeight) {
-        this.width = newWidth;
-        this.height = newHeight;
-    }
-
-    @Override
-    public int getX() {
-        return this.position.getX();
-    }
-
-    @Override
-    public int getY() {
-        return this.position.getY();
     }
 
     @Override

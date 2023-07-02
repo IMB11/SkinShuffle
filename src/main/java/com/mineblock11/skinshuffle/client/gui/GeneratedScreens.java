@@ -92,4 +92,8 @@ public class GeneratedScreens {
                         client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.world") : client.isConnectedToRealms() ? I18n.translate("skinshuffle.reconnect.realm") : I18n.translate("skinshuffle.reconnect.server"),
                         client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.rejoin") : I18n.translate("skinshuffle.reconnect.reconnect")));
     }
+
+    public static Screen getCarouselScreen(Screen parent) {
+        return new CompactCarouselScreen(parent); // TODO: load default type from config;
+    }
 }

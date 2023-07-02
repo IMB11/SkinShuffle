@@ -18,16 +18,22 @@
  *     USA
  */
 
-package com.mineblock11.skinshuffle.compat;
+package com.mineblock11.skinshuffle.client.gui.widgets.preset;
 
-import com.mineblock11.skinshuffle.client.gui.GeneratedScreens;
-import com.terraformersmc.modmenu.api.ConfigScreenFactory;
-import com.terraformersmc.modmenu.api.ModMenuApi;
-import net.minecraft.client.gui.screen.Screen;
+import com.mineblock11.skinshuffle.client.gui.CarouselScreen;
+import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 
-public class ModMenuCompat implements ModMenuApi {
-    @Override
-    public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return (ConfigScreenFactory<Screen>) GeneratedScreens::getCarouselScreen;
+public class CarouselPresetWidget extends PresetWidget {
+    public CarouselPresetWidget(CarouselScreen parent, int width, int height, SkinPreset skinPreset) {
+        super(parent, width, height, skinPreset);
+
+        editButton.overridePosition((getWidth() / 8) + 4, getHeight() - 48);
+        editButton.overrideDimensions(getWidth() - (this.getWidth() / 4) - 8, 20);
+
+        copyButton.overridePosition(3, getHeight() - 24);
+        copyButton.overrideDimensions(getWidth() / 2 - 5, 20);
+
+        deleteButton.overridePosition(getWidth() / 2 + 2, getHeight() - 24);
+        deleteButton.overrideDimensions(getWidth() / 2 - 5, 20);
     }
 }

@@ -54,7 +54,7 @@ import static net.minecraft.client.gui.screen.world.CreateWorldScreen.LIGHT_DIRT
 public class PresetEditScreen extends SpruceScreen {
     public static final int MAX_WIDTH = 400;
 
-    private final SkinCarouselScreen parent;
+    private final CarouselScreen parent;
     private final LivingEntity entity;
     private final TabManager tabManager = new TabManager(this::addDrawableChild, this::remove);
     private final UrlValidator urlValidator = new UrlValidator(new String[]{"http", "https"});
@@ -68,7 +68,7 @@ public class PresetEditScreen extends SpruceScreen {
     private ButtonWidget exitButton;
     private int sideMargins;
 
-    public PresetEditScreen(SkinCarouselScreen parent, SkinPreset preset) {
+    public PresetEditScreen(CarouselScreen parent, SkinPreset preset) {
         super(Text.translatable("skinshuffle.edit.title"));
         this.preset = preset.copy();
         this.originalPreset = preset;
