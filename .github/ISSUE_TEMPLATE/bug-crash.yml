@@ -19,6 +19,14 @@ body:
       placeholder: ex. https://mclo.gs/nggyunglyd
     validations:
       required: false
+  - type: input
+    id: modversion
+    attributes:
+      label: SkinShuffle version
+      description: What version of SkinShuffle are you using?
+      placeholder: ex. 0.1.0+1.20
+    validations:
+      required: true
   - type: textarea
     id: extra
     attributes:
