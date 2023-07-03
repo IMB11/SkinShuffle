@@ -42,19 +42,17 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.UUID;
 
-public abstract class PresetWidget extends AbstractCardWidget {
+public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCardWidget<S> {
     protected final SkinPreset skinPreset;
     protected VariableSpruceButtonWidget editButton;
     protected VariableSpruceButtonWidget copyButton;
     protected VariableSpruceButtonWidget deleteButton;
-    protected CarouselMoveButton moveLeftButton;
-    protected CarouselMoveButton moveRightButton;
     private final boolean showButtons;
     protected LivingEntity entity;
     protected double scaleFactor;
 
-    public PresetWidget(CarouselScreen parent, int width, int height, SkinPreset skinPreset) {
-        super(Position.of(0, 0), width, height, parent);
+    public PresetWidget(S parent, SkinPreset skinPreset) {
+        super(Position.of(0, 0), parent.getCardWidth(), parent.getCardHeight(), parent);
 
         this.skinPreset = skinPreset;
 
@@ -99,27 +97,11 @@ public abstract class PresetWidget extends AbstractCardWidget {
                     }
             );
 
-            this.moveLeftButton = new CarouselMoveButton(Position.of(2, getHeight() - 46), false);
-            this.moveRightButton = new CarouselMoveButton(Position.of(getWidth() - 2, getHeight() - 46), true);
-
-            this.moveLeftButton.setCallback(() -> {
-                var i = parent.carouselWidgets.indexOf(this);
-                parent.swapPresets(i, i - 1);
-                parent.scrollCarousel(-1, false);
-            });
-            this.moveRightButton.setCallback(() -> {
-                var i = parent.carouselWidgets.indexOf(this);
-                parent.swapPresets(i, i + 1);
-                parent.scrollCarousel(1, false);
-            });
-
             if(SkinPresetManager.getLoadedPresets().size() < 2) this.deleteButton.setActive(false);
 
             addChild(deleteButton);
             addChild(editButton);
             addChild(copyButton);
-            addChild(moveLeftButton);
-            addChild(moveRightButton);
         }
     }
 
@@ -131,10 +113,6 @@ public abstract class PresetWidget extends AbstractCardWidget {
             if(child.equals(this.deleteButton) && SkinPresetManager.getLoadedPresets().size() < 2) continue;
             child.setActive(active);
         }
-
-        int i = this.parent.carouselWidgets.indexOf(this);
-        moveLeftButton.setVisible(active && this.isMovable() && i > 0 && this.parent.carouselWidgets.get(i - 1).isMovable());
-        moveRightButton.setVisible(active && this.isMovable() && i < this.parent.carouselWidgets.size() - 1 && this.parent.carouselWidgets.get(i + 1).isMovable());
     }
 
     @Override
@@ -190,8 +168,8 @@ public abstract class PresetWidget extends AbstractCardWidget {
                 this.active ? 0xFFFFFFFF : 0xFF808080
         );
 
-        var previewX = getX() + this.getWidth() / 2;
-        var previewY = (int) (this.getY() + (showButtons ? this.height / 1.6 : this.height * (1.5 / 2)));
+        var previewX = getPreviewX();
+        var previewY = getPreviewY();
 
         float followX = (float) previewX - mouseX;
         float followY = (float) (previewY - this.height / 40 * 16) - mouseY;
@@ -213,8 +191,20 @@ public abstract class PresetWidget extends AbstractCardWidget {
 
         GuiEntityRenderer.drawEntity(
                 graphics.getMatrices(), previewX, previewY,
-                this.height / 4, rotation, followX, followY, entity
+                getPreviewSize(), rotation, followX, followY, entity
         );
+    }
+
+    protected int getPreviewX() {
+        return getX() + this.getWidth() / 2;
+    }
+
+    protected int getPreviewY() {
+        return (int) (this.getY() + (showButtons ? this.height / 1.6 : this.height * (1.5 / 2)));
+    }
+
+    protected int getPreviewSize() {
+        return this.height / 4;
     }
 
     public void setScaleFactor(double scaleFactor) {

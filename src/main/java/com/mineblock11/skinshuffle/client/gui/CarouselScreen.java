@@ -26,7 +26,7 @@ import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.widgets.*;
 import com.mineblock11.skinshuffle.client.gui.widgets.preset.AddCardWidget;
 import com.mineblock11.skinshuffle.client.gui.widgets.preset.AbstractCardWidget;
-import com.mineblock11.skinshuffle.client.gui.widgets.preset.CarouselPresetWidget;
+import com.mineblock11.skinshuffle.client.gui.widgets.preset.LargePresetWidget;
 import com.mineblock11.skinshuffle.client.gui.widgets.preset.PresetWidget;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mineblock11.skinshuffle.client.skin.Skin;
@@ -65,7 +65,7 @@ public abstract class CarouselScreen extends SpruceScreen {
     private double cardIndex = -1;
     private double lastCardIndex = 0;
     private double lastCardSwitchTime = 0;
-    public ArrayList<AbstractCardWidget> carouselWidgets = new ArrayList<>();
+    public ArrayList<AbstractCardWidget<?>> carouselWidgets = new ArrayList<>();
 
     @Override
     protected void init() {
@@ -227,7 +227,7 @@ public abstract class CarouselScreen extends SpruceScreen {
         int i = 0;
         int leftI = this.width / 2 - cardAreaWidth - getCardWidth() / 2;
         int rowI = 0;
-        for (AbstractCardWidget widget : this.carouselWidgets) {
+        for (AbstractCardWidget<?> widget : this.carouselWidgets) {
 //            var widgetDeltaIndex = widget.getDeltaIndex() - i++;
 //            var widgetXOffset = (int) (widgetDeltaIndex * cardAreaWidth);
             var widgetYOffset = (getCardHeight() + getCardGap()) * rowI;
@@ -241,7 +241,7 @@ public abstract class CarouselScreen extends SpruceScreen {
             );
 
 //            graphics.drawTextWithShadow(this.textRenderer, String.valueOf(loadedPresets.indexOf(loadedPreset)), leftI + scrollOffset, this.height/2 - this.textRenderer.fontHeight /2 , 0xFFFFFFFF);
-            if(widget instanceof PresetWidget loadedPreset) {
+            if(widget instanceof PresetWidget<?> loadedPreset) {
                 loadedPreset.overridePosition(position);
                 loadedPreset.setScaleFactor(this.scaleFactor);
             } else if (widget instanceof AddCardWidget addCardWidget) {
@@ -306,17 +306,19 @@ public abstract class CarouselScreen extends SpruceScreen {
 
     protected abstract int getRows();
 
-    private int getCardWidth() {
-        return this.width / 4 / getRows();
+    public int getCardWidth() {
+        return this.width / 4;
     }
 
-    private int getCardHeight() {
+    public int getCardHeight() {
         return ((int) (this.height / 1.5) - getCardGap() * (getRows() - 1)) / getRows();
     }
 
-    private int getCardGap() {
+    protected int getCardGap() {
         return (int) (10 * this.scaleFactor) / getRows();
     }
+
+    protected abstract AbstractCardWidget widgetFromPreset(SkinPreset preset);
 
     private double getDeltaScrollIndex() {
         var deltaTime = (GlfwUtil.getTime() - lastCardSwitchTime) * 5;
@@ -326,7 +328,7 @@ public abstract class CarouselScreen extends SpruceScreen {
     }
 
     public AbstractCardWidget loadPreset(SkinPreset preset) {
-        var widget = new CarouselPresetWidget(this, getCardWidth(), getCardHeight(), preset);
+        var widget = widgetFromPreset(preset);
         this.carouselWidgets.get(this.carouselWidgets.size() - 1).refreshLastIndex();
         this.carouselWidgets.add(this.carouselWidgets.set(this.carouselWidgets.size() - 1, widget));
 //        widget.lastIndex = this.carouselWidgets.size() - 2; // TODO TODO

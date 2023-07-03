@@ -106,6 +106,7 @@ skinshuffle:
       edit: "Edit"
       copy: "Copy"
       delete: "Delete"
+      select: "Select"
 
   edit:
     customize:

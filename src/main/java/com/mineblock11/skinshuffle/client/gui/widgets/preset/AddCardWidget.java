@@ -30,7 +30,7 @@ import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
-public class AddCardWidget extends AbstractCardWidget {
+public class AddCardWidget extends AbstractCardWidget<CarouselScreen> {
 //    private final DummyClientPlayerEntity entity;
     private Runnable action;
 

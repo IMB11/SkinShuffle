@@ -20,23 +20,18 @@
 
 package com.mineblock11.skinshuffle.client.gui.widgets;
 
-import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
-import com.mineblock11.skinshuffle.client.gui.SkinCarouselScreen;
+import com.mineblock11.skinshuffle.client.gui.GeneratedScreens;
 import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.GlfwUtil;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
 import java.util.UUID;
-import java.util.function.Supplier;
 
 public class OpenCarouselButton extends ButtonWidget {
     private SkinPreset selectedPreset;
@@ -46,7 +41,7 @@ public class OpenCarouselButton extends ButtonWidget {
     public OpenCarouselButton(int x, int y, int width, int height) {
         super(x, y, width, height, Text.translatable("skinshuffle.button"), (btn) -> {
             var client = MinecraftClient.getInstance();
-            client.setScreen(new SkinCarouselScreen(client.currentScreen));
+            client.setScreen(GeneratedScreens.getCarouselScreen(client.currentScreen));
         }, textSupplier -> null);
 
         currentTime = GlfwUtil.getTime();

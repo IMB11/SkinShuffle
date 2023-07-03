@@ -30,17 +30,26 @@ import org.jetbrains.annotations.Nullable;
 
 public class CarouselMoveButton extends AbstractSpruceWidget {
     private static Identifier ARROW_TEXTURES = new Identifier(SkinShuffle.MOD_ID, "textures/gui/carousel_arrows.png");
-    private final boolean isRight;
+    private final Direction direction;
     private @Nullable Runnable action;
 
     public CarouselMoveButton(Position position, boolean isRight) {
         super(position);
-        this.isRight = isRight;
         this.width = 16;
         this.height = 16;
+        this.direction = isRight ? Direction.RIGHT : Direction.LEFT;
         if (isRight) {
             position.setRelativeX(position.getRelativeX() - width);
         }
+    }
+
+    public CarouselMoveButton(Position position, Direction direction) {
+        super(position);
+        this.width = 16;
+        this.height = 16;
+        this.direction = direction;
+        position.setRelativeX(position.getRelativeX() - width / 2);
+        position.setRelativeY(position.getRelativeY() - height / 2);
     }
 
     public void setCallback(@Nullable Runnable action) {
@@ -66,12 +75,27 @@ public class CarouselMoveButton extends AbstractSpruceWidget {
         matrices.push();
         // Translate the matrix forward so its above rendered playermodels
         matrices.translate(0, 0, 10000);
-        guiGraphics.drawTexture(ARROW_TEXTURES, getX(), getY(), 16, 16, (isRight ? 8 : 0), (this.active ? (this.hovered || this.focused ? 8 : 0) : 8), 8, 8, 16, 16);
+        guiGraphics.drawTexture(ARROW_TEXTURES, getX(), getY(), 16, 16, this.direction.u, (this.active ? (this.hovered || this.focused ? 8 : 0) : 8), 8, 8, 32, 32);
         matrices.pop();
     }
 
     @Override
     protected @Nullable Text getNarrationMessage() {
-        return Text.translatable("skinshuffle.carousel." + (this.isRight ? "right" : "left"));
+        return Text.translatable("skinshuffle.carousel." + this.direction.name);
+    }
+
+    public enum Direction {
+        LEFT("left", 0),
+        RIGHT("right", 8),
+        UP("up", 16),
+        DOWN("down", 24);
+
+        public final String name;
+        public final int u;
+
+        Direction(String name, int u) {
+            this.name = name;
+            this.u = u;
+        }
     }
 }

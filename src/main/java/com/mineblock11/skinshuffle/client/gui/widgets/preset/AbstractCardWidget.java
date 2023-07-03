@@ -23,17 +23,18 @@ package com.mineblock11.skinshuffle.client.gui.widgets.preset;
 import com.mineblock11.skinshuffle.client.gui.CarouselScreen;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.util.math.MathHelper;
 
-public abstract class AbstractCardWidget extends SpruceContainerWidget {
-    protected final CarouselScreen parent;
+public abstract class AbstractCardWidget<S extends CarouselScreen> extends SpruceContainerWidget {
+    protected final S parent;
     public double lastX;
     public double lastY;
     public double lastPositionTime;
     private Position position;
 
-    public AbstractCardWidget(Position position, int width, int height, CarouselScreen parent) {
+    public AbstractCardWidget(Position position, int width, int height, S parent) {
         super(position, width, height);
         this.position = position;
         this.parent = parent;
