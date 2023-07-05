@@ -40,14 +40,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.ArrayList;
 
 @Mixin(GameMenuScreen.class)
-public class GameMenuScreenMixin extends Screen {
+public abstract class GameMenuScreenMixin extends ScreenMixin {
     @Unique
     private ArrayList<ClickableWidget> openCarouselWidgets;
     private WarningIndicatorButton warningIndicator;
-
-    protected GameMenuScreenMixin(Text title) {
-        super(title);
-    }
 
     @Inject(method = "render", at = @At("HEAD"))
     public void render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
@@ -57,7 +53,7 @@ public class GameMenuScreenMixin extends Screen {
     }
 
     @Override
-    public void close() {
+    public void closeHook(CallbackInfo ci) {
         if (this.openCarouselWidgets != null) {
             for (ClickableWidget openCarouselWidget : this.openCarouselWidgets) {
                 if(openCarouselWidget instanceof  OpenCarouselButton button) {
@@ -69,7 +65,7 @@ public class GameMenuScreenMixin extends Screen {
     }
 
     @Override
-    public void onDisplayed() {
+    public void onDisplayedHook(CallbackInfo ci) {
         if (!SkinShuffleConfig.get().displayInTitleScreen && this.openCarouselWidgets != null) {
             for (ClickableWidget openCarouselWidget : this.openCarouselWidgets) {
                 this.remove(openCarouselWidget);
@@ -86,7 +82,7 @@ public class GameMenuScreenMixin extends Screen {
              - Bedrock-style skin preview
          */
 
-        this.openCarouselWidgets = GeneratedScreens.createCarouselWidgets(this);
+        this.openCarouselWidgets = GeneratedScreens.createCarouselWidgets((Screen)(Object)this);
 
         for (ClickableWidget carouselWidget : this.openCarouselWidgets) {
             this.addDrawableChild(carouselWidget);
