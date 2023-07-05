@@ -30,24 +30,24 @@ import org.jetbrains.annotations.Nullable;
 
 public class CarouselMoveButton extends AbstractSpruceWidget {
     private static Identifier ARROW_TEXTURES = new Identifier(SkinShuffle.MOD_ID, "textures/gui/carousel_arrows.png");
-    private final Direction direction;
+    private final Type type;
     private @Nullable Runnable action;
 
     public CarouselMoveButton(Position position, boolean isRight) {
         super(position);
         this.width = 16;
         this.height = 16;
-        this.direction = isRight ? Direction.RIGHT : Direction.LEFT;
+        this.type = isRight ? Type.RIGHT : Type.LEFT;
         if (isRight) {
             position.setRelativeX(position.getRelativeX() - width);
         }
     }
 
-    public CarouselMoveButton(Position position, Direction direction) {
+    public CarouselMoveButton(Position position, Type type) {
         super(position);
-        this.width = 16;
-        this.height = 16;
-        this.direction = direction;
+        this.width = type.width * 2;
+        this.height = type.height * 2;
+        this.type = type;
         position.setRelativeX(position.getRelativeX() - width / 2);
         position.setRelativeY(position.getRelativeY() - height / 2);
     }
@@ -75,27 +75,44 @@ public class CarouselMoveButton extends AbstractSpruceWidget {
         matrices.push();
         // Translate the matrix forward so its above rendered playermodels
         matrices.translate(0, 0, 10000);
-        guiGraphics.drawTexture(ARROW_TEXTURES, getX(), getY(), 16, 16, this.direction.u, (this.active ? (this.hovered || this.focused ? 8 : 0) : 8), 8, 8, 32, 32);
+        guiGraphics.drawTexture(
+                ARROW_TEXTURES, getX(), getY(), width, height, this.type.u,
+                (this.active ? (this.hovered || this.focused ? this.type.height : 0) : this.type.height),
+                this.type.width, this.type.height, 64, 64
+        );
         matrices.pop();
     }
 
     @Override
     protected @Nullable Text getNarrationMessage() {
-        return Text.translatable("skinshuffle.carousel." + this.direction.name);
+        return Text.translatable("skinshuffle.carousel." + this.type.name);
     }
 
-    public enum Direction {
+    public enum Type {
         LEFT("left", 0),
         RIGHT("right", 8),
         UP("up", 16),
-        DOWN("down", 24);
+        DOWN("down", 24),
+        LEFT_RIGHT("left_right", 32, 16, 16),
+        UP_DOWN("up_down", 48, 16, 16);
 
         public final String name;
         public final int u;
+        public final int width;
+        public final int height;
 
-        Direction(String name, int u) {
+        Type(String name, int u) {
             this.name = name;
             this.u = u;
+            this.width = 8;
+            this.height = 8;
+        }
+
+        Type(String name, int u, int width, int height) {
+            this.name = name;
+            this.u = u;
+            this.width = width;
+            this.height = height;
         }
     }
 }

@@ -64,10 +64,6 @@ public class AddCardWidget extends AbstractCardWidget<CarouselScreen> {
         graphics.drawTextWithShadow(this.client.textRenderer, text, getX() + (this.width / 2) - this.client.textRenderer.getWidth(text) / 2, getY() + this.client.textRenderer.fontHeight / 2, this.active ? 0xFFFFFFFF : 0xFF808080);
     }
 
-    private float getEntityRotation() {
-        return isActive() ? (float) (GlfwUtil.getTime() - parent.getLastCardSwitchTime()) * 35.0f : 0.0f;
-    }
-
     @Override
     public boolean isMovable() {
         return false;

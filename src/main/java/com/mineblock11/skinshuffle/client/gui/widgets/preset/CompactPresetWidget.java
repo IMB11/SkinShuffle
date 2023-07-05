@@ -1,19 +1,17 @@
 package com.mineblock11.skinshuffle.client.gui.widgets.preset;
 
 import com.mineblock11.skinshuffle.client.gui.CompactCarouselScreen;
-import com.mineblock11.skinshuffle.client.gui.PresetEditScreen;
 import com.mineblock11.skinshuffle.client.gui.widgets.CarouselMoveButton;
 import com.mineblock11.skinshuffle.client.gui.widgets.VariableSpruceButtonWidget;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import dev.lambdaurora.spruceui.Position;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 public class CompactPresetWidget extends PresetWidget<CompactCarouselScreen> {
     protected VariableSpruceButtonWidget selectButton;
-    protected CarouselMoveButton moveLeftButton;
     protected CarouselMoveButton moveRightButton;
-    protected CarouselMoveButton moveUpButton;
     protected CarouselMoveButton moveDownButton;
 
     public CompactPresetWidget(CompactCarouselScreen parent, SkinPreset skinPreset) {
@@ -35,27 +33,28 @@ public class CompactPresetWidget extends PresetWidget<CompactCarouselScreen> {
 
         deleteButton.overridePosition((getWidth() / 2) + 4, getHeight() - 24);
         deleteButton.overrideDimensions(getWidth() / 2 - (4 * 2), 20);
+        deleteButton.setMessage(Text.translatable("skinshuffle.carousel.preset_widget.delete").formatted(Formatting.RED));
         deleteButton.setVisible(false);
 
-        moveLeftButton = new CarouselMoveButton(Position.of(getX(), getY() + getHeight() / 2), CarouselMoveButton.Direction.RIGHT);
-        moveRightButton = new CarouselMoveButton(Position.of(getX() + getWidth(), getY() + getHeight() / 2), CarouselMoveButton.Direction.LEFT);
-        moveUpButton = new CarouselMoveButton(Position.of(getX() + getWidth() / 2, getY()), CarouselMoveButton.Direction.DOWN);
-        moveDownButton = new CarouselMoveButton(Position.of(getX() + getWidth() / 2, getY() + getHeight()), CarouselMoveButton.Direction.UP);
+        moveRightButton = new CarouselMoveButton(
+                Position.of(getX() + getWidth() + parent.getCardGap() / 2, getY() + getHeight() / 2), CarouselMoveButton.Type.LEFT_RIGHT);
+        moveDownButton = new CarouselMoveButton(
+                Position.of(getX() + getWidth() / 2, getY() + getHeight() + parent.getCardGap() / 2), CarouselMoveButton.Type.UP_DOWN);
 
-        addChild(moveLeftButton);
+        moveRightButton.setCallback(() -> parent.swapPresets(getIndex(), getIndex() + parent.getRows()));
+        moveDownButton.setCallback(() -> parent.swapPresets(getIndex(), getIndex() + 1));
+
         addChild(moveRightButton);
-        addChild(moveUpButton);
         addChild(moveDownButton);
     }
 
     @Override
     public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
-        updateVisibility();
-
         super.render(graphics, mouseX, mouseY, delta);
     }
 
-    protected void updateVisibility() {
+    @Override
+    public void updateVisibility(int index) {
         var editMode = parent.isEditMode();
 
         selectButton.setVisible(!editMode);
@@ -63,10 +62,8 @@ public class CompactPresetWidget extends PresetWidget<CompactCarouselScreen> {
         copyButton.setVisible(editMode);
         deleteButton.setVisible(editMode);
 
-        moveLeftButton.setVisible(editMode);
-        moveRightButton.setVisible(editMode);
-        moveUpButton.setVisible(editMode);
-        moveDownButton.setVisible(editMode);
+        moveRightButton.setVisible(editMode && parent.getPresetWidget(index + parent.getRows()).map(PresetWidget::isMovable).orElse(false));
+        moveDownButton.setVisible(editMode && index % parent.getRows() == 0 && parent.getPresetWidget(index + 1).map(PresetWidget::isMovable).orElse(false));
     }
 
     private int getPreviewMargin() {

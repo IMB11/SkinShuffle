@@ -39,7 +39,7 @@ public class CompactCarouselScreen extends CarouselScreen {
     }
 
     @Override
-    protected int getRows() {
+    public int getRows() {
         return 2;
     }
 

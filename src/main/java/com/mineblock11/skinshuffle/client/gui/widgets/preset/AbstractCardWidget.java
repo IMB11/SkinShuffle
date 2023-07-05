@@ -23,7 +23,6 @@ package com.mineblock11.skinshuffle.client.gui.widgets.preset;
 import com.mineblock11.skinshuffle.client.gui.CarouselScreen;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.util.math.MathHelper;
 
@@ -31,7 +30,7 @@ public abstract class AbstractCardWidget<S extends CarouselScreen> extends Spruc
     protected final S parent;
     public double lastX;
     public double lastY;
-    public double lastPositionTime;
+    public double lastPositionTime = Double.MIN_VALUE;
     private Position position;
 
     public AbstractCardWidget(Position position, int width, int height, S parent) {
@@ -54,7 +53,7 @@ public abstract class AbstractCardWidget<S extends CarouselScreen> extends Spruc
         return (int) MathHelper.lerp(deltaTime, lastY, y);
     }
 
-    public void refreshLastIndex() {
+    public void refreshLastPosition() {
         this.lastX = getDeltaX(position.getRelativeX());
         this.lastY = getDeltaY(position.getRelativeY());
         this.lastPositionTime = GlfwUtil.getTime();
@@ -63,6 +62,9 @@ public abstract class AbstractCardWidget<S extends CarouselScreen> extends Spruc
     public abstract boolean isMovable();
 
     public void refreshState() {
+    }
+
+    public void updateVisibility(int index) {
     }
 
     public void overridePosition(Position newPosition) {
@@ -82,5 +84,9 @@ public abstract class AbstractCardWidget<S extends CarouselScreen> extends Spruc
     @Override
     public int getY() {
         return this.position.getY();
+    }
+
+    public int getIndex() {
+        return this.parent.carouselWidgets.indexOf(this);
     }
 }

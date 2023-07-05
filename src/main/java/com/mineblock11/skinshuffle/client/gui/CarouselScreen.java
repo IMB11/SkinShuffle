@@ -23,10 +23,8 @@ package com.mineblock11.skinshuffle.client.gui;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
-import com.mineblock11.skinshuffle.client.gui.widgets.*;
 import com.mineblock11.skinshuffle.client.gui.widgets.preset.AddCardWidget;
 import com.mineblock11.skinshuffle.client.gui.widgets.preset.AbstractCardWidget;
-import com.mineblock11.skinshuffle.client.gui.widgets.preset.LargePresetWidget;
 import com.mineblock11.skinshuffle.client.gui.widgets.preset.PresetWidget;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mineblock11.skinshuffle.client.skin.Skin;
@@ -47,6 +45,7 @@ import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.function.Function;
 
 public abstract class CarouselScreen extends SpruceScreen {
@@ -60,8 +59,6 @@ public abstract class CarouselScreen extends SpruceScreen {
         this.nextViewTypeFactory = nextViewTypeFactory;
     }
 
-    public CarouselMoveButton leftMoveButton;
-    public CarouselMoveButton rightMoveButton;
     private double cardIndex = -1;
     private double lastCardIndex = 0;
     private double lastCardSwitchTime = 0;
@@ -72,17 +69,11 @@ public abstract class CarouselScreen extends SpruceScreen {
         super.init();
         carouselWidgets.clear();
 
-        leftMoveButton = new CarouselMoveButton(Position.of((getCardWidth() / 2), (this.height / 2) - 8), false);
-        rightMoveButton = new CarouselMoveButton(Position.of(this.width - (getCardWidth() / 2), (this.height / 2) - 8), true);
-
-        leftMoveButton.setCallback(() -> {
-            scrollCarousel(-1, true);
-            snapCarousel();
-        });
-        rightMoveButton.setCallback(() -> {
-            scrollCarousel(1, true);
-            snapCarousel();
-        });
+        var loadedPresets = SkinPresetManager.getLoadedPresets();
+        for (var preset : loadedPresets) {
+            var presetWidget = this.widgetFromPreset(preset);
+            this.carouselWidgets.add(presetWidget);
+        }
 
         var addPresetWidget = new AddCardWidget(this,
                 Position.of(0, 0), getCardWidth(), getCardHeight());
@@ -93,10 +84,6 @@ public abstract class CarouselScreen extends SpruceScreen {
             this.addDrawableChild(newWidget);
         });
         this.carouselWidgets.add(addPresetWidget);
-
-        var loadedPresets = SkinPresetManager.getLoadedPresets();
-
-        loadedPresets.forEach(this::loadPreset);
 
         // We don't want to switch back to the selected preset when we return from a subscreen.
         if (this.cardIndex < 0) {
@@ -128,10 +115,6 @@ public abstract class CarouselScreen extends SpruceScreen {
 //                this.addDrawableChild(apiPresetWidget);
 //            }
 //        }).start();
-
-        this.addDrawableChild(leftMoveButton);
-        this.addDrawableChild(rightMoveButton);
-        this.addDrawableChild(addPresetWidget);
 
         for (SpruceWidget presetCards : this.carouselWidgets) {
             this.addDrawableChild(presetCards);
@@ -177,9 +160,6 @@ public abstract class CarouselScreen extends SpruceScreen {
                 this.close();
             }
         }));
-
-        this.leftMoveButton.setActive(this.carouselWidgets.size() != 1);
-        this.rightMoveButton.setActive(this.carouselWidgets.size() != 1);
 
         refreshPresetState();
     }
@@ -248,12 +228,14 @@ public abstract class CarouselScreen extends SpruceScreen {
                 addCardWidget.overridePosition(position);
             }
 
-            widget.setActive(Math.round(cardIndex) == this.carouselWidgets.indexOf(widget) || getRows() > 1);
+            widget.setActive(Math.round(cardIndex) == i || getRows() > 1);
+            widget.updateVisibility(i);
 
             if (++rowI >= rows) {
                 rowI = 0;
                 leftI += cardAreaWidth;
             }
+            i++;
         }
 
         this.renderWidgets(graphics, mouseX, mouseY, delta);
@@ -314,7 +296,7 @@ public abstract class CarouselScreen extends SpruceScreen {
         return ((int) (this.height / 1.5) - getCardGap() * (getRows() - 1)) / getRows();
     }
 
-    protected int getCardGap() {
+    public int getCardGap() {
         return (int) (10 * this.scaleFactor) / getRows();
     }
 
@@ -329,7 +311,7 @@ public abstract class CarouselScreen extends SpruceScreen {
 
     public AbstractCardWidget loadPreset(SkinPreset preset) {
         var widget = widgetFromPreset(preset);
-        this.carouselWidgets.get(this.carouselWidgets.size() - 1).refreshLastIndex();
+        this.carouselWidgets.get(this.carouselWidgets.size() - 1).refreshLastPosition();
         this.carouselWidgets.add(this.carouselWidgets.set(this.carouselWidgets.size() - 1, widget));
 //        widget.lastIndex = this.carouselWidgets.size() - 2; // TODO TODO
         refreshPresetState();
@@ -337,11 +319,21 @@ public abstract class CarouselScreen extends SpruceScreen {
     }
 
     public void swapPresets(int index1, int index2) {
-        this.carouselWidgets.get(index1).refreshLastIndex();
-        this.carouselWidgets.get(index2).refreshLastIndex();
+        this.carouselWidgets.get(index1).refreshLastPosition();
+        this.carouselWidgets.get(index2).refreshLastPosition();
         Collections.swap(this.carouselWidgets, index1, index2);
         SkinPresetManager.swapPresets(index1, index2);
         refreshPresetState();
+    }
+
+    public Optional<PresetWidget<?>> getPresetWidget(int index) {
+        if (index < 0 || index >= this.carouselWidgets.size()) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(this.carouselWidgets.get(index))
+                .filter(widget -> widget instanceof PresetWidget<?>)
+                .map(widget -> (PresetWidget<?>) widget);
     }
 
     public void refreshPresetState() {
