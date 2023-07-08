@@ -1,5 +1,6 @@
 package com.mineblock11.skinshuffle.client.gui;
 
+import com.mineblock11.skinshuffle.client.config.CarouselView;
 import com.mineblock11.skinshuffle.client.gui.widgets.CarouselMoveButton;
 import com.mineblock11.skinshuffle.client.gui.widgets.preset.AbstractCardWidget;
 import com.mineblock11.skinshuffle.client.gui.widgets.preset.LargePresetWidget;
@@ -12,7 +13,7 @@ public class LargeCarouselScreen extends CarouselScreen {
     public CarouselMoveButton rightMoveButton;
 
     public LargeCarouselScreen(Screen parent) {
-        super(parent, CompactCarouselScreen::new);
+        super(parent, CarouselView.COMPACT);
     }
 
     @Override

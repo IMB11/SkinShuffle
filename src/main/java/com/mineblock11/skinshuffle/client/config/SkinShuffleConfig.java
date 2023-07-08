@@ -141,6 +141,10 @@ public class SkinShuffleConfig {
                                     .name(translatable("skinshuffle.config.rendering.title"))
                                     .tooltip(translatable("skinshuffle.config.rendering.description"))
                                     .options(List.of(carouselRenderStyle, presetEditScreenRenderStyle, widgetRenderStyle, rotationMultiplier))
+                                    .group(OptionGroup.createBuilder()
+                                            .name(translatable("skinshuffle.config.rendering.compact_view.title"))
+                                            .options(List.of())
+                                            .build())
                                     .build()
                             ).category(ConfigCategory.createBuilder()
                                     .name(translatable("skinshuffle.config.popups.title"))
@@ -165,6 +169,8 @@ public class SkinShuffleConfig {
     @ConfigEntry public SkinRenderStyle carouselSkinRenderStyle = SkinRenderStyle.ROTATION;
     @ConfigEntry public SkinRenderStyle presetEditScreenRenderStyle = SkinRenderStyle.ROTATION;
     @ConfigEntry public float rotationMultiplier = 1.0f;
+
+    @ConfigEntry public CarouselView carouselView = CarouselView.LARGE;
 
     public enum SkinRenderStyle {
         ROTATION,

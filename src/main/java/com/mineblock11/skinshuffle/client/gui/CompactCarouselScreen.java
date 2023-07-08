@@ -1,6 +1,7 @@
 package com.mineblock11.skinshuffle.client.gui;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
+import com.mineblock11.skinshuffle.client.config.CarouselView;
 import com.mineblock11.skinshuffle.client.gui.widgets.preset.AbstractCardWidget;
 import com.mineblock11.skinshuffle.client.gui.widgets.preset.CompactPresetWidget;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
@@ -16,7 +17,7 @@ public class CompactCarouselScreen extends CarouselScreen {
     private boolean editMode;
 
     public CompactCarouselScreen(Screen parent) {
-        super(parent, LargeCarouselScreen::new);
+        super(parent, CarouselView.LARGE);
     }
 
     @Override
@@ -49,7 +50,11 @@ public class CompactCarouselScreen extends CarouselScreen {
 
     @Override
     public int getRows() {
-        return 2;
+        return height / 120;
+    }
+
+    public int getCardHeight() {
+        return (this.height - 80 - getCardGap() * (getRows() - 1)) / getRows();
     }
 
     @Override

@@ -94,6 +94,6 @@ public class GeneratedScreens {
     }
 
     public static Screen getCarouselScreen(Screen parent) {
-        return new CompactCarouselScreen(parent); // TODO: load default type from config;
+        return SkinShuffleConfig.get().carouselView.factory.apply(parent);
     }
 }

@@ -21,6 +21,7 @@
 package com.mineblock11.skinshuffle.client.gui;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
+import com.mineblock11.skinshuffle.client.config.CarouselView;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.widgets.preset.AddCardWidget;
@@ -50,13 +51,13 @@ import java.util.function.Function;
 
 public abstract class CarouselScreen extends SpruceScreen {
     public final Screen parent;
-    public final Function<Screen, ? extends CarouselScreen> nextViewTypeFactory;
+    public final CarouselView nextViewType;
     public boolean hasEditedPreset = false;
 
-    public CarouselScreen(Screen parent, Function<Screen, ? extends CarouselScreen> nextViewTypeFactory) {
+    public CarouselScreen(Screen parent, CarouselView nextViewType) {
         super(Text.translatable("skinshuffle.carousel.title"));
         this.parent = parent;
-        this.nextViewTypeFactory = nextViewTypeFactory;
+        this.nextViewType = nextViewType;
     }
 
     private double cardIndex = -1;
@@ -135,7 +136,11 @@ public abstract class CarouselScreen extends SpruceScreen {
             }
         });
 
-        this.addDrawableChild(new SpruceIconButtonWidget(Position.of(24, 2), 20, 20, Text.empty(), (btn) -> this.client.setScreenAndRender(nextViewTypeFactory.apply(this.parent))) {
+        this.addDrawableChild(new SpruceIconButtonWidget(Position.of(24, 2), 20, 20, Text.empty(), (btn) -> {
+            this.client.setScreenAndRender(nextViewType.factory.apply(this.parent));
+            SkinShuffleConfig.get().carouselView = nextViewType;
+            SkinShuffleConfig.GSON.save();
+        }) {
             @Override
             protected int renderIcon(DrawContext graphics, int mouseX, int mouseY, float delta) {
                 graphics.drawTexture(SkinShuffle.id("textures/gui/todo-todo-todo.png"), this.getX() + this.getWidth() / 2 - (14 / 2), this.getY() + this.getHeight() / 2 - (14 / 2), 14, 14, 0, 0, 15, 15, 15, 15);
