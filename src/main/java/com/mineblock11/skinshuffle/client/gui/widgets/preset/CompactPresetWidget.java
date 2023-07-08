@@ -1,18 +1,25 @@
 package com.mineblock11.skinshuffle.client.gui.widgets.preset;
 
+import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.gui.CompactCarouselScreen;
-import com.mineblock11.skinshuffle.client.gui.widgets.CarouselMoveButton;
 import com.mineblock11.skinshuffle.client.gui.widgets.VariableSpruceButtonWidget;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import dev.lambdaurora.spruceui.Position;
+import dev.lambdaurora.spruceui.widget.SpruceWidget;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.RotationAxis;
+import net.minecraft.util.math.random.Random;
+import org.lwjgl.glfw.GLFW;
 
 public class CompactPresetWidget extends PresetWidget<CompactCarouselScreen> {
+    private static final Random WIGGLE_RANDOM = Random.create();
+
     protected VariableSpruceButtonWidget selectButton;
-    protected CarouselMoveButton moveRightButton;
-    protected CarouselMoveButton moveDownButton;
+    private final float wiggleAmount = WIGGLE_RANDOM.nextFloat() + 1f;
+    private final float wiggleSpeed = WIGGLE_RANDOM.nextFloat() * 4f + 16f;
 
     public CompactPresetWidget(CompactCarouselScreen parent, SkinPreset skinPreset) {
         super(parent, skinPreset);
@@ -23,7 +30,10 @@ public class CompactPresetWidget extends PresetWidget<CompactCarouselScreen> {
         selectButton = new VariableSpruceButtonWidget(
                 Position.of((getWidth() / 2) + 4, getHeight() - 24), getWidth() / 2 - (4 * 2), 20,
                 Text.translatable("skinshuffle.carousel.preset_widget.select"),
-                button -> {}
+                button -> {
+                    SkinPresetManager.setChosenPreset(getPreset(), parent.hasEditedPreset);
+                    SkinPresetManager.savePresets();
+                }
         );
         addChild(selectButton);
 
@@ -35,22 +45,6 @@ public class CompactPresetWidget extends PresetWidget<CompactCarouselScreen> {
         deleteButton.overrideDimensions(getWidth() / 2 - (4 * 2), 20);
         deleteButton.setMessage(Text.translatable("skinshuffle.carousel.preset_widget.delete").formatted(Formatting.RED));
         deleteButton.setVisible(false);
-
-        moveRightButton = new CarouselMoveButton(
-                Position.of(getX() + getWidth() + parent.getCardGap() / 2, getY() + getHeight() / 2), CarouselMoveButton.Type.LEFT_RIGHT);
-        moveDownButton = new CarouselMoveButton(
-                Position.of(getX() + getWidth() / 2, getY() + getHeight() + parent.getCardGap() / 2), CarouselMoveButton.Type.UP_DOWN);
-
-        moveRightButton.setCallback(() -> parent.swapPresets(getIndex(), getIndex() + parent.getRows()));
-        moveDownButton.setCallback(() -> parent.swapPresets(getIndex(), getIndex() + 1));
-
-        addChild(moveRightButton);
-        addChild(moveDownButton);
-    }
-
-    @Override
-    public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
-        super.render(graphics, mouseX, mouseY, delta);
     }
 
     @Override
@@ -61,9 +55,40 @@ public class CompactPresetWidget extends PresetWidget<CompactCarouselScreen> {
         editButton.setVisible(!editMode);
         copyButton.setVisible(editMode);
         deleteButton.setVisible(editMode);
+    }
 
-        moveRightButton.setVisible(editMode && parent.getPresetWidget(index + parent.getRows()).map(PresetWidget::isMovable).orElse(false));
-        moveDownButton.setVisible(editMode && index % parent.getRows() == 0 && parent.getPresetWidget(index + 1).map(PresetWidget::isMovable).orElse(false));
+    @Override
+    public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
+        var matrices = graphics.getMatrices();
+        matrices.push();
+
+        if (parent.isEditMode() && isMovable()) {
+            var x = getX() + getWidth() / 2;
+            var y = getY() + getHeight() / 2;
+            matrices.translate(x, y, 0);
+            matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees((float) Math.sin(GlfwUtil.getTime() * wiggleSpeed) * wiggleAmount));
+            matrices.translate(-x, -y, 0);
+        }
+        super.render(graphics, mouseX, mouseY, delta);
+
+        matrices.pop();
+    }
+
+    @Override
+    protected boolean onMouseClick(double mouseX, double mouseY, int button) {
+        for (SpruceWidget widget : this) {
+            if (widget.mouseClicked(mouseX, mouseY, button)) {
+                return true;
+            }
+        }
+
+        if (button == GLFW.GLFW_MOUSE_BUTTON_1) {
+            this.setDragging(true);
+            this.setDragStart(mouseX - getX(), mouseY - getY());
+            return true;
+        }
+
+        return false;
     }
 
     private int getPreviewMargin() {

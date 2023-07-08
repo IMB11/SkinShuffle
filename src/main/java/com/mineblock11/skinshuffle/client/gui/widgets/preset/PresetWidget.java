@@ -116,28 +116,6 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
     }
 
     @Override
-    protected boolean onMouseClick(double mouseX, double mouseY, int button) {
-        var it = this.iterator();
-
-        SpruceWidget element;
-        do {
-            if (!it.hasNext()) {
-                if (button == GLFW.GLFW_MOUSE_BUTTON_1) {
-                    this.setDragging(true);
-                }
-
-                return true;
-            }
-
-            element = it.next();
-        } while (!element.mouseClicked(mouseX, mouseY, button));
-
-        this.setFocused(element);
-
-        return true;
-    }
-
-    @Override
     protected void renderBackground(DrawContext graphics, int mouseX, int mouseY, float delta) {
         int borderColour = this.active ? 0xDF000000 : 0x5F000000;
 

@@ -33,6 +33,10 @@ public abstract class AbstractCardWidget<S extends CarouselScreen> extends Spruc
     public double lastPositionTime = Double.MIN_VALUE;
     private Position position;
 
+    private boolean dragging;
+    private double dragStartX;
+    private double dragStartY;
+
     public AbstractCardWidget(Position position, int width, int height, S parent) {
         super(position, width, height);
         this.position = position;
@@ -84,6 +88,29 @@ public abstract class AbstractCardWidget<S extends CarouselScreen> extends Spruc
     @Override
     public int getY() {
         return this.position.getY();
+    }
+
+    @Override
+    public void setDragging(boolean dragging) {
+        this.dragging = dragging;
+    }
+
+    public void setDragStart(double x, double y) {
+        this.dragStartX = x;
+        this.dragStartY = y;
+    }
+
+    @Override
+    public boolean isDragging() {
+        return dragging;
+    }
+
+    public double getDragStartX() {
+        return dragStartX;
+    }
+
+    public double getDragStartY() {
+        return dragStartY;
     }
 
     public int getIndex() {

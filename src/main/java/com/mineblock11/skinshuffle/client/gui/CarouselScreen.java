@@ -64,6 +64,9 @@ public abstract class CarouselScreen extends SpruceScreen {
     private double lastCardSwitchTime = 0;
     public ArrayList<AbstractCardWidget<?>> carouselWidgets = new ArrayList<>();
 
+    protected SpruceButtonWidget cancelButton;
+    protected SpruceButtonWidget selectButton;
+
     @Override
     protected void init() {
         super.init();
@@ -120,7 +123,7 @@ public abstract class CarouselScreen extends SpruceScreen {
             this.addDrawableChild(presetCards);
         }
 
-        this.addDrawableChild(new SpruceButtonWidget(Position.of(this.width / 2 - 128 - 5, this.height - 23), 128, 20, ScreenTexts.DONE, button -> {
+        this.cancelButton = this.addDrawableChild(new SpruceButtonWidget(Position.of(this.width / 2 - 128 - 5, this.height - 23), 128, 20, ScreenTexts.CANCEL, button -> {
             this.close();
         }));
 
@@ -140,7 +143,7 @@ public abstract class CarouselScreen extends SpruceScreen {
             }
         });
 
-        this.addDrawableChild(new SpruceButtonWidget(Position.of(this.width / 2 + 5, this.height - 23), 128, 20, Text.translatable("skinshuffle.carousel.save_button"), button -> {
+        this.selectButton = this.addDrawableChild(new SpruceButtonWidget(Position.of(this.width / 2 + 5, this.height - 23), 128, 20, Text.translatable("skinshuffle.carousel.save_button"), button -> {
             SpruceWidget chosenPresetWidget = this.carouselWidgets.get((int) Math.round(cardIndex));
 
             if(chosenPresetWidget instanceof AddCardWidget) {
@@ -199,10 +202,13 @@ public abstract class CarouselScreen extends SpruceScreen {
         // Carousel Widgets
         int rows = getRows();
         int fullHeight = getCardHeight() * rows + getCardGap() * (rows - 1);
+        int top = this.height / 2 - fullHeight / 2;
 
         double deltaIndex = getDeltaScrollIndex() / rows;
         int scrollOffset = (int) ((-deltaIndex + 1) * cardAreaWidth);
         var scrollOffsetPosition = Position.of(scrollOffset, 0);
+        int draggingIndex = -1;
+        int hoveredIndex = -1;
 
         int i = 0;
         int leftI = this.width / 2 - cardAreaWidth - getCardWidth() / 2;
@@ -210,15 +216,29 @@ public abstract class CarouselScreen extends SpruceScreen {
         for (AbstractCardWidget<?> widget : this.carouselWidgets) {
 //            var widgetDeltaIndex = widget.getDeltaIndex() - i++;
 //            var widgetXOffset = (int) (widgetDeltaIndex * cardAreaWidth);
-            var widgetYOffset = (getCardHeight() + getCardGap()) * rowI;
+            var topI = top + (getCardHeight() + getCardGap()) * rowI;
 //            var position = Position.of(
 //                    widget.isDragging() ? mouseX - widget.getWidth() / 2 : leftI + scrollOffset,
 //                    this.height / 2 - getCardHeight() / 2
 //            );
             var position = Position.of(
                     scrollOffsetPosition, widget.getDeltaX(leftI),
-                    widget.getDeltaY(this.height / 2 - fullHeight / 2 + widgetYOffset)
+                    widget.getDeltaY(topI)
             );
+
+            if (supportsDragging()) {
+                var boundLeft = leftI + scrollOffsetPosition.getX();
+                var boundTop = topI + scrollOffsetPosition.getY();
+                if (mouseX > boundLeft && mouseX < boundLeft + widget.getWidth() &&
+                        mouseY > boundTop && mouseY < boundTop + widget.getHeight() && widget.isMovable()) {
+                    hoveredIndex = i;
+                }
+
+                if (widget.isDragging() && widget.isMovable()) {
+                    position = Position.of(mouseX - (int) widget.getDragStartX(), mouseY - (int) widget.getDragStartY());
+                    draggingIndex = i;
+                }
+            }
 
 //            graphics.drawTextWithShadow(this.textRenderer, String.valueOf(loadedPresets.indexOf(loadedPreset)), leftI + scrollOffset, this.height/2 - this.textRenderer.fontHeight /2 , 0xFFFFFFFF);
             if(widget instanceof PresetWidget<?> loadedPreset) {
@@ -238,11 +258,15 @@ public abstract class CarouselScreen extends SpruceScreen {
             i++;
         }
 
+        if (draggingIndex != -1 && hoveredIndex != -1 && draggingIndex != hoveredIndex) {
+            swapPresets(draggingIndex, hoveredIndex);
+            refreshPresetState();
+        }
+
         this.renderWidgets(graphics, mouseX, mouseY, delta);
         this.renderTitle(graphics, mouseX, mouseY, delta);
         Tooltip.renderAll(graphics);
         ScissorManager.popScaleFactor();
-
     }
 
     @Override
@@ -298,6 +322,10 @@ public abstract class CarouselScreen extends SpruceScreen {
 
     public int getCardGap() {
         return (int) (10 * this.scaleFactor) / getRows();
+    }
+
+    protected boolean supportsDragging() {
+        return false;
     }
 
     protected abstract AbstractCardWidget widgetFromPreset(SkinPreset preset);
