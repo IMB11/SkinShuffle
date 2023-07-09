@@ -21,35 +21,70 @@
 package com.mineblock11.skinshuffle.client.preset;
 
 import com.mineblock11.skinshuffle.api.SkinAPIs;
+import com.mineblock11.skinshuffle.client.cape.Cape;
 import com.mineblock11.skinshuffle.client.skin.ResourceSkin;
 import com.mineblock11.skinshuffle.client.skin.Skin;
-import com.mineblock11.skinshuffle.client.skin.UUIDSkin;
 import com.mineblock11.skinshuffle.client.skin.UrlSkin;
 import com.mineblock11.skinshuffle.util.NetworkingUtil;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.mojang.util.UUIDTypeAdapter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.Session;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 public class SkinPreset {
     public static final Codec<SkinPreset> CODEC = RecordCodecBuilder.create(instance ->
-        instance.group(
-                Skin.CODEC.fieldOf("skin").forGetter(SkinPreset::getSkin),
-                Codec.STRING.fieldOf("name").forGetter(SkinPreset::getName)
-        ).apply(instance, SkinPreset::new));
+            instance.group(
+                    Skin.CODEC.fieldOf("skin").forGetter(SkinPreset::getSkin),
+                    Codec.STRING.fieldOf("name").forGetter(SkinPreset::getName),
+                    Cape.CODEC.fieldOf("cape").forGetter(SkinPreset::getCape)
+            ).apply(instance, SkinPreset::new));
 
     private String name;
     private Skin skin;
+    private @Nullable Cape cape;
 
     public SkinPreset(Skin skin) {
-        this(skin, "Unnamed Preset");
+        this(skin, "Unnamed Preset", null);
     }
 
-    public SkinPreset(Skin skin, String name) {
+    public SkinPreset(Skin skin, String name, @Nullable Cape cape) {
         this.skin = skin;
         this.name = name;
+        this.cape = cape;
+    }
+
+    public static SkinPreset generateDefaultPreset() {
+        MinecraftClient client = MinecraftClient.getInstance();
+        Session session = client.getSession();
+        String name = session.getUsername();
+
+        if (!NetworkingUtil.isLoggedIn()) {
+            Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
+            Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
+
+            return new SkinPreset(skin, name, null);
+        } else {
+            var skinQueryResult = SkinAPIs.getPlayerSkinTexture(session.getUuid());
+
+            if (skinQueryResult.usesDefaultSkin()) {
+                Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
+                Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
+
+                return new SkinPreset(skin, name, null);
+            }
+
+            return new SkinPreset(new UrlSkin(skinQueryResult.skinURL(), skinQueryResult.modelType()), name, null);
+        }
+    }
+
+    public Cape getCape() {
+        return cape;
+    }
+
+    public void setCape(Cape cape) {
+        this.cape = cape;
     }
 
     public String getName() {
@@ -68,37 +103,13 @@ public class SkinPreset {
         this.skin = skin;
     }
 
-    public static SkinPreset generateDefaultPreset() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        Session session = client.getSession();
-        String name = session.getUsername();
-
-        if(!NetworkingUtil.isLoggedIn()) {
-            Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
-            Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
-
-            return new SkinPreset(skin, name);
-        } else {
-            var skinQueryResult = SkinAPIs.getPlayerSkinTexture(session.getUuid());
-
-            if(skinQueryResult.usesDefaultSkin()) {
-                Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
-                Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
-
-                return new SkinPreset(skin, name);
-            }
-
-            return new SkinPreset(new UrlSkin(skinQueryResult.skinURL(), skinQueryResult.modelType()), name);
-        }
-    }
-
     public void copyFrom(SkinPreset other) {
         this.name = other.name;
         this.skin = other.skin;
     }
 
     public SkinPreset copy() {
-        return new SkinPreset(this.skin, this.name);
+        return new SkinPreset(this.skin, this.name, this.cape);
     }
 
     @Override
