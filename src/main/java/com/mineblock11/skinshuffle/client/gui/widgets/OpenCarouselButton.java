@@ -42,7 +42,7 @@ public class OpenCarouselButton extends ButtonWidget {
         super(x, y, width, height, Text.translatable("skinshuffle.button"), (btn) -> {
             var client = MinecraftClient.getInstance();
             client.setScreen(GeneratedScreens.getCarouselScreen(client.currentScreen));
-        }, textSupplier -> null);
+        }, textSupplier -> Text.empty());
 
         currentTime = GlfwUtil.getTime();
     }
