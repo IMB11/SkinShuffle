@@ -22,7 +22,6 @@ package com.mineblock11.skinshuffle.client.gui;
 
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.widgets.OpenCarouselButton;
-import com.mineblock11.skinshuffle.client.gui.widgets.TexturedIconButtonWidget;
 import com.mineblock11.skinshuffle.client.gui.widgets.WarningIndicatorButton;
 import com.mineblock11.skinshuffle.mixin.accessor.GameMenuScreenAccessor;
 import com.mineblock11.skinshuffle.networking.ClientSkinHandling;

@@ -25,7 +25,7 @@ import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
-import com.mineblock11.skinshuffle.client.gui.widgets.TexturedIconButtonWidget;
+import com.mineblock11.skinshuffle.client.gui.widgets.IconButtonWidget;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mineblock11.skinshuffle.client.skin.*;
 import com.mineblock11.skinshuffle.util.ToastHelper;
@@ -305,7 +305,7 @@ public class PresetEditScreen extends SpruceScreen {
                 }
             };
 
-            loadButton = new TexturedIconButtonWidget(0, 0, 20, 20,
+            loadButton = new IconButtonWidget(0, 0, 20, 20,
                     0, 0, 0, 2,
                     16, 16, 16, 16, 32,
                     SkinShuffle.id("textures/gui/reload-button-icon.png"),

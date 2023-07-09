@@ -24,6 +24,7 @@ import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.client.config.CarouselView;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
+import com.mineblock11.skinshuffle.client.gui.widgets.ActualSpruceIconButtonWidget;
 import com.mineblock11.skinshuffle.client.gui.widgets.preset.AddCardWidget;
 import com.mineblock11.skinshuffle.client.gui.widgets.preset.AbstractCardWidget;
 import com.mineblock11.skinshuffle.client.gui.widgets.preset.PresetWidget;
@@ -47,16 +48,19 @@ import net.minecraft.util.math.MathHelper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
-import java.util.function.Function;
 
 public abstract class CarouselScreen extends SpruceScreen {
     public final Screen parent;
+    public final CarouselView viewType;
     public final CarouselView nextViewType;
     public boolean hasEditedPreset = false;
+    protected SpruceIconButtonWidget configButton;
+    protected SpruceIconButtonWidget viewTypeButton;
 
-    public CarouselScreen(Screen parent, CarouselView nextViewType) {
+    public CarouselScreen(Screen parent, CarouselView viewType, CarouselView nextViewType) {
         super(Text.translatable("skinshuffle.carousel.title"));
         this.parent = parent;
+        this.viewType = viewType;
         this.nextViewType = nextViewType;
     }
 
@@ -91,11 +95,10 @@ public abstract class CarouselScreen extends SpruceScreen {
 
         // We don't want to switch back to the selected preset when we return from a subscreen.
         if (this.cardIndex < 0) {
-            this.cardIndex = loadedPresets.indexOf(SkinPresetManager.getChosenPreset());
+            //noinspection IntegerDivisionInFloatingPointContext
+            this.cardIndex = loadedPresets.indexOf(SkinPresetManager.getChosenPreset()) / getRows() * getRows();
         }
         this.lastCardIndex = this.cardIndex;
-
-//        addPresetWidget.lastIndex = this.carouselWidgets.size() - 1; TODO TODO
 
 //        new Thread(() -> {
             // TODO: requires more accurate equality check, maybe comparing the texture directly somehow?
@@ -128,25 +131,17 @@ public abstract class CarouselScreen extends SpruceScreen {
             this.close();
         }));
 
-        this.addDrawableChild(new SpruceIconButtonWidget(Position.of(2, 2), 20, 20, Text.empty(), (btn) -> this.client.setScreenAndRender(GeneratedScreens.getConfigScreen(this))) {
-            @Override
-            protected int renderIcon(DrawContext graphics, int mouseX, int mouseY, float delta) {
-                graphics.drawTexture(SkinShuffle.id("textures/gui/config-button-icon.png"), this.getX() + this.getWidth() / 2 - (14 / 2), this.getY() + this.getHeight() / 2 - (14 / 2), 14, 14, 0, 0, 15, 15, 15, 15);
-                return 14;
-            }
-        });
+        this.configButton = this.addDrawableChild(new ActualSpruceIconButtonWidget(Position.of(2, 2), 20, 20, Text.empty(),
+                (btn) -> this.client.setScreenAndRender(GeneratedScreens.getConfigScreen(this)),
+                () -> SkinShuffle.id("textures/gui/config-button-icon.png")));
+        this.configButton.setTooltip(Text.translatable("skinshuffle.carousel.config_button.tooltip"));
 
-        this.addDrawableChild(new SpruceIconButtonWidget(Position.of(24, 2), 20, 20, Text.empty(), (btn) -> {
+        this.viewTypeButton = this.addDrawableChild(new ActualSpruceIconButtonWidget(Position.of(24, 2), 20, 20, Text.empty(), (btn) -> {
             this.client.setScreenAndRender(nextViewType.factory.apply(this.parent));
             SkinShuffleConfig.get().carouselView = nextViewType;
             SkinShuffleConfig.GSON.save();
-        }) {
-            @Override
-            protected int renderIcon(DrawContext graphics, int mouseX, int mouseY, float delta) {
-                graphics.drawTexture(SkinShuffle.id("textures/gui/todo-todo-todo.png"), this.getX() + this.getWidth() / 2 - (14 / 2), this.getY() + this.getHeight() / 2 - (14 / 2), 14, 14, 0, 0, 15, 15, 15, 15);
-                return 14;
-            }
-        });
+        }, () -> viewType.iconTexture));
+        this.viewTypeButton.setTooltip(viewType.tooltip);
 
         this.selectButton = this.addDrawableChild(new SpruceButtonWidget(Position.of(this.width / 2 + 5, this.height - 23), 128, 20, Text.translatable("skinshuffle.carousel.save_button"), button -> {
             SpruceWidget chosenPresetWidget = this.carouselWidgets.get((int) Math.round(cardIndex));
@@ -346,7 +341,6 @@ public abstract class CarouselScreen extends SpruceScreen {
         var widget = widgetFromPreset(preset);
         this.carouselWidgets.get(this.carouselWidgets.size() - 1).refreshLastPosition();
         this.carouselWidgets.add(this.carouselWidgets.set(this.carouselWidgets.size() - 1, widget));
-//        widget.lastIndex = this.carouselWidgets.size() - 2; // TODO TODO
         refreshPresetState();
         return widget;
     }
