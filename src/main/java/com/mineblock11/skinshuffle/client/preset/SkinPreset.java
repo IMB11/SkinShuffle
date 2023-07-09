@@ -21,8 +21,8 @@
 package com.mineblock11.skinshuffle.client.preset;
 
 import com.mineblock11.skinshuffle.api.SkinAPIs;
-import com.mineblock11.skinshuffle.client.cape.Cape;
 import com.mineblock11.skinshuffle.client.cape.provider.CapeProvider;
+import com.mineblock11.skinshuffle.client.cape.provider.CapeProviders;
 import com.mineblock11.skinshuffle.client.skin.ResourceSkin;
 import com.mineblock11.skinshuffle.client.skin.Skin;
 import com.mineblock11.skinshuffle.client.skin.UrlSkin;
@@ -39,21 +39,21 @@ public class SkinPreset {
             instance.group(
                     Skin.CODEC.fieldOf("skin").forGetter(SkinPreset::getSkin),
                     Codec.STRING.fieldOf("name").forGetter(SkinPreset::getName),
-                    Cape.CODEC.fieldOf("cape").forGetter(SkinPreset::getCape)
+                    CapeProviders.CODEC.optionalFieldOf("cape", CapeProviders.MC_CAPES).forGetter(SkinPreset::getCapeProvider)
             ).apply(instance, SkinPreset::new));
 
     private String name;
     private Skin skin;
-    private CapeProvider capeProvider;
+    private CapeProviders capeProvider;
 
     public SkinPreset(Skin skin) {
         this(skin, "Unnamed Preset", null);
     }
 
-    public SkinPreset(Skin skin, String name, @Nullable CapeProvider cape) {
+    public SkinPreset(Skin skin, String name, @Nullable CapeProviders cape) {
         this.skin = skin;
         this.name = name;
-        this.cape = cape;
+        this.capeProvider = cape;
     }
 
     public static SkinPreset generateDefaultPreset() {
@@ -80,12 +80,12 @@ public class SkinPreset {
         }
     }
 
-    public Cape getCape() {
-        return cape;
+    public CapeProviders getCapeProvider() {
+        return capeProvider;
     }
 
-    public void setCape(Cape cape) {
-        this.cape = cape;
+    public void setCapeProvider(CapeProviders capeProvider) {
+        this.capeProvider = capeProvider;
     }
 
     public String getName() {
@@ -110,7 +110,7 @@ public class SkinPreset {
     }
 
     public SkinPreset copy() {
-        return new SkinPreset(this.skin, this.name, this.cape);
+        return new SkinPreset(this.skin, this.name, this.capeProvider);
     }
 
     @Override

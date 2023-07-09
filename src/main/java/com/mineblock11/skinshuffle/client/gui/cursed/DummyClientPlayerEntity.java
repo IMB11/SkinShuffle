@@ -26,6 +26,7 @@ import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.render.entity.PlayerModelPart;
+import net.minecraft.client.render.entity.feature.CapeFeatureRenderer;
 import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.EquipmentSlot;
@@ -136,6 +137,15 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
     public boolean isCreative() {
         return true;
     }
+
+    @Override
+    public void tick() {
+        super.tick();
+    }
+
+
+    @Override
+    public void updateCapeAngles() {}
 
     @Override
     public ItemStack getEquippedStack(EquipmentSlot slot) {

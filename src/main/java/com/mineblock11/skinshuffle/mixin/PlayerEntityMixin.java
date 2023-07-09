@@ -22,7 +22,9 @@ package com.mineblock11.skinshuffle.mixin;
 
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
+import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
+import com.mineblock11.skinshuffle.util.CapeCacheRegistry;
 import com.mineblock11.skinshuffle.util.NetworkingUtil;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.MinecraftClient;
@@ -44,23 +46,41 @@ public abstract class PlayerEntityMixin extends PlayerEntity {
         super(world, pos, yaw, gameProfile);
     }
 
-    @Inject(method = "getSkinTexture", at = @At("HEAD"), cancellable = true)
-    private void modifySkinTexture(CallbackInfoReturnable<Identifier> cir) {
-        if(MinecraftClient.getInstance().world != null) {
-            if(this.getUuid().equals(MinecraftClient.getInstance().player.getUuid()) && (!NetworkingUtil.isLoggedIn() || SkinShuffleConfig.get().disableAPIUpload)) {
-                SkinPreset currentPreset = SkinPresetManager.getChosenPreset();
-                cir.setReturnValue(Objects.requireNonNullElse(currentPreset.getSkin().getTexture(), new Identifier("textures/skins/default/steve.png")));
-            }
+//    @Inject(method = "getSkinTexture", at = @At("HEAD"), cancellable = true)
+//    private void modifySkinTexture(CallbackInfoReturnable<Identifier> cir) {
+//        if(MinecraftClient.getInstance().world != null) {
+//            if(this.getUuid().equals(MinecraftClient.getInstance().player.getUuid()) && (!NetworkingUtil.isLoggedIn() || SkinShuffleConfig.get().disableAPIUpload)) {
+//                SkinPreset currentPreset = SkinPresetManager.getChosenPreset();
+//                cir.setReturnValue(Objects.requireNonNullElse(currentPreset.getSkin().getTexture(), new Identifier("textures/skins/default/steve.png")));
+//            }
+//        }
+//    }
+
+    @Inject(method = "canRenderCapeTexture", at = @At("HEAD"), cancellable = true)
+    private void canRenderCapeTexture(CallbackInfoReturnable<Boolean> cir) {
+        if(((Object)this) instanceof DummyClientPlayerEntity || this.getUuidAsString().equals(MinecraftClient.getInstance().getSession().getUuid())) {
+            cir.setReturnValue(CapeCacheRegistry.doesPlayerHaveCape(MinecraftClient.getInstance().getSession().getUsername()));
+            return;
         }
+        cir.setReturnValue(CapeCacheRegistry.doesPlayerHaveCape(this.getGameProfile().getName()));
     }
 
-    @Inject(method = "getModel", at = @At("HEAD"), cancellable = true)
-    private void modifySkinModel(CallbackInfoReturnable<String> cir) {
-        if(MinecraftClient.getInstance().world != null) {
-            if(this.getUuid().equals(MinecraftClient.getInstance().player.getUuid()) && (!NetworkingUtil.isLoggedIn() || SkinShuffleConfig.get().disableAPIUpload)) {
-                SkinPreset currentPreset = SkinPresetManager.getChosenPreset();
-                cir.setReturnValue(Objects.requireNonNullElse(currentPreset.getSkin().getModel(), "default"));
-            }
+    @Inject(method = "getCapeTexture", at = @At("HEAD"), cancellable = true)
+    private void getCapeTexture(CallbackInfoReturnable<Identifier> cir) {
+        if(((Object)this) instanceof DummyClientPlayerEntity) {
+            cir.setReturnValue(CapeCacheRegistry.getCapeTexture(MinecraftClient.getInstance().getSession().getUsername()));
+            return;
         }
+        cir.setReturnValue(CapeCacheRegistry.getCapeTexture(this.getGameProfile().getName()));
     }
+
+//    @Inject(method = "getModel", at = @At("HEAD"), cancellable = true)
+//    private void modifySkinModel(CallbackInfoReturnable<String> cir) {
+//        if(MinecraftClient.getInstance().world != null) {
+//            if(this.getUuid().equals(MinecraftClient.getInstance().player.getUuid()) && (!NetworkingUtil.isLoggedIn() || SkinShuffleConfig.get().disableAPIUpload)) {
+//                SkinPreset currentPreset = SkinPresetManager.getChosenPreset();
+//                cir.setReturnValue(Objects.requireNonNullElse(currentPreset.getSkin().getModel(), "default"));
+//            }
+//        }
+//    }
 }

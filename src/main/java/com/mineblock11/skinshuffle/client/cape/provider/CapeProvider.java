@@ -17,15 +17,17 @@ public interface CapeProvider {
 
     Gson GSON = new Gson();
 
-    default @Nullable byte[] getCapeTexture(String username) {
+    default @Nullable byte[] getCapeTexture(String id) {
         try {
-            JsonObject result = GSON.fromJson(Unirest.get("https://api.capes.dev/load/%s/%s".formatted(username, getProviderID())).asString().getBody(), JsonObject.class);
+            JsonObject result = GSON.fromJson(Unirest.get("https://api.capes.dev/load/%s/%s".formatted(id, getProviderID())).asString().getBody(), JsonObject.class);
+            System.out.println("https://api.capes.dev/load/%s/%s".formatted(id, getProviderID()));
             if (result.get("exists").getAsBoolean()) {
                 String imageURL = result.get("imageUrl").getAsString();
                 return Unirest.get(imageURL).asBytes().getBody();
             } else return null;
         } catch (Exception ignored) {
             SkinShuffle.LOGGER.info("Failed to run cape provider \"{}\"", getProviderID());
+            SkinShuffle.LOGGER.info(ignored.toString());
             return null;
         }
     }
