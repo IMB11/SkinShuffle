@@ -22,6 +22,7 @@ package com.mineblock11.skinshuffle.client.preset;
 
 import com.mineblock11.skinshuffle.api.SkinAPIs;
 import com.mineblock11.skinshuffle.client.cape.Cape;
+import com.mineblock11.skinshuffle.client.cape.provider.CapeProvider;
 import com.mineblock11.skinshuffle.client.skin.ResourceSkin;
 import com.mineblock11.skinshuffle.client.skin.Skin;
 import com.mineblock11.skinshuffle.client.skin.UrlSkin;
@@ -43,13 +44,13 @@ public class SkinPreset {
 
     private String name;
     private Skin skin;
-    private @Nullable Cape cape;
+    private CapeProvider capeProvider;
 
     public SkinPreset(Skin skin) {
         this(skin, "Unnamed Preset", null);
     }
 
-    public SkinPreset(Skin skin, String name, @Nullable Cape cape) {
+    public SkinPreset(Skin skin, String name, @Nullable CapeProvider cape) {
         this.skin = skin;
         this.name = name;
         this.cape = cape;
