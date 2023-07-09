@@ -26,7 +26,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-public class TexturedIconButtonWidget extends ButtonWidget {
+public class IconButtonWidget extends ButtonWidget {
     protected final Identifier iconTexture;
     protected final int iconU;
     protected final int iconV;
@@ -38,7 +38,7 @@ public class TexturedIconButtonWidget extends ButtonWidget {
     public final int iconWidth;
     public final int iconHeight;
 
-    public TexturedIconButtonWidget(int x, int y, int width, int height, int iconU, int iconV, int iconXOffset, int iconYOffset, int iconDisabledVOffset, int iconWidth, int iconHeight, int iconTextureWidth, int iconTextureHeight, Identifier iconTexture, ButtonWidget.PressAction onPress) {
+    public IconButtonWidget(int x, int y, int width, int height, int iconU, int iconV, int iconXOffset, int iconYOffset, int iconDisabledVOffset, int iconWidth, int iconHeight, int iconTextureWidth, int iconTextureHeight, Identifier iconTexture, ButtonWidget.PressAction onPress) {
         super(x, y, width, height, Text.of(""), onPress, DEFAULT_NARRATION_SUPPLIER);
         this.iconTextureWidth = iconTextureWidth;
         this.iconTextureHeight = iconTextureHeight;

@@ -166,6 +166,8 @@ public class SkinShuffleConfig {
     @ConfigEntry public SkinRenderStyle presetEditScreenRenderStyle = SkinRenderStyle.ROTATION;
     @ConfigEntry public float rotationMultiplier = 1.0f;
 
+    @ConfigEntry public CarouselView carouselView = CarouselView.LARGE;
+
     public enum SkinRenderStyle {
         ROTATION,
         CURSOR

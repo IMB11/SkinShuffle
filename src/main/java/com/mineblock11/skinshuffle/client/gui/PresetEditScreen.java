@@ -25,7 +25,7 @@ import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
-import com.mineblock11.skinshuffle.client.gui.widgets.TexturedIconButtonWidget;
+import com.mineblock11.skinshuffle.client.gui.widgets.IconButtonWidget;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mineblock11.skinshuffle.client.skin.*;
 import com.mineblock11.skinshuffle.util.ToastHelper;
@@ -54,7 +54,7 @@ import static net.minecraft.client.gui.screen.world.CreateWorldScreen.LIGHT_DIRT
 public class PresetEditScreen extends SpruceScreen {
     public static final int MAX_WIDTH = 400;
 
-    private final SkinCarouselScreen parent;
+    private final CarouselScreen parent;
     private final LivingEntity entity;
     private final TabManager tabManager = new TabManager(this::addDrawableChild, this::remove);
     private final UrlValidator urlValidator = new UrlValidator(new String[]{"http", "https"});
@@ -68,7 +68,7 @@ public class PresetEditScreen extends SpruceScreen {
     private ButtonWidget exitButton;
     private int sideMargins;
 
-    public PresetEditScreen(SkinCarouselScreen parent, SkinPreset preset) {
+    public PresetEditScreen(CarouselScreen parent, SkinPreset preset) {
         super(Text.translatable("skinshuffle.edit.title"));
         this.preset = preset.copy();
         this.originalPreset = preset;
@@ -305,7 +305,7 @@ public class PresetEditScreen extends SpruceScreen {
                 }
             };
 
-            loadButton = new TexturedIconButtonWidget(0, 0, 20, 20,
+            loadButton = new IconButtonWidget(0, 0, 20, 20,
                     0, 0, 0, 2,
                     16, 16, 16, 16, 32,
                     SkinShuffle.id("textures/gui/reload-button-icon.png"),

@@ -87,6 +87,12 @@ skinshuffle:
   carousel:
     title: "Skin Presets"
 
+    config_button.tooltip: "Open the config screen."
+    view_type_button.large.tooltip: "Large view."
+    view_type_button.compact.tooltip: "Compact view."
+    shuffle_button.tooltip.enable: "Enable shuffling."
+    shuffle_button.tooltip.disable: "Disable shuffling."
+
     default_tooltip: "§4You cannot modify or copy the default preset."
 
     create: "Create"
@@ -106,6 +112,7 @@ skinshuffle:
       edit: "Edit"
       copy: "Copy"
       delete: "Delete"
+      select: "Select"
 
   edit:
     customize:

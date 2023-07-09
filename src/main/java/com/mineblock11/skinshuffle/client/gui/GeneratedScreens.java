@@ -22,7 +22,6 @@ package com.mineblock11.skinshuffle.client.gui;
 
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.widgets.OpenCarouselButton;
-import com.mineblock11.skinshuffle.client.gui.widgets.TexturedIconButtonWidget;
 import com.mineblock11.skinshuffle.client.gui.widgets.WarningIndicatorButton;
 import com.mineblock11.skinshuffle.mixin.accessor.GameMenuScreenAccessor;
 import com.mineblock11.skinshuffle.networking.ClientSkinHandling;
@@ -91,5 +90,9 @@ public class GeneratedScreens {
                         client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.rejoin") : I18n.translate("skinshuffle.reconnect.reconnect_to"),
                         client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.world") : client.isConnectedToRealms() ? I18n.translate("skinshuffle.reconnect.realm") : I18n.translate("skinshuffle.reconnect.server"),
                         client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.rejoin") : I18n.translate("skinshuffle.reconnect.reconnect")));
+    }
+
+    public static Screen getCarouselScreen(Screen parent) {
+        return SkinShuffleConfig.get().carouselView.factory.apply(parent);
     }
 }

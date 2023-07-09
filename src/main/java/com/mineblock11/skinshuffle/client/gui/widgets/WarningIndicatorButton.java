@@ -22,19 +22,15 @@ package com.mineblock11.skinshuffle.client.gui.widgets;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.client.gui.GeneratedScreens;
-import com.mineblock11.skinshuffle.client.gui.PresetEditScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.ScreenRect;
-import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
 
-public class WarningIndicatorButton extends TexturedIconButtonWidget {
+public class WarningIndicatorButton extends IconButtonWidget {
     @Override
     public Text getMessage() {
         return Text.translatable("skinshuffle.indicator");

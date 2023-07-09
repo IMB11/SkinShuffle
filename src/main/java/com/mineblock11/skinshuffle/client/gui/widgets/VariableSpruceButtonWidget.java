@@ -18,16 +18,32 @@
  *     USA
  */
 
-package com.mineblock11.skinshuffle.compat;
+package com.mineblock11.skinshuffle.client.gui.widgets;
 
-import com.mineblock11.skinshuffle.client.gui.GeneratedScreens;
-import com.terraformersmc.modmenu.api.ConfigScreenFactory;
-import com.terraformersmc.modmenu.api.ModMenuApi;
-import net.minecraft.client.gui.screen.Screen;
+import dev.lambdaurora.spruceui.Position;
+import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
+import net.minecraft.text.Text;
 
-public class ModMenuCompat implements ModMenuApi {
-    @Override
-    public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return (ConfigScreenFactory<Screen>) GeneratedScreens::getCarouselScreen;
+public class VariableSpruceButtonWidget extends SpruceButtonWidget {
+    public VariableSpruceButtonWidget(Position position, int width, int height, Text message, PressAction action) {
+        super(position, width, height, message, action);
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public void overrideDimensions(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    public void overridePosition(int x, int y) {
+        this.position.setRelativeX(x);
+        this.position.setRelativeY(y);
     }
 }
