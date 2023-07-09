@@ -307,7 +307,7 @@ public class PresetEditScreen extends SpruceScreen {
 
             loadButton = new IconButtonWidget(0, 0, 20, 20,
                     0, 0, 0, 2,
-                    16, 16, 16, 16, 32,
+                    32, 16, 16, 16, 48,
                     SkinShuffle.id("textures/gui/reload-button-icon.png"),
                     button -> {
                         if (currentSourceType != SourceType.UNCHANGED) {

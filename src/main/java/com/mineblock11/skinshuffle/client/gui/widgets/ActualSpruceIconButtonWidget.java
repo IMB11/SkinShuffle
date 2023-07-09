@@ -40,7 +40,7 @@ public class ActualSpruceIconButtonWidget extends SpruceIconButtonWidget {
 
     @Override
     protected int renderIcon(DrawContext graphics, int mouseX, int mouseY, float delta) {
-        graphics.drawTexture(iconTexture.get(), this.getX() + this.getWidth() / 2 - (16 / 2), this.getY() + this.getHeight() / 2 - (16 / 2), 16, 16, 0, 0, 16, 16, 16, 16);
+        graphics.drawTexture(iconTexture.get(), this.getX() + this.getWidth() / 2 - (16 / 2), this.getY() + this.getHeight() / 2 - (16 / 2), 16, 16, 0, isMouseHovered() ? 16 : 0, 16, 16, 16, 32);
         return 16;
     }
 
