@@ -21,6 +21,8 @@
 package com.mineblock11.skinshuffle.client.gui;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
+import com.mineblock11.skinshuffle.client.cape.provider.CapeProvider;
+import com.mineblock11.skinshuffle.client.cape.provider.CapeProviders;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
@@ -390,8 +392,13 @@ public class PresetEditScreen extends SpruceScreen {
             presetNameField.setChangedListener(preset::setName);
             presetNameField.setMaxLength(2048);
 
+            var capeProviderSelector = new CyclingButtonWidget.Builder<CapeProvider>(provider -> Text.translatable(provider.getTranslationKey()))
+                    .values(CapeProvider.DEFAULT, CapeProviders.MOJANG, CapeProviders.OPTIFINE, CapeProviders.MC_CAPES)
+                    .build(0, 0, 192, 20, Text.translatable("skinshuffle.edit.customize.cape_provider"));
+
             gridAdder.add(new TextWidget(Text.translatable("skinshuffle.edit.customize.preset_name"), textRenderer));
             gridAdder.add(presetNameField);
+            gridAdder.add(capeProviderSelector);
         }
     }
 }

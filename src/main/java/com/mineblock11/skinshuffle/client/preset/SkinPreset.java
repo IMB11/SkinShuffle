@@ -39,18 +39,18 @@ public class SkinPreset {
             instance.group(
                     Skin.CODEC.fieldOf("skin").forGetter(SkinPreset::getSkin),
                     Codec.STRING.fieldOf("name").forGetter(SkinPreset::getName),
-                    CapeProviders.CODEC.optionalFieldOf("cape", CapeProviders.MC_CAPES).forGetter(SkinPreset::getCapeProvider)
+                    CapeProvider.CODEC.optionalFieldOf("cape", CapeProviders.MC_CAPES).forGetter(SkinPreset::getCapeProvider)
             ).apply(instance, SkinPreset::new));
 
     private String name;
     private Skin skin;
-    private CapeProviders capeProvider;
+    private CapeProvider capeProvider;
 
     public SkinPreset(Skin skin) {
         this(skin, "Unnamed Preset", null);
     }
 
-    public SkinPreset(Skin skin, String name, @Nullable CapeProviders cape) {
+    public SkinPreset(Skin skin, String name, @Nullable CapeProvider cape) {
         this.skin = skin;
         this.name = name;
         this.capeProvider = cape;
@@ -80,11 +80,11 @@ public class SkinPreset {
         }
     }
 
-    public CapeProviders getCapeProvider() {
+    public CapeProvider getCapeProvider() {
         return capeProvider;
     }
 
-    public void setCapeProvider(CapeProviders capeProvider) {
+    public void setCapeProvider(CapeProvider capeProvider) {
         this.capeProvider = capeProvider;
     }
 

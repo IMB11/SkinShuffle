@@ -1,5 +1,10 @@
 skinshuffle:
   indicator: "Warning Indicator"
+  cape_provider:
+    default: "Default"
+    minecraft: "Mojang"
+    optifine: "OptiFine"
+    minecraftcapes: "MinecraftCapes"
   reconnect:
     warning: "You must %s to allow other players, including yourself, to see your skin."
     reconnecting: Reconnecting...
@@ -121,6 +126,7 @@ skinshuffle:
       slim: "Slim"
       model_cycle_prefix: "Model Type"
       preset_name: "Preset Name"
+      cape_provider: "Cape Provider"
     source:
       username: "Username"
       invalid_username: |-
