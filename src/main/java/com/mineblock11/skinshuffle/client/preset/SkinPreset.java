@@ -34,12 +34,14 @@ import net.minecraft.client.util.Session;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public class SkinPreset {
     public static final Codec<SkinPreset> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
                     Skin.CODEC.fieldOf("skin").forGetter(SkinPreset::getSkin),
                     Codec.STRING.fieldOf("name").forGetter(SkinPreset::getName),
-                    CapeProvider.CODEC.optionalFieldOf("cape", CapeProviders.MC_CAPES).forGetter(SkinPreset::getCapeProvider)
+                    CapeProvider.CODEC.optionalFieldOf("cape", CapeProviders.DEFAULT).forGetter(SkinPreset::getCapeProvider)
             ).apply(instance, SkinPreset::new));
 
     private String name;
@@ -47,7 +49,7 @@ public class SkinPreset {
     private CapeProvider capeProvider;
 
     public SkinPreset(Skin skin) {
-        this(skin, "Unnamed Preset", null);
+        this(skin, "Unnamed Preset", CapeProvider.DEFAULT);
     }
 
     public SkinPreset(Skin skin, String name, @Nullable CapeProvider cape) {
@@ -65,7 +67,7 @@ public class SkinPreset {
             Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
             Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
 
-            return new SkinPreset(skin, name, null);
+            return new SkinPreset(skin, name, CapeProvider.DEFAULT);
         } else {
             var skinQueryResult = SkinAPIs.getPlayerSkinTexture(session.getUuid());
 
@@ -73,10 +75,10 @@ public class SkinPreset {
                 Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
                 Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
 
-                return new SkinPreset(skin, name, null);
+                return new SkinPreset(skin, name, CapeProvider.DEFAULT);
             }
 
-            return new SkinPreset(new UrlSkin(skinQueryResult.skinURL(), skinQueryResult.modelType()), name, null);
+            return new SkinPreset(new UrlSkin(skinQueryResult.skinURL(), skinQueryResult.modelType()), name, CapeProvider.DEFAULT);
         }
     }
 
@@ -107,6 +109,7 @@ public class SkinPreset {
     public void copyFrom(SkinPreset other) {
         this.name = other.name;
         this.skin = other.skin;
+        this.capeProvider = other.capeProvider;
     }
 
     public SkinPreset copy() {
@@ -120,14 +123,16 @@ public class SkinPreset {
 
         SkinPreset that = (SkinPreset) o;
 
-        if (!name.equals(that.name)) return false;
-        return skin.equals(that.skin);
+        if (!Objects.equals(name, that.name)) return false;
+        if (!Objects.equals(skin, that.skin)) return false;
+        return Objects.equals(capeProvider, that.capeProvider);
     }
 
     @Override
     public int hashCode() {
-        int result = name.hashCode();
-        result = 31 * result + skin.hashCode();
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (skin != null ? skin.hashCode() : 0);
+        result = 31 * result + (capeProvider != null ? capeProvider.hashCode() : 0);
         return result;
     }
 }
