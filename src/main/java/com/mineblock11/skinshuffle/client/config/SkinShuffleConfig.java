@@ -22,6 +22,9 @@ package com.mineblock11.skinshuffle.client.config;
 
 import com.google.gson.GsonBuilder;
 import com.mineblock11.skinshuffle.SkinShuffle;
+import com.mineblock11.skinshuffle.client.cape.provider.CapeProvider;
+import com.mineblock11.skinshuffle.client.cape.provider.CapeProviders;
+import com.mineblock11.skinshuffle.client.config.gson.CapeProviderTypeAdapter;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
@@ -31,19 +34,43 @@ import dev.isxander.yacl3.config.GsonConfigInstance;
 import net.minecraft.text.Text;
 
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static net.minecraft.text.Text.*;
 
 public class SkinShuffleConfig {
     private static final Path CONFIG_FILE_PATH = SkinShuffle.DATA_DIR.resolve("config.json");
-    public static final GsonConfigInstance<SkinShuffleConfig> GSON = GsonConfigInstance.createBuilder(SkinShuffleConfig.class)
-            .overrideGsonBuilder(new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create())
+    private static final GsonConfigInstance<SkinShuffleConfig> GSON = GsonConfigInstance.createBuilder(SkinShuffleConfig.class)
+            .overrideGsonBuilder(new GsonBuilder()
+                    .setPrettyPrinting()
+                    .disableHtmlEscaping()
+                    .registerTypeAdapter(CapeProvider.class, new CapeProviderTypeAdapter())
+                    .create())
             .setPath(CONFIG_FILE_PATH)
             .build();
 
     public static SkinShuffleConfig get() {
         return GSON.getConfig();
+    }
+
+    public static void load() {
+        GSON.load();
+        get().postLoad();
+    }
+
+    public static void save() {
+        GSON.save();
+    }
+
+    public void postLoad() {
+        // Add any new cape providers to the config
+        HashSet<CapeProvider> capeProviders = new HashSet<>(Set.of(CapeProviders.values()));
+        for (var provider : capeProviders) {
+            if (this.capeProviders.contains(provider)) continue;
+            this.capeProviders.add(provider);
+        }
     }
 
     public static YetAnotherConfigLib getInstance() {
@@ -154,6 +181,7 @@ public class SkinShuffleConfig {
     @ConfigEntry public boolean disableReconnectToast = false;
 
     @ConfigEntry public boolean disableAPIUpload = false;
+    @ConfigEntry public Set<CapeProvider> capeProviders = new HashSet<>();
 
     @ConfigEntry public boolean displayInPauseMenu = true;
     @ConfigEntry public boolean displayInTitleScreen = true;

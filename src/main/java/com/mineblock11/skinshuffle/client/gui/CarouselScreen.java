@@ -139,7 +139,7 @@ public abstract class CarouselScreen extends SpruceScreen {
         this.viewTypeButton = this.addDrawableChild(new ActualSpruceIconButtonWidget(Position.of(24, 2), 20, 20, Text.empty(), (btn) -> {
             this.client.setScreenAndRender(nextViewType.factory.apply(this.parent));
             SkinShuffleConfig.get().carouselView = nextViewType;
-            SkinShuffleConfig.GSON.save();
+            SkinShuffleConfig.save();
         }, () -> viewType.iconTexture));
         this.viewTypeButton.setTooltip(viewType.tooltip);
 

@@ -40,7 +40,7 @@ public class SkinShuffleClient implements ClientModInitializer {
     public void onInitializeClient() {
         SkinPresetManager.setup();
         ClientSkinHandling.init();
-        SkinShuffleConfig.GSON.load();
+        SkinShuffleConfig.load();
 
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
             @Override
