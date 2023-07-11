@@ -48,7 +48,9 @@ public class OpenCarouselButton extends ButtonWidget {
     }
 
     public void disposed() {
-        this.entity.kill();
+        if (this.entity != null) {
+            this.entity.kill();
+        }
     }
 
     public void setSelectedPreset(SkinPreset preset) {
