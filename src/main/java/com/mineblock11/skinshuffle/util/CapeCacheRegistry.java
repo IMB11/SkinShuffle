@@ -20,76 +20,76 @@
 
 package com.mineblock11.skinshuffle.util;
 
+import com.google.common.collect.ArrayTable;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import com.mineblock11.skinshuffle.SkinShuffle;
-import com.mineblock11.skinshuffle.client.cape.provider.CapeProviders;
+import com.mineblock11.skinshuffle.client.cape.provider.CapeProvider;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.util.Identifier;
+import org.apache.commons.collections.map.MultiKeyMap;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.UUID;
 
 public class CapeCacheRegistry {
-    public static final HashMap<String, @Nullable Identifier> CAPE_CACHE = new HashMap<>();
-    public static boolean doesPlayerHaveCape(String uuid) {
-        if(CAPE_CACHE.containsKey(uuid)) {
-            Identifier cape = CAPE_CACHE.get(uuid);
-            return cape != null;
+    public static final BiHashMap<String, CapeProvider, @Nullable Identifier> CAPE_CACHE = new BiHashMap<>();
+    public static boolean doesPlayerHaveCape(String username, CapeProvider capeProvider, @Nullable String usernameToStoreAs) {
+        if(usernameToStoreAs != null) {
+            if(CAPE_CACHE.containsKeys(usernameToStoreAs, capeProvider)) {
+                Identifier cape = CAPE_CACHE.get(usernameToStoreAs, capeProvider);
+                return cape != null;
+            }
+            CAPE_CACHE.put(usernameToStoreAs, capeProvider, null);
+            getPlayerCape(username, capeProvider, usernameToStoreAs);
         } else {
-            CAPE_CACHE.put(uuid, null);
-            if(!uuid.equals(MinecraftClient.getInstance().getSession().getUuid()))
-                getPlayerCape(uuid);
-            return false;
+            if(CAPE_CACHE.containsKeys(username, capeProvider)) {
+                Identifier cape = CAPE_CACHE.get(username, capeProvider);
+                return cape != null;
+            }
+            CAPE_CACHE.put(username, capeProvider, null);
+            getPlayerCape(username, capeProvider, usernameToStoreAs);
         }
+
+        return false;
     }
 
-    public static @Nullable Identifier getCapeTexture(String uuid) {
-        return CAPE_CACHE.getOrDefault(uuid, null);
+    public static @Nullable Identifier getCapeTexture(String username, CapeProvider capeProvider, @Nullable String usernameToStoreAs) {
+        if(usernameToStoreAs != null) {
+            return CAPE_CACHE.get(usernameToStoreAs, capeProvider);
+        }
+        return CAPE_CACHE.get(username, capeProvider);
     }
 
     public static void clearCache() {
         CAPE_CACHE.clear();
     }
 
-    private static void getPlayerCape(String uuid) {
+    private static void getPlayerCape(String username, CapeProvider capeProvider, @Nullable String usernameToStoreAs) {
         new Thread(() -> {
-            byte[] data = CapeProviders.MC_CAPES.getCapeTexture(uuid);
+            byte[] data = capeProvider.getCapeTexture(username);
             if (data != null) {
                 try {
                     NativeImageBackedTexture imageBackedTexture = new NativeImageBackedTexture(NativeImage.read(data));
-                    Identifier capeID = SkinShuffle.id(uuid);
+                    Identifier capeID = SkinShuffle.id(username);
                     MinecraftClient.getInstance().execute(() -> {
                         MinecraftClient.getInstance().getTextureManager().registerTexture(capeID, imageBackedTexture);
-                        CAPE_CACHE.put(uuid, capeID);
+                        if(usernameToStoreAs != null) CAPE_CACHE.put(usernameToStoreAs, capeProvider, capeID);
+                        else CAPE_CACHE.put(username, capeProvider, capeID);
                     });
                 } catch (IOException e) {
-                    SkinShuffle.LOGGER.info("Failed to load cape texture for uuid: " + uuid);
+                    SkinShuffle.LOGGER.info("Failed to load cape texture for uuid: " + username);
                     SkinShuffle.LOGGER.error(e.toString());
                 }
             }
         }).start();
     }
 
-    public static void applyFromPreset(SkinPreset chosenPreset, String uuid) {
-        new Thread(() -> {
-            byte[] data = chosenPreset.getCapeProvider().getCapeTexture(uuid);
-            if (data != null) {
-                try {
-                    NativeImageBackedTexture imageBackedTexture = new NativeImageBackedTexture(NativeImage.read(data));
-                    Identifier capeID = SkinShuffle.id(uuid);
-                    MinecraftClient.getInstance().execute(() -> {
-                        MinecraftClient.getInstance().getTextureManager().registerTexture(capeID, imageBackedTexture);
-                        CAPE_CACHE.put(uuid, capeID);
-                    });
-                } catch (IOException e) {
-                    SkinShuffle.LOGGER.info("Failed to load cape texture for uuid: " + uuid);
-                    SkinShuffle.LOGGER.error(e.toString());
-                }
-            }
-        }).start();
+    public static void applyFromPreset(SkinPreset chosenPreset, String username) {
+        CapeProvider provider = chosenPreset.getCapeProvider();
+        getPlayerCape(username, provider, null);
     }
 }

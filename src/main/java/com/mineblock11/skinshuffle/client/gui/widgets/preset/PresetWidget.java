@@ -56,11 +56,7 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
 
         this.skinPreset = skinPreset;
 
-        var skin = skinPreset.getSkin();
-        entity = new DummyClientPlayerEntity(
-                null, UUID.randomUUID(),
-                skin::getTexture, skin::getModel
-        );
+        entity = new DummyClientPlayerEntity(this.skinPreset);
 
         this.showButtons = true;
 

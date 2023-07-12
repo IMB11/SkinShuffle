@@ -53,11 +53,7 @@ public class OpenCarouselButton extends ButtonWidget {
 
     public void setSelectedPreset(SkinPreset preset) {
         this.selectedPreset = preset;
-        var skin = selectedPreset.getSkin();
-        this.entity = new DummyClientPlayerEntity(
-                null, UUID.randomUUID(),
-                skin::getTexture, skin::getModel
-        );
+        this.entity = new DummyClientPlayerEntity(this.selectedPreset);
     }
 
     private float getEntityRotation() {

@@ -76,11 +76,7 @@ public class PresetEditScreen extends SpruceScreen {
         this.originalPreset = preset;
         this.parent = parent;
 
-        this.entity = new DummyClientPlayerEntity(
-                null, UUID.randomUUID(),
-                () -> this.preset.getSkin().getTexture(),
-                () -> this.preset.getSkin().getModel()
-        );
+        this.entity = new DummyClientPlayerEntity(this.preset);
     }
 
     @Override
