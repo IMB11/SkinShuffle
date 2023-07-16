@@ -62,21 +62,14 @@ public interface CapeProvider {
     };
 
     private static DataResult<CapeProvider> validate(String id) {
-        switch (id) {
-            case "default" -> {
-                return DataResult.success(AUTO);
-            }
-            case "minecraft" -> {
-                return DataResult.success(CapeProviders.MOJANG);
-            }
-            case "optifine" -> {
-                return DataResult.success(CapeProviders.OPTIFINE);
-            }
-            case "minecraftcapes" -> {
-                return DataResult.success(CapeProviders.MC_CAPES);
-            }
-        }
-        return DataResult.error(() -> "Invalid cape provider id: " + id);
+        return switch (id) {
+            case "none" -> DataResult.success(NONE);
+            case "default", "auto" -> DataResult.success(AUTO);
+            case "minecraft" -> DataResult.success(CapeProviders.MOJANG);
+            case "optifine" -> DataResult.success(CapeProviders.OPTIFINE);
+            case "minecraftcapes" -> DataResult.success(CapeProviders.MC_CAPES);
+            default -> DataResult.error(() -> "Invalid cape provider id: " + id);
+        };
     }
 
     default byte @Nullable [] getClientCapeTexture() {
