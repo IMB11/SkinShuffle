@@ -67,14 +67,14 @@ public abstract class PlayerEntityMixin extends PlayerEntity {
             return;
         }
 
-        cir.setReturnValue(CapeCacheRegistry.doesPlayerHaveCape(this.getGameProfile().getName(), CapeProvider.DEFAULT, null));
+        cir.setReturnValue(CapeCacheRegistry.doesPlayerHaveCape(this.getGameProfile().getName(), CapeProvider.AUTO, null));
     }
 
     @Inject(method = "getCapeTexture", at = @At("HEAD"), cancellable = true)
     private void getCapeTexture(CallbackInfoReturnable<Identifier> cir) {
         if(((Object)this) instanceof DummyClientPlayerEntity) return;
 
-        cir.setReturnValue(CapeCacheRegistry.getCapeTexture(this.getGameProfile().getName(), CapeProvider.DEFAULT, null));
+        cir.setReturnValue(CapeCacheRegistry.getCapeTexture(this.getGameProfile().getName(), CapeProvider.AUTO, null));
     }
 
     @Inject(method = "getModel", at = @At("HEAD"), cancellable = true)

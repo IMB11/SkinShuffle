@@ -41,7 +41,7 @@ public class SkinPreset {
             instance.group(
                     Skin.CODEC.fieldOf("skin").forGetter(SkinPreset::getSkin),
                     Codec.STRING.fieldOf("name").forGetter(SkinPreset::getName),
-                    CapeProvider.CODEC.optionalFieldOf("cape", CapeProviders.DEFAULT).forGetter(SkinPreset::getCapeProvider)
+                    CapeProvider.CODEC.optionalFieldOf("cape", CapeProviders.AUTO).forGetter(SkinPreset::getCapeProvider)
             ).apply(instance, SkinPreset::new));
 
     private String name;
@@ -49,7 +49,7 @@ public class SkinPreset {
     private CapeProvider capeProvider;
 
     public SkinPreset(Skin skin) {
-        this(skin, "Unnamed Preset", CapeProvider.DEFAULT);
+        this(skin, "Unnamed Preset", CapeProvider.AUTO);
     }
 
     public SkinPreset(Skin skin, String name, @Nullable CapeProvider cape) {
@@ -67,7 +67,7 @@ public class SkinPreset {
             Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
             Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
 
-            return new SkinPreset(skin, name, CapeProvider.DEFAULT);
+            return new SkinPreset(skin, name, CapeProvider.AUTO);
         } else {
             var skinQueryResult = SkinAPIs.getPlayerSkinTexture(session.getUuid());
 
@@ -75,10 +75,10 @@ public class SkinPreset {
                 Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
                 Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
 
-                return new SkinPreset(skin, name, CapeProvider.DEFAULT);
+                return new SkinPreset(skin, name, CapeProvider.AUTO);
             }
 
-            return new SkinPreset(new UrlSkin(skinQueryResult.skinURL(), skinQueryResult.modelType()), name, CapeProvider.DEFAULT);
+            return new SkinPreset(new UrlSkin(skinQueryResult.skinURL(), skinQueryResult.modelType()), name, CapeProvider.AUTO);
         }
     }
 

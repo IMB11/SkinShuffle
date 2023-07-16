@@ -23,18 +23,19 @@ package com.mineblock11.skinshuffle.client.cape.provider;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.mineblock11.skinshuffle.SkinShuffle;
+import com.mineblock11.skinshuffle.util.NetworkingUtil;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import kong.unirest.Unirest;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.texture.AbstractTexture;
 import org.jetbrains.annotations.Nullable;
 
 public interface CapeProvider {
     Codec<CapeProvider> CODEC = Codec.STRING.comapFlatMap(CapeProvider::validate, CapeProvider::getProviderID);
-    CapeProvider DEFAULT = new CapeProvider() {
+    CapeProvider AUTO = new CapeProvider() {
         @Override
         public byte @Nullable [] getCapeTexture(String id) {
+            if(!NetworkingUtil.isLoggedIn()) return null;
             for (var provider : CapeProviders.values()) { // TODO: order using config
                 byte[] texture = provider.getCapeTexture(id);
                 if (texture != null) return texture;
@@ -44,14 +45,26 @@ public interface CapeProvider {
 
         @Override
         public String getProviderID() {
-            return "default";
+            return "auto";
+        }
+    };
+
+    CapeProvider NONE = new CapeProvider() {
+        @Override
+        public byte @Nullable [] getCapeTexture(String id) {
+            return null;
+        }
+
+        @Override
+        public String getProviderID() {
+            return "none";
         }
     };
 
     private static DataResult<CapeProvider> validate(String id) {
         switch (id) {
             case "default" -> {
-                return DataResult.success(DEFAULT);
+                return DataResult.success(AUTO);
             }
             case "minecraft" -> {
                 return DataResult.success(CapeProviders.MOJANG);

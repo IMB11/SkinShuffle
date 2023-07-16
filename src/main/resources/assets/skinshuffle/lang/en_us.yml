@@ -1,7 +1,8 @@
 skinshuffle:
   indicator: "Warning Indicator"
   cape_provider:
-    default: "Default"
+    none: "None"
+    default: "Automatic"
     minecraft: "Mojang"
     optifine: "OptiFine"
     minecraftcapes: "MinecraftCapes"

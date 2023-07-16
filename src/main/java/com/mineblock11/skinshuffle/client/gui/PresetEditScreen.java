@@ -389,7 +389,7 @@ public class PresetEditScreen extends SpruceScreen {
             presetNameField.setMaxLength(2048);
 
             var capeProviderSelector = new CyclingButtonWidget.Builder<CapeProvider>(provider -> Text.translatable(provider.getTranslationKey()))
-                    .values(CapeProvider.DEFAULT, CapeProviders.MOJANG, CapeProviders.OPTIFINE, CapeProviders.MC_CAPES)
+                    .values(CapeProvider.NONE, CapeProvider.AUTO, CapeProviders.MOJANG, CapeProviders.OPTIFINE, CapeProviders.MC_CAPES)
                     .initially(preset.getCapeProvider())
                     .build(0, 0, 192, 20,
                             Text.translatable("skinshuffle.edit.customize.cape_provider"),
