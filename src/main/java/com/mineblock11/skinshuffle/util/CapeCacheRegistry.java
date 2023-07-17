@@ -20,9 +20,6 @@
 
 package com.mineblock11.skinshuffle.util;
 
-import com.google.common.collect.ArrayTable;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.client.cape.provider.CapeProvider;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
@@ -30,9 +27,9 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.util.Identifier;
-import org.apache.commons.collections.map.MultiKeyMap;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class CapeCacheRegistry {
@@ -70,11 +67,20 @@ public class CapeCacheRegistry {
 
     private static void getPlayerCape(String username, CapeProvider capeProvider, @Nullable String usernameToStoreAs) {
         new Thread(() -> {
+            Identifier capeID = SkinShuffle.id(username + "/" + capeProvider.getProviderID());
+
+            try {
+                if(MinecraftClient.getInstance().getTextureManager().getOrDefault(capeID, null) != null) {
+                    if(usernameToStoreAs != null) CAPE_CACHE.put(usernameToStoreAs, capeProvider, capeID);
+                    else CAPE_CACHE.put(username, capeProvider, capeID);
+                    return;
+                }
+            } catch (Exception ignored) {}
+
             byte[] data = capeProvider.getCapeTexture(username);
             if (data != null) {
                 try {
                     NativeImageBackedTexture imageBackedTexture = new NativeImageBackedTexture(NativeImage.read(data));
-                    Identifier capeID = SkinShuffle.id(username);
                     MinecraftClient.getInstance().execute(() -> {
                         MinecraftClient.getInstance().getTextureManager().registerTexture(capeID, imageBackedTexture);
                         if(usernameToStoreAs != null) CAPE_CACHE.put(usernameToStoreAs, capeProvider, capeID);

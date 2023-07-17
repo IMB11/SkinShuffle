@@ -71,6 +71,7 @@ public class SkinShuffleConfig {
             if (this.capeProviders.contains(provider)) continue;
             this.capeProviders.add(provider);
         }
+        save();
     }
 
     public static YetAnotherConfigLib getInstance() {

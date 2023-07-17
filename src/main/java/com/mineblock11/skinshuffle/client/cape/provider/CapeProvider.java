@@ -65,9 +65,9 @@ public interface CapeProvider {
         return switch (id) {
             case "none" -> DataResult.success(NONE);
             case "default", "auto" -> DataResult.success(AUTO);
-            case "minecraft" -> DataResult.success(CapeProviders.MOJANG);
-            case "optifine" -> DataResult.success(CapeProviders.OPTIFINE);
-            case "minecraftcapes" -> DataResult.success(CapeProviders.MC_CAPES);
+            case "minecraft", "MOJANG" -> DataResult.success(CapeProviders.MOJANG);
+            case "optifine", "OPTIFINE" -> DataResult.success(CapeProviders.OPTIFINE);
+            case "minecraftcapes", "MC_CAPES" -> DataResult.success(CapeProviders.MC_CAPES);
             default -> DataResult.error(() -> "Invalid cape provider id: " + id);
         };
     }
