@@ -183,11 +183,6 @@ public abstract class CarouselScreen extends SpruceScreen {
     }
 
     @Override
-    public boolean shouldCloseOnEsc() {
-        return false;
-    }
-
-    @Override
     public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
         var cardAreaWidth = getCardWidth() + getCardGap();
 
