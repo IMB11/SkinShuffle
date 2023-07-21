@@ -74,6 +74,9 @@ skinshuffle:
       description: "Configuration options regarding how skin presets are rendered in the title screen, pause menu, carousel and edit screens."
       rotation: "Rotation"
       cursor: "Cursor"
+      render_player_capes:
+        name: "Render Player Capes"
+        description: "Should SkinShuffle render player capes from Mojang, Optifine and Minecraft Capes providers?"
       rendering_style: |-
         §lROTATION§r rotates the rendered player at a fixed rate specified by the rotation speed multiplier.
         §lCURSOR§r makes the rendered player look at the mouse cursor at all times, similarly to the inventory screen.

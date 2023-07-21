@@ -61,6 +61,11 @@ public abstract class PlayerEntityMixin extends PlayerEntity {
     private void canRenderCapeTexture(CallbackInfoReturnable<Boolean> cir) {
         if(((Object)this) instanceof DummyClientPlayerEntity) return;
 
+        if(!SkinShuffleConfig.get().renderPlayerCapes) {
+            cir.setReturnValue(false);
+            return;
+        }
+
         if(this.getUuidAsString().equals(MinecraftClient.getInstance().getSession().getUuid())) {
             SkinPreset chosenPreset = SkinPresetManager.getChosenPreset();
             cir.setReturnValue(CapeCacheRegistry.doesPlayerHaveCape(MinecraftClient.getInstance().getSession().getUsername(), chosenPreset.getCapeProvider(), null));

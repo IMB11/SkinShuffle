@@ -78,6 +78,13 @@ public class SkinShuffleConfig {
         return YetAnotherConfigLib.create(GSON,
                 (defaults, config, builder) -> {
                     // Rendering Options
+                    var renderPlayerCapes = Option.<Boolean>createBuilder()
+                            .name(translatable("skinshuffle.config.rendering.render_player_capes.name"))
+                            .description(OptionDescription.createBuilder()
+                                    .text(translatable("skinshuffle.config.rendering.render_player_capes.description")).build())
+                            .binding(defaults.renderPlayerCapes, () -> config.renderPlayerCapes, val -> config.renderPlayerCapes = val)
+                            .controller(TickBoxControllerBuilder::create).build();
+
                     var carouselRenderStyle = Option.<SkinRenderStyle>createBuilder()
                             .name(translatable("skinshuffle.config.rendering.carousel_rendering_style.name"))
                             .description(OptionDescription.createBuilder()
@@ -168,7 +175,7 @@ public class SkinShuffleConfig {
                             ).category(ConfigCategory.createBuilder()
                                     .name(translatable("skinshuffle.config.rendering.title"))
                                     .tooltip(translatable("skinshuffle.config.rendering.description"))
-                                    .options(List.of(carouselRenderStyle, presetEditScreenRenderStyle, widgetRenderStyle, rotationMultiplier))
+                                    .options(List.of(carouselRenderStyle, presetEditScreenRenderStyle, widgetRenderStyle, rotationMultiplier, renderPlayerCapes))
                                     .build()
                             ).category(ConfigCategory.createBuilder()
                                     .name(translatable("skinshuffle.config.popups.title"))
@@ -189,6 +196,7 @@ public class SkinShuffleConfig {
 
     @ConfigEntry public float carouselScrollSensitivity = 1.0f;
     @ConfigEntry public boolean invertCarouselScroll = false;
+    @ConfigEntry public boolean renderPlayerCapes = true;
 
     @ConfigEntry public SkinRenderStyle widgetSkinRenderStyle = SkinRenderStyle.CURSOR;
     @ConfigEntry public SkinRenderStyle carouselSkinRenderStyle = SkinRenderStyle.ROTATION;
