@@ -20,12 +20,15 @@
 
 package com.mineblock11.skinshuffle.client.gui.cursed;
 
+import com.mineblock11.skinshuffle.client.preset.SkinPreset;
+import com.mineblock11.skinshuffle.util.CapeCacheRegistry;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.render.entity.PlayerModelPart;
+import net.minecraft.client.render.entity.feature.CapeFeatureRenderer;
 import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.EquipmentSlot;
@@ -41,47 +44,17 @@ import java.util.function.Supplier;
 
 public class DummyClientPlayerEntity extends ClientPlayerEntity {
     private static DummyClientPlayerEntity instance;
-    private Supplier<Identifier> skinIdentifier = null;
-    private Supplier<String> model = null;
+    private final SkinPreset skinPreset;
     private PlayerEntity player = null;
     public Function<EquipmentSlot, ItemStack> equippedStackSupplier = slot -> ItemStack.EMPTY;
-
-    public static DummyClientPlayerEntity getInstance() {
-        if (instance == null) instance = new DummyClientPlayerEntity() {
-            @Override
-            public Text getName() {
-                return Text.translatable("gui.showmeyourskin.armorScreen.global");
-            }
-        };
-        return instance;
-    }
-
-    private DummyClientPlayerEntity() {
+    public DummyClientPlayerEntity(SkinPreset skinPreset) {
         super(MinecraftClient.getInstance(), DummyClientWorld.getInstance(), DummyClientPlayNetworkHandler.getInstance(), null, null,false, false);
         setUuid(UUID.randomUUID());
-        MinecraftClient.getInstance().getSkinProvider().loadSkin(getGameProfile(), (type, identifier, texture) -> {
-            if (type == MinecraftProfileTexture.Type.SKIN) {
-                skinIdentifier = () -> identifier;
-                var model = texture.getMetadata("model");
-                if (model == null) {
-                    model = "default";
-                }
-                var model1 = model;
-                this.model = () -> model1;
-            }
-        }, true);
+        this.skinPreset = skinPreset;
     }
 
-    public DummyClientPlayerEntity(@Nullable PlayerEntity player, UUID uuid, Supplier<Identifier> skinIdentifier, @Nullable Supplier<String> model) {
-        this(player, uuid, skinIdentifier, model, DummyClientWorld.getInstance(), DummyClientPlayNetworkHandler.getInstance());
-    }
-
-    public DummyClientPlayerEntity(@Nullable PlayerEntity player, UUID uuid, Supplier<Identifier> skinIdentifier, @Nullable Supplier<String> model, ClientWorld world, ClientPlayNetworkHandler networkHandler) {
-        super(MinecraftClient.getInstance(), world, networkHandler, null, null,false, false);
-        this.player = player;
-        setUuid(uuid);
-        this.skinIdentifier = skinIdentifier;
-        this.model = model;
+    private String getUserUsername() {
+        return MinecraftClient.getInstance().getSession().getUsername();
     }
 
     @Override
@@ -95,12 +68,27 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
     }
 
     @Override
+    public boolean canRenderCapeTexture() {
+        if(this.skinPreset != null) {
+            return CapeCacheRegistry.doesPlayerHaveCape(getUserUsername(), this.skinPreset.getCapeProvider(), this.getUuidAsString());
+        }
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public Identifier getCapeTexture() {
+        if(this.skinPreset != null) {
+            return CapeCacheRegistry.getCapeTexture(getUserUsername(), this.skinPreset.getCapeProvider(), null);
+        }
+        return null;
+    }
+
+    @Override
     public Identifier getSkinTexture() {
-        if (skinIdentifier != null) {
-            var identifier = skinIdentifier.get();
-            if (identifier != null) {
-                return identifier;
-            }
+        @Nullable Identifier presetTexture = skinPreset.getSkin().getTexture();
+        if(presetTexture != null) {
+            return presetTexture;
         }
         return DefaultSkinHelper.getTexture(getUuid());
     }
@@ -118,11 +106,8 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
 
     @Override
     public String getModel() {
-        if (model != null) {
-            var model = this.model.get();
-            if (model != null) {
-                return model;
-            }
+        if(skinPreset != null) {
+            skinPreset.getSkin().getModel();
         }
         return DefaultSkinHelper.getModel(getUuid());
     }
@@ -138,10 +123,16 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
     }
 
     @Override
+    public void tick() {
+        super.tick();
+    }
+
+
+    @Override
+    public void updateCapeAngles() {}
+
+    @Override
     public ItemStack getEquippedStack(EquipmentSlot slot) {
-        if (player != null) {
-            return player.getEquippedStack(slot);
-        }
         return equippedStackSupplier.apply(slot);
     }
 }

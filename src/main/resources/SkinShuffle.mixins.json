@@ -9,9 +9,11 @@
     "accessor.YggdrasilUserApiServiceAccessor"
   ],
   "client": [
+    "PlayerEntityMixin",
     "accessor.GameMenuScreenAccessor",
     "accessor.MinecraftClientAccessor",
     "accessor.ToastManagerAccessor",
+    "render.CapeFeatureRendererMixin",
     "render.LivingEntityRendererMixin",
     "screen.GameMenuScreenMixin",
     "screen.ScreenMixin",

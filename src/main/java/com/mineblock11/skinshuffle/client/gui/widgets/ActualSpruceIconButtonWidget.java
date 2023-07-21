@@ -28,12 +28,13 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ActualSpruceIconButtonWidget extends SpruceIconButtonWidget {
-    private final Supplier<Identifier> iconTexture;
+    private final Function<ActualSpruceIconButtonWidget, Identifier> iconTexture;
 
-    public ActualSpruceIconButtonWidget(Position position, int width, int height, Text message, PressAction action, Supplier<Identifier> iconTexture) {
+    public ActualSpruceIconButtonWidget(Position position, int width, int height, Text message, PressAction action, Function<ActualSpruceIconButtonWidget, Identifier> iconTexture) {
         super(position, width, height, message, action);
         this.iconTexture = iconTexture;
     }

@@ -20,10 +20,18 @@
 
 package com.mineblock11.skinshuffle.client;
 
+import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.networking.ClientSkinHandling;
+import com.mineblock11.skinshuffle.util.CapeCacheRegistry;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourceType;
+import net.minecraft.util.Identifier;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
@@ -32,21 +40,19 @@ public class SkinShuffleClient implements ClientModInitializer {
     public void onInitializeClient() {
         SkinPresetManager.setup();
         ClientSkinHandling.init();
-        SkinShuffleConfig.GSON.load();
-    }
+        SkinShuffleConfig.load();
 
-    public static Connection jsoupConnection(String url) {
-        return Jsoup.connect(url)
-                .ignoreContentType(true)
-                .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8")
-                .header("Accept-Encoding", "gzip,deflate,sdch")
-                .header("Accept-Language", "en")
-                .header("Connection", "keep-alive")
-                .header("Host", "namemc.com")
-                .referrer("http://www.google.com")
-                .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/113.0")
-                .maxBodySize(0)
-                .timeout(12000)
-                .followRedirects(true);
+        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
+            @Override
+            public Identifier getFabricId() {
+                return SkinShuffle.id("skinshuffle");
+            }
+
+            @Override
+            public void reload(ResourceManager manager) {
+                CapeCacheRegistry.clearCache();
+                CapeCacheRegistry.applyFromPreset(SkinPresetManager.getChosenPreset(), MinecraftClient.getInstance().getSession().getUsername());
+            }
+        });
     }
 }

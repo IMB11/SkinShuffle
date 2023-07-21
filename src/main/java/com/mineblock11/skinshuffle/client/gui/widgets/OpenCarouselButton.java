@@ -42,7 +42,7 @@ public class OpenCarouselButton extends ButtonWidget {
         super(x, y, width, height, Text.translatable("skinshuffle.button"), (btn) -> {
             var client = MinecraftClient.getInstance();
             client.setScreen(GeneratedScreens.getCarouselScreen(client.currentScreen));
-        }, textSupplier -> null);
+        }, textSupplier -> Text.empty());
 
         currentTime = GlfwUtil.getTime();
     }
@@ -55,11 +55,7 @@ public class OpenCarouselButton extends ButtonWidget {
 
     public void setSelectedPreset(SkinPreset preset) {
         this.selectedPreset = preset;
-        var skin = selectedPreset.getSkin();
-        this.entity = new DummyClientPlayerEntity(
-                null, UUID.randomUUID(),
-                skin::getTexture, skin::getModel
-        );
+        this.entity = new DummyClientPlayerEntity(this.selectedPreset);
     }
 
     private float getEntityRotation() {

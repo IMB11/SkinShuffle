@@ -22,6 +22,9 @@ package com.mineblock11.skinshuffle.client.config;
 
 import com.google.gson.GsonBuilder;
 import com.mineblock11.skinshuffle.SkinShuffle;
+import com.mineblock11.skinshuffle.client.cape.provider.CapeProvider;
+import com.mineblock11.skinshuffle.client.cape.provider.CapeProviders;
+import com.mineblock11.skinshuffle.client.config.gson.CapeProviderTypeAdapter;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
@@ -31,14 +34,20 @@ import dev.isxander.yacl3.config.GsonConfigInstance;
 import net.minecraft.text.Text;
 
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static net.minecraft.text.Text.*;
 
 public class SkinShuffleConfig {
     private static final Path CONFIG_FILE_PATH = SkinShuffle.DATA_DIR.resolve("config.json");
-    public static final GsonConfigInstance<SkinShuffleConfig> GSON = GsonConfigInstance.createBuilder(SkinShuffleConfig.class)
-            .overrideGsonBuilder(new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create())
+    private static final GsonConfigInstance<SkinShuffleConfig> GSON = GsonConfigInstance.createBuilder(SkinShuffleConfig.class)
+            .overrideGsonBuilder(new GsonBuilder()
+                    .setPrettyPrinting()
+                    .disableHtmlEscaping()
+                    .registerTypeAdapter(CapeProvider.class, new CapeProviderTypeAdapter())
+                    .create())
             .setPath(CONFIG_FILE_PATH)
             .build();
 
@@ -46,10 +55,36 @@ public class SkinShuffleConfig {
         return GSON.getConfig();
     }
 
+    public static void load() {
+        GSON.load();
+        get().postLoad();
+    }
+
+    public static void save() {
+        GSON.save();
+    }
+
+    public void postLoad() {
+        // Add any new cape providers to the config
+        HashSet<CapeProvider> capeProviders = new HashSet<>(Set.of(CapeProviders.values()));
+        for (var provider : capeProviders) {
+            if (this.capeProviders.contains(provider)) continue;
+            this.capeProviders.add(provider);
+        }
+        save();
+    }
+
     public static YetAnotherConfigLib getInstance() {
         return YetAnotherConfigLib.create(GSON,
                 (defaults, config, builder) -> {
                     // Rendering Options
+                    var renderPlayerCapes = Option.<Boolean>createBuilder()
+                            .name(translatable("skinshuffle.config.rendering.render_player_capes.name"))
+                            .description(OptionDescription.createBuilder()
+                                    .text(translatable("skinshuffle.config.rendering.render_player_capes.description")).build())
+                            .binding(defaults.renderPlayerCapes, () -> config.renderPlayerCapes, val -> config.renderPlayerCapes = val)
+                            .controller(TickBoxControllerBuilder::create).build();
+
                     var carouselRenderStyle = Option.<SkinRenderStyle>createBuilder()
                             .name(translatable("skinshuffle.config.rendering.carousel_rendering_style.name"))
                             .description(OptionDescription.createBuilder()
@@ -140,7 +175,7 @@ public class SkinShuffleConfig {
                             ).category(ConfigCategory.createBuilder()
                                     .name(translatable("skinshuffle.config.rendering.title"))
                                     .tooltip(translatable("skinshuffle.config.rendering.description"))
-                                    .options(List.of(carouselRenderStyle, presetEditScreenRenderStyle, widgetRenderStyle, rotationMultiplier))
+                                    .options(List.of(carouselRenderStyle, presetEditScreenRenderStyle, widgetRenderStyle, rotationMultiplier, renderPlayerCapes))
                                     .build()
                             ).category(ConfigCategory.createBuilder()
                                     .name(translatable("skinshuffle.config.popups.title"))
@@ -154,12 +189,14 @@ public class SkinShuffleConfig {
     @ConfigEntry public boolean disableReconnectToast = false;
 
     @ConfigEntry public boolean disableAPIUpload = false;
+    @ConfigEntry public Set<CapeProvider> capeProviders = new HashSet<>();
 
     @ConfigEntry public boolean displayInPauseMenu = true;
     @ConfigEntry public boolean displayInTitleScreen = true;
 
     @ConfigEntry public float carouselScrollSensitivity = 1.0f;
     @ConfigEntry public boolean invertCarouselScroll = false;
+    @ConfigEntry public boolean renderPlayerCapes = true;
 
     @ConfigEntry public SkinRenderStyle widgetSkinRenderStyle = SkinRenderStyle.CURSOR;
     @ConfigEntry public SkinRenderStyle carouselSkinRenderStyle = SkinRenderStyle.ROTATION;
