@@ -67,7 +67,7 @@ public class CapeCacheRegistry {
 
     private static void getPlayerCape(String username, CapeProvider capeProvider, @Nullable String usernameToStoreAs) {
         new Thread(() -> {
-            Identifier capeID = SkinShuffle.id(username + "/" + capeProvider.getProviderID());
+            Identifier capeID = SkinShuffle.id(toIdValidUsername(username) + "/" + capeProvider.getProviderID());
 
             try {
                 if(MinecraftClient.getInstance().getTextureManager().getOrDefault(capeID, null) != null) {
@@ -99,5 +99,9 @@ public class CapeCacheRegistry {
     public static void applyFromPreset(SkinPreset chosenPreset, String username) {
         CapeProvider provider = chosenPreset.getCapeProvider();
         getPlayerCape(username, provider, null);
+    }
+
+    private static String toIdValidUsername(String username) {
+        return String.valueOf(Math.abs(username.hashCode()));
     }
 }

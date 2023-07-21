@@ -133,14 +133,14 @@ public abstract class CarouselScreen extends SpruceScreen {
 
         this.configButton = this.addDrawableChild(new ActualSpruceIconButtonWidget(Position.of(2, 2), 20, 20, Text.empty(),
                 (btn) -> this.client.setScreenAndRender(GeneratedScreens.getConfigScreen(this)),
-                () -> SkinShuffle.id("textures/gui/config-button-icon.png")));
+                (btn) -> SkinShuffle.id("textures/gui/config-button-icon.png")));
         this.configButton.setTooltip(Text.translatable("skinshuffle.carousel.config_button.tooltip"));
 
         this.viewTypeButton = this.addDrawableChild(new ActualSpruceIconButtonWidget(Position.of(24, 2), 20, 20, Text.empty(), (btn) -> {
             this.client.setScreenAndRender(nextViewType.factory.apply(this.parent));
             SkinShuffleConfig.get().carouselView = nextViewType;
             SkinShuffleConfig.save();
-        }, () -> viewType.iconTexture));
+        }, (btn) -> viewType.iconTexture));
         this.viewTypeButton.setTooltip(viewType.tooltip);
 
         this.selectButton = this.addDrawableChild(new SpruceButtonWidget(Position.of(this.width / 2 + 5, this.height - 23), 128, 20, Text.translatable("skinshuffle.carousel.save_button"), button -> {

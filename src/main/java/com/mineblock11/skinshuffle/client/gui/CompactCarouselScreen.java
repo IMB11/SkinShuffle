@@ -50,7 +50,7 @@ public class CompactCarouselScreen extends CarouselScreen {
         super.init();
 
         this.shuffleButton = this.addDrawableChild(new ActualSpruceIconButtonWidget(Position.of(46, 2), 20, 20, Text.empty(),
-                (btn) -> setEditMode(!isEditMode()), () -> SkinShuffle.id("textures/gui/todo-todo-todo.png")));
+                (btn) -> setEditMode(!isEditMode()), (btn) -> SkinShuffle.id("textures/gui/shuffle-mode-" + (isEditMode() ? "on" : "off") + ".png")));
 
         this.addDrawableChild(new SpruceButtonWidget(Position.of(this.width / 2 - 64, this.height - 23), 128, 20, ScreenTexts.DONE, button -> {
             this.close();
