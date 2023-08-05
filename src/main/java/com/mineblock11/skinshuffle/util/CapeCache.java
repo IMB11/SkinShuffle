@@ -29,21 +29,21 @@ import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public class CapeCacheRegistry {
-    public static final BiHashMap<String, CapeProvider, @Nullable Identifier> CAPE_CACHE = new BiHashMap<>();
+public class CapeCache {
+    private static final BiHashMap<String, CapeProvider, @Nullable Identifier> CAPE_CACHE = new BiHashMap<>();
+
     public static boolean doesPlayerHaveCape(String username, CapeProvider capeProvider, @Nullable String usernameToStoreAs) {
-        if(usernameToStoreAs != null) {
-            if(CAPE_CACHE.containsKeys(usernameToStoreAs, capeProvider)) {
+        if (usernameToStoreAs != null) {
+            if (CAPE_CACHE.containsKeys(usernameToStoreAs, capeProvider)) {
                 Identifier cape = CAPE_CACHE.get(usernameToStoreAs, capeProvider);
                 return cape != null;
             }
             CAPE_CACHE.put(usernameToStoreAs, capeProvider, null);
             getPlayerCape(username, capeProvider, usernameToStoreAs);
         } else {
-            if(CAPE_CACHE.containsKeys(username, capeProvider)) {
+            if (CAPE_CACHE.containsKeys(username, capeProvider)) {
                 Identifier cape = CAPE_CACHE.get(username, capeProvider);
                 return cape != null;
             }
@@ -55,7 +55,7 @@ public class CapeCacheRegistry {
     }
 
     public static @Nullable Identifier getCapeTexture(String username, CapeProvider capeProvider, @Nullable String usernameToStoreAs) {
-        if(usernameToStoreAs != null) {
+        if (usernameToStoreAs != null) {
             return CAPE_CACHE.get(usernameToStoreAs, capeProvider);
         }
         return CAPE_CACHE.get(username, capeProvider);
@@ -70,27 +70,28 @@ public class CapeCacheRegistry {
             Identifier capeID = SkinShuffle.id(toIdValidUsername(username) + "/" + capeProvider.getProviderID());
 
             try {
-                if(MinecraftClient.getInstance().getTextureManager().getOrDefault(capeID, null) != null) {
-                    if(usernameToStoreAs != null) CAPE_CACHE.put(usernameToStoreAs, capeProvider, capeID);
+                if (MinecraftClient.getInstance().getTextureManager().getOrDefault(capeID, null) != null) {
+                    if (usernameToStoreAs != null) CAPE_CACHE.put(usernameToStoreAs, capeProvider, capeID);
                     else CAPE_CACHE.put(username, capeProvider, capeID);
                     return;
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
 
             byte[] data = capeProvider.getCapeTexture(username);
             if (data != null) {
 
-                    MinecraftClient.getInstance().execute(() -> {
-                        try {
+                MinecraftClient.getInstance().execute(() -> {
+                    try {
                         NativeImageBackedTexture imageBackedTexture = new NativeImageBackedTexture(NativeImage.read(data));
                         MinecraftClient.getInstance().getTextureManager().registerTexture(capeID, imageBackedTexture);
-                        if(usernameToStoreAs != null) CAPE_CACHE.put(usernameToStoreAs, capeProvider, capeID);
+                        if (usernameToStoreAs != null) CAPE_CACHE.put(usernameToStoreAs, capeProvider, capeID);
                         else CAPE_CACHE.put(username, capeProvider, capeID);
                     } catch (IOException e) {
                         SkinShuffle.LOGGER.info("Failed to load cape texture for uuid: " + username);
                         SkinShuffle.LOGGER.error(e.toString());
                     }
-                    });
+                });
 
             }
         }).start();

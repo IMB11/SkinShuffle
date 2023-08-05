@@ -36,7 +36,7 @@ The carousel is where all your skins will be stored for future use! You can crea
   
 You can customize every preset to your own desire in the edit screen.
 <br><br>
-<center><img width="50%" src="https://cdn.modrinth.com/data/3s19I5jr/images/2146f756a3c5ef7e916e8f3d02e36a1bfa8d19ad.png"></center>
+<center><img width="50%" src="https://cdn.modrinth.com/data/3s19I5jr/images/ced596ec493eff53b3be5139fc991cf1e4d18d16.png"><img width="50%" src="https://cdn.modrinth.com/data/3s19I5jr/images/fea4801fa0923716a06982652c23c9a5c3fc72cf.png"></center>
 
 <h3 id="edit-screen">Edit Screen</h2>
 

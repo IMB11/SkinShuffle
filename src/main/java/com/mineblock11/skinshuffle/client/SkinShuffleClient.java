@@ -24,7 +24,7 @@ import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.networking.ClientSkinHandling;
-import com.mineblock11.skinshuffle.util.CapeCacheRegistry;
+import com.mineblock11.skinshuffle.util.CapeCache;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
@@ -32,8 +32,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
 
 public class SkinShuffleClient implements ClientModInitializer {
     @Override
@@ -50,8 +48,8 @@ public class SkinShuffleClient implements ClientModInitializer {
 
             @Override
             public void reload(ResourceManager manager) {
-                CapeCacheRegistry.clearCache();
-                CapeCacheRegistry.applyFromPreset(SkinPresetManager.getChosenPreset(), MinecraftClient.getInstance().getSession().getUsername());
+                CapeCache.clearCache();
+                CapeCache.applyFromPreset(SkinPresetManager.getChosenPreset(), MinecraftClient.getInstance().getSession().getUsername());
             }
         });
     }
