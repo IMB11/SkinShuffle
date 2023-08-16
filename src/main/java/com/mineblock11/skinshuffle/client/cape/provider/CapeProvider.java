@@ -83,14 +83,11 @@ public interface CapeProvider {
     default byte @Nullable [] getCapeTexture(String id) {
         try {
             JsonObject result = GSON.fromJson(Unirest.get("https://api.capes.dev/load/%s/%s".formatted(id, getProviderID())).asString().getBody(), JsonObject.class);
-            SkinShuffle.LOGGER.info("Requested cape metadata at {} for {}", id, getProviderID());
             if (result.get("exists").getAsBoolean()) {
                 String imageURL = result.get("imageUrl").getAsString();
                 return Unirest.get(imageURL).asBytes().getBody();
             } else return null;
         } catch (Exception e) {
-            SkinShuffle.LOGGER.info("Failed to run cape provider \"{}\"", getProviderID());
-            SkinShuffle.LOGGER.info(e.toString());
             return null;
         }
     }

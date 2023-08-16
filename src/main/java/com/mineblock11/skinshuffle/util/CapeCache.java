@@ -80,19 +80,19 @@ public class CapeCache {
 
             byte[] data = capeProvider.getCapeTexture(username);
             if (data != null) {
-
-                MinecraftClient.getInstance().execute(() -> {
-                    try {
-                        NativeImageBackedTexture imageBackedTexture = new NativeImageBackedTexture(NativeImage.read(data));
-                        MinecraftClient.getInstance().getTextureManager().registerTexture(capeID, imageBackedTexture);
-                        if (usernameToStoreAs != null) CAPE_CACHE.put(usernameToStoreAs, capeProvider, capeID);
-                        else CAPE_CACHE.put(username, capeProvider, capeID);
-                    } catch (IOException e) {
-                        SkinShuffle.LOGGER.info("Failed to load cape texture for uuid: " + username);
-                        SkinShuffle.LOGGER.error(e.toString());
-                    }
-                });
-
+                try {
+                    NativeImageBackedTexture imageBackedTexture = new NativeImageBackedTexture(NativeImage.read(data));
+                    MinecraftClient.getInstance().execute(() -> {
+                            MinecraftClient.getInstance().getTextureManager().registerTexture(capeID, imageBackedTexture);
+                            if (usernameToStoreAs != null) CAPE_CACHE.put(usernameToStoreAs, capeProvider, capeID);
+                            else CAPE_CACHE.put(username, capeProvider, capeID);
+                    });
+                    Thread.sleep(350);
+                    imageBackedTexture.close();
+                }  catch (Exception e) {
+                    SkinShuffle.LOGGER.info("Failed to load cape texture for uuid: " + username);
+                    SkinShuffle.LOGGER.error(e.toString());
+                }
             }
         }).start();
     }
