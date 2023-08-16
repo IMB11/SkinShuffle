@@ -20,60 +20,35 @@
 
 package com.mineblock11.skinshuffle.util;
 
+import oshi.util.tuples.Pair;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class BiHashMap<K1, K2, V> {
-
-    private final Map<K1, Map<K2, V>> mMap;
-    private int sizeOfMap;
-
-    public BiHashMap() {
-        mMap = new HashMap<>();
-        sizeOfMap = 0;
-    }
+    private final HashMap<Pair<K1, K2>, V> internalMap = new HashMap<>();
 
     public void put(K1 key1, K2 key2, V value) {
-        Map<K2, V> map;
-        if (mMap.containsKey(key1)) {
-            map = mMap.get(key1);
-        } else {
-            map = new HashMap<>();
-            mMap.put(key1, map);
-        }
-        map.put(key2, value);
-        sizeOfMap++;
+       internalMap.put(new Pair<>(key1, key2), value);
     }
 
     public int getSize() {
-        return sizeOfMap;
+        return internalMap.size();
     }
 
     public Boolean containsKey(K1 key1) {
-        return mMap.containsKey(key1);
+        return internalMap.keySet().stream().anyMatch(pair -> pair.getA().equals(key1));
     }
 
-    public Boolean containsKey(K1 key1, K2 key2) {
-        Map<K2, V> map;
-        if (mMap.containsKey(key1)) {
-            map = mMap.get(key1);
-            return map.containsKey(key2);
-        } else
-            return false;
-    }
     public V get(K1 key1, K2 key2) {
-        if (mMap.containsKey(key1)) {
-            return mMap.get(key1).get(key2);
-        } else {
-            return null;
-        }
+        return internalMap.get(new Pair<>(key1, key2));
     }
     public boolean containsKeys(K1 key1, K2 key2) {
-        return mMap.containsKey(key1) && mMap.get(key1).containsKey(key2);
+        return internalMap.keySet().stream().anyMatch(pair -> pair.getA().equals(key1) && pair.getB().equals(key2));
     }
 
     public void clear() {
-        mMap.clear();
+        internalMap.clear();
     }
 
 }
