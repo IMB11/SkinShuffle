@@ -21,26 +21,19 @@
 package com.mineblock11.skinshuffle.client.gui.cursed;
 
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
-import com.mineblock11.skinshuffle.util.CapeCacheRegistry;
-import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.render.entity.PlayerModelPart;
-import net.minecraft.client.render.entity.feature.CapeFeatureRenderer;
 import net.minecraft.client.util.DefaultSkinHelper;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class DummyClientPlayerEntity extends ClientPlayerEntity {
     private static DummyClientPlayerEntity instance;
@@ -65,23 +58,6 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
     @Override
     public boolean hasSkinTexture() {
         return true;
-    }
-
-    @Override
-    public boolean canRenderCapeTexture() {
-        if(this.skinPreset != null) {
-            return CapeCacheRegistry.doesPlayerHaveCape(getUserUsername(), this.skinPreset.getCapeProvider(), this.getUuidAsString());
-        }
-        return false;
-    }
-
-    @Nullable
-    @Override
-    public Identifier getCapeTexture() {
-        if(this.skinPreset != null) {
-            return CapeCacheRegistry.getCapeTexture(getUserUsername(), this.skinPreset.getCapeProvider(), null);
-        }
-        return null;
     }
 
     @Override

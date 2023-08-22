@@ -22,9 +22,6 @@ package com.mineblock11.skinshuffle.client.config;
 
 import com.google.gson.GsonBuilder;
 import com.mineblock11.skinshuffle.SkinShuffle;
-import com.mineblock11.skinshuffle.client.cape.provider.CapeProvider;
-import com.mineblock11.skinshuffle.client.cape.provider.CapeProviders;
-import com.mineblock11.skinshuffle.client.config.gson.CapeProviderTypeAdapter;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
@@ -34,11 +31,9 @@ import dev.isxander.yacl3.config.GsonConfigInstance;
 import net.minecraft.text.Text;
 
 import java.nio.file.Path;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import static net.minecraft.text.Text.*;
+import static net.minecraft.text.Text.translatable;
 
 public class SkinShuffleConfig {
     private static final Path CONFIG_FILE_PATH = SkinShuffle.DATA_DIR.resolve("config.json");
@@ -46,7 +41,6 @@ public class SkinShuffleConfig {
             .overrideGsonBuilder(new GsonBuilder()
                     .setPrettyPrinting()
                     .disableHtmlEscaping()
-                    .registerTypeAdapter(CapeProvider.class, new CapeProviderTypeAdapter())
                     .create())
             .setPath(CONFIG_FILE_PATH)
             .build();
@@ -65,12 +59,6 @@ public class SkinShuffleConfig {
     }
 
     public void postLoad() {
-        // Add any new cape providers to the config
-        HashSet<CapeProvider> capeProviders = new HashSet<>(Set.of(CapeProviders.values()));
-        for (var provider : capeProviders) {
-            if (this.capeProviders.contains(provider)) continue;
-            this.capeProviders.add(provider);
-        }
         save();
     }
 
@@ -189,7 +177,6 @@ public class SkinShuffleConfig {
     @ConfigEntry public boolean disableReconnectToast = false;
 
     @ConfigEntry public boolean disableAPIUpload = false;
-    @ConfigEntry public Set<CapeProvider> capeProviders = new HashSet<>();
 
     @ConfigEntry public boolean displayInPauseMenu = true;
     @ConfigEntry public boolean displayInTitleScreen = true;

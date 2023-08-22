@@ -23,16 +23,10 @@ package com.mineblock11.skinshuffle.networking;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.api.SkinQueryResult;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
-import com.mineblock11.skinshuffle.util.ToastHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
-
-import java.util.concurrent.*;
 
 public class ClientSkinHandling {
     private static boolean handshakeTakenPlace = false;

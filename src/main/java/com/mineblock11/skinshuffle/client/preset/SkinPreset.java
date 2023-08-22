@@ -21,8 +21,6 @@
 package com.mineblock11.skinshuffle.client.preset;
 
 import com.mineblock11.skinshuffle.api.SkinAPIs;
-import com.mineblock11.skinshuffle.client.cape.provider.CapeProvider;
-import com.mineblock11.skinshuffle.client.cape.provider.CapeProviders;
 import com.mineblock11.skinshuffle.client.skin.ResourceSkin;
 import com.mineblock11.skinshuffle.client.skin.Skin;
 import com.mineblock11.skinshuffle.client.skin.UrlSkin;
@@ -32,30 +30,24 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.Session;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 
 public class SkinPreset {
     public static final Codec<SkinPreset> CODEC = RecordCodecBuilder.create(instance ->
-            instance.group(
-                    Skin.CODEC.fieldOf("skin").forGetter(SkinPreset::getSkin),
-                    Codec.STRING.fieldOf("name").forGetter(SkinPreset::getName),
-                    CapeProvider.CODEC.optionalFieldOf("cape", CapeProviders.AUTO).forGetter(SkinPreset::getCapeProvider)
-            ).apply(instance, SkinPreset::new));
+        instance.group(
+                Skin.CODEC.fieldOf("skin").forGetter(SkinPreset::getSkin),
+                Codec.STRING.fieldOf("name").forGetter(SkinPreset::getName)
+        ).apply(instance, SkinPreset::new));
 
     private String name;
     private Skin skin;
-    private CapeProvider capeProvider;
 
     public SkinPreset(Skin skin) {
-        this(skin, "Unnamed Preset", CapeProvider.AUTO);
+        this(skin, "Unnamed Preset");
     }
 
-    public SkinPreset(Skin skin, String name, @Nullable CapeProvider cape) {
+    public SkinPreset(Skin skin, String name) {
         this.skin = skin;
         this.name = name;
-        this.capeProvider = cape;
     }
 
     public static SkinPreset generateDefaultPreset() {
@@ -63,39 +55,23 @@ public class SkinPreset {
         Session session = client.getSession();
         String name = session.getUsername();
 
-        if (!NetworkingUtil.isLoggedIn()) {
+        if(!NetworkingUtil.isLoggedIn()) {
             Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
             Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
 
-            return new SkinPreset(skin, name, CapeProvider.AUTO);
+            return new SkinPreset(skin, name);
         } else {
             var skinQueryResult = SkinAPIs.getPlayerSkinTexture(session.getUuid());
 
-            if (skinQueryResult.usesDefaultSkin()) {
+            if(skinQueryResult.usesDefaultSkin()) {
                 Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
                 Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
 
-                return new SkinPreset(skin, name, CapeProvider.AUTO);
+                return new SkinPreset(skin, name);
             }
 
-            return new SkinPreset(new UrlSkin(skinQueryResult.skinURL(), skinQueryResult.modelType()), name, CapeProvider.AUTO);
+            return new SkinPreset(new UrlSkin(skinQueryResult.skinURL(), skinQueryResult.modelType()), name);
         }
-    }
-
-    public CapeProvider getCapeProvider() {
-        return capeProvider;
-    }
-
-    public void setCapeProvider(CapeProvider capeProvider) {
-        this.capeProvider = capeProvider;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Skin getSkin() {
@@ -106,14 +82,21 @@ public class SkinPreset {
         this.skin = skin;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public void copyFrom(SkinPreset other) {
         this.name = other.name;
         this.skin = other.skin;
-        this.capeProvider = other.capeProvider;
     }
 
     public SkinPreset copy() {
-        return new SkinPreset(this.skin, this.name, this.capeProvider);
+        return new SkinPreset(this.skin, this.name);
     }
 
     @Override
@@ -123,16 +106,14 @@ public class SkinPreset {
 
         SkinPreset that = (SkinPreset) o;
 
-        if (!Objects.equals(name, that.name)) return false;
-        if (!Objects.equals(skin, that.skin)) return false;
-        return Objects.equals(capeProvider, that.capeProvider);
+        if (!name.equals(that.name)) return false;
+        return skin.equals(that.skin);
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (skin != null ? skin.hashCode() : 0);
-        result = 31 * result + (capeProvider != null ? capeProvider.hashCode() : 0);
+        int result = name.hashCode();
+        result = 31 * result + skin.hashCode();
         return result;
     }
 }

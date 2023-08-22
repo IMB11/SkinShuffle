@@ -31,8 +31,6 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.text.Text;
 
-import java.util.UUID;
-
 public class OpenCarouselButton extends ButtonWidget {
     private SkinPreset selectedPreset;
     private DummyClientPlayerEntity entity;
