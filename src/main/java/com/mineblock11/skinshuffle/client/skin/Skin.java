@@ -21,7 +21,6 @@
 package com.mineblock11.skinshuffle.client.skin;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;

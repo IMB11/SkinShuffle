@@ -24,7 +24,6 @@ import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.GeneratedScreens;
 import com.mineblock11.skinshuffle.client.gui.widgets.OpenCarouselButton;
-import com.mineblock11.skinshuffle.client.gui.widgets.WarningIndicatorButton;
 import com.mineblock11.skinshuffle.util.NetworkingUtil;
 import com.mineblock11.skinshuffle.util.ToastHelper;
 import net.minecraft.client.gui.screen.Screen;

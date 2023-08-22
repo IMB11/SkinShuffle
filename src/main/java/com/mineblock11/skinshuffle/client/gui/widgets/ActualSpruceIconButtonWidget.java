@@ -29,7 +29,6 @@ import net.minecraft.util.Identifier;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class ActualSpruceIconButtonWidget extends SpruceIconButtonWidget {
     private final Function<ActualSpruceIconButtonWidget, Identifier> iconTexture;

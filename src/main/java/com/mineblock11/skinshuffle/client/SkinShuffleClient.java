@@ -20,18 +20,10 @@
 
 package com.mineblock11.skinshuffle.client;
 
-import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.networking.ClientSkinHandling;
-import com.mineblock11.skinshuffle.util.CapeCache;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceType;
-import net.minecraft.util.Identifier;
 
 public class SkinShuffleClient implements ClientModInitializer {
     @Override
@@ -39,18 +31,5 @@ public class SkinShuffleClient implements ClientModInitializer {
         SkinPresetManager.setup();
         ClientSkinHandling.init();
         SkinShuffleConfig.load();
-
-        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
-            @Override
-            public Identifier getFabricId() {
-                return SkinShuffle.id("skinshuffle");
-            }
-
-            @Override
-            public void reload(ResourceManager manager) {
-                CapeCache.clearCache();
-                CapeCache.applyFromPreset(SkinPresetManager.getChosenPreset(), MinecraftClient.getInstance().getSession().getUsername());
-            }
-        });
     }
 }

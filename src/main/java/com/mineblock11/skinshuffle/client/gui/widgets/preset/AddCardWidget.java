@@ -26,7 +26,6 @@ import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
 import dev.lambdaurora.spruceui.widget.SpruceWidget;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 

@@ -20,12 +20,9 @@
 
 package com.mineblock11.skinshuffle.mixin;
 
-import com.mineblock11.skinshuffle.client.cape.provider.CapeProvider;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
-import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
-import com.mineblock11.skinshuffle.util.CapeCache;
 import com.mineblock11.skinshuffle.util.NetworkingUtil;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.MinecraftClient;
@@ -55,31 +52,6 @@ public abstract class PlayerEntityMixin extends PlayerEntity {
                 cir.setReturnValue(Objects.requireNonNullElse(currentPreset.getSkin().getTexture(), new Identifier("textures/skins/default/steve.png")));
             }
         }
-    }
-
-    @Inject(method = "canRenderCapeTexture", at = @At("HEAD"), cancellable = true)
-    private void canRenderCapeTexture(CallbackInfoReturnable<Boolean> cir) {
-        if(((Object)this) instanceof DummyClientPlayerEntity) return;
-
-        if(!SkinShuffleConfig.get().renderPlayerCapes) {
-            cir.setReturnValue(false);
-            return;
-        }
-
-        if(this.getUuidAsString().equals(MinecraftClient.getInstance().getSession().getUuid())) {
-            SkinPreset chosenPreset = SkinPresetManager.getChosenPreset();
-            cir.setReturnValue(CapeCache.doesPlayerHaveCape(MinecraftClient.getInstance().getSession().getUsername(), chosenPreset.getCapeProvider(), null));
-            return;
-        }
-
-        cir.setReturnValue(CapeCache.doesPlayerHaveCape(this.getGameProfile().getName(), CapeProvider.AUTO, null));
-    }
-
-    @Inject(method = "getCapeTexture", at = @At("HEAD"), cancellable = true)
-    private void getCapeTexture(CallbackInfoReturnable<Identifier> cir) {
-        if(((Object)this) instanceof DummyClientPlayerEntity) return;
-
-        cir.setReturnValue(CapeCache.getCapeTexture(this.getGameProfile().getName(), CapeProvider.AUTO, null));
     }
 
     @Inject(method = "getModel", at = @At("HEAD"), cancellable = true)

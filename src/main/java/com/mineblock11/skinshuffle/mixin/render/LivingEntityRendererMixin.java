@@ -22,7 +22,6 @@ package com.mineblock11.skinshuffle.mixin.render;
 
 import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.render.entity.feature.CapeFeatureRenderer;
 import net.minecraft.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

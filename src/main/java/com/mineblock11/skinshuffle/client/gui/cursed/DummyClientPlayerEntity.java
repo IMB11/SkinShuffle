@@ -21,7 +21,6 @@
 package com.mineblock11.skinshuffle.client.gui.cursed;
 
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
-import com.mineblock11.skinshuffle.util.CapeCache;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
@@ -59,23 +58,6 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
     @Override
     public boolean hasSkinTexture() {
         return true;
-    }
-
-    @Override
-    public boolean canRenderCapeTexture() {
-        if(this.skinPreset != null) {
-            return CapeCache.doesPlayerHaveCape(getUserUsername(), this.skinPreset.getCapeProvider(), this.getUuidAsString());
-        }
-        return false;
-    }
-
-    @Nullable
-    @Override
-    public Identifier getCapeTexture() {
-        if(this.skinPreset != null) {
-            return CapeCache.getCapeTexture(getUserUsername(), this.skinPreset.getCapeProvider(), null);
-        }
-        return null;
     }
 
     @Override
