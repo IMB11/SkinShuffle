@@ -22,6 +22,8 @@ repositories {
     maven { url 'https://maven.shedaniel.me/' }
     maven { url 'https://maven.isxander.dev/releases' }
     maven { url 'https://repo.inventivetalent.org/repository/public/' }
+    maven { url "https://maven.quiltmc.org/repository/release" }
+    maven { url = "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1" }
     maven {
         url "https://cursemaven.com"
         content {
@@ -47,7 +49,7 @@ dependencies {
 
     modLocalRuntime modCompileOnly("com.terraformersmc:modmenu:${project.modmenu_version}")
 
-    modImplementation "com.ptsmods:devlogin:3.2.2"
+    modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:1.1.2")
     include implementation('com.konghq:unirest-java:3.11.09:standalone')
 
     include modImplementation("dev.lambdaurora:spruceui:${project.spruceui_version}")

@@ -26,6 +26,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.render.entity.PlayerModelPart;
 import net.minecraft.client.util.DefaultSkinHelper;
+import net.minecraft.client.util.SkinTextures;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -56,17 +57,12 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
     }
 
     @Override
-    public boolean hasSkinTexture() {
-        return true;
-    }
-
-    @Override
-    public Identifier getSkinTexture() {
+    public SkinTextures getSkinTextures() {
         @Nullable Identifier presetTexture = skinPreset.getSkin().getTexture();
         if(presetTexture != null) {
-            return presetTexture;
+            return new SkinTextures(presetTexture, null, null, null, SkinTextures.Model.fromName(skinPreset.getSkin().getModel()), true);
         }
-        return DefaultSkinHelper.getTexture(getUuid());
+        return DefaultSkinHelper.getSkinTextures(getUuid());
     }
 
     @Override
@@ -78,14 +74,6 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
     @Override
     protected PlayerListEntry getPlayerListEntry() {
         return null;
-    }
-
-    @Override
-    public String getModel() {
-        if(skinPreset != null) {
-            skinPreset.getSkin().getModel();
-        }
-        return DefaultSkinHelper.getModel(getUuid());
     }
 
     @Override

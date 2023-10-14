@@ -28,6 +28,6 @@ public record SkinQueryResult(boolean usesDefaultSkin, @Nullable String skinURL,
     public static final SkinQueryResult EMPTY_RESULT = new SkinQueryResult(true, null, null, null, null);
 
     public Property toProperty() {
-        return new Property(PlayerSkinProvider.TEXTURES, textureValue, textureSignature);
+        return new Property("textures", textureValue, textureSignature);
     }
 }

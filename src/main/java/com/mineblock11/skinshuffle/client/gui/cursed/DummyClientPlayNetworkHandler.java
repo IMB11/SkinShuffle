@@ -23,13 +23,18 @@ package com.mineblock11.skinshuffle.client.gui.cursed;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.DisconnectedScreen;
+import net.minecraft.client.gui.screen.TitleScreen;
+import net.minecraft.client.network.ClientConnectionState;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.network.ServerInfo;
 import net.minecraft.entity.damage.DamageScaling;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkSide;
 import net.minecraft.registry.*;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.resource.featuretoggle.FeatureSet;
 import net.minecraft.world.biome.Biome;
 
 import java.time.Duration;
@@ -47,14 +52,14 @@ public class DummyClientPlayNetworkHandler extends ClientPlayNetworkHandler {
         return instance;
     }
 
-    private final Registry<Biome> cursedBiomeRegistry = new SimpleDefaultedRegistry<>("dummy", RegistryKeys.BIOME, Lifecycle.stable(), true) {
+    private static final Registry<Biome> cursedBiomeRegistry = new SimpleDefaultedRegistry<>("dummy", RegistryKeys.BIOME, Lifecycle.stable(), true) {
         @Override
         public RegistryEntry.Reference<Biome> entryOf(RegistryKey<Biome> key) {
             return null;
         }
     };
 
-    private final DynamicRegistryManager cursedRegistryManager = new DynamicRegistryManager.Immutable() {
+    private static final DynamicRegistryManager cursedRegistryManager = new DynamicRegistryManager.Immutable() {
         private final CursedRegistry<DamageType> damageTypes = new CursedRegistry<>(RegistryKeys.DAMAGE_TYPE, SkinShuffle.id("fake_damage"),
                 new DamageType("", DamageScaling.NEVER, 0));
 
@@ -82,16 +87,21 @@ public class DummyClientPlayNetworkHandler extends ClientPlayNetworkHandler {
     private DummyClientPlayNetworkHandler() {
         super(
                 MinecraftClient.getInstance(),
-                null,
                 new ClientConnection(NetworkSide.CLIENTBOUND),
-                MinecraftClient.getInstance().getCurrentServerEntry(),
-                MinecraftClient.getInstance().getSession().getProfile(),
-                MinecraftClient.getInstance().getTelemetryManager().createWorldSession(true, Duration.of(0, ChronoUnit.SECONDS), null)
+                new ClientConnectionState(
+                        MinecraftClient.getInstance().getGameProfile(),
+                        MinecraftClient.getInstance().getTelemetryManager().createWorldSession(true, Duration.of(0, ChronoUnit.SECONDS), null),
+                        cursedRegistryManager.toImmutable(),
+                        FeatureSet.empty(),
+                        "vanilla",
+                        new ServerInfo("", "", ServerInfo.ServerType.OTHER),
+                        new TitleScreen()
+                        )
         );
     }
 
     @Override
-    public DynamicRegistryManager getRegistryManager() {
-        return cursedRegistryManager;
+    public DynamicRegistryManager.Immutable getRegistryManager() {
+        return cursedRegistryManager.toImmutable();
     }
 }

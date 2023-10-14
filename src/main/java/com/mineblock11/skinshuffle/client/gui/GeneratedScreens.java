@@ -88,7 +88,7 @@ public class GeneratedScreens {
                 client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.c_rejoin") : I18n.translate("skinshuffle.reconnect.c_reconnect")).formatted(Formatting.RED, Formatting.BOLD),
                 Text.translatable("skinshuffle.reconnect.message",
                         client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.rejoin") : I18n.translate("skinshuffle.reconnect.reconnect_to"),
-                        client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.world") : client.isConnectedToRealms() ? I18n.translate("skinshuffle.reconnect.realm") : I18n.translate("skinshuffle.reconnect.server"),
+                        client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.world") : I18n.translate("skinshuffle.reconnect.server"),
                         client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.rejoin") : I18n.translate("skinshuffle.reconnect.reconnect")));
     }
 

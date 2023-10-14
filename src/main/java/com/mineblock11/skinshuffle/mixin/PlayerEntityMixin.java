@@ -27,6 +27,7 @@ import com.mineblock11.skinshuffle.util.NetworkingUtil;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.util.SkinTextures;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -44,22 +45,22 @@ public abstract class PlayerEntityMixin extends PlayerEntity {
         super(world, pos, yaw, gameProfile);
     }
 
-    @Inject(method = "getSkinTexture", at = @At("HEAD"), cancellable = true)
-    private void modifySkinTexture(CallbackInfoReturnable<Identifier> cir) {
-        if(MinecraftClient.getInstance().world != null) {
-            if(this.getUuid().equals(MinecraftClient.getInstance().player.getUuid()) && (!NetworkingUtil.isLoggedIn() || SkinShuffleConfig.get().disableAPIUpload)) {
-                SkinPreset currentPreset = SkinPresetManager.getChosenPreset();
-                cir.setReturnValue(Objects.requireNonNullElse(currentPreset.getSkin().getTexture(), new Identifier("textures/skins/default/steve.png")));
-            }
-        }
-    }
+//    @Inject(method = "getSkinTexture", at = @At("HEAD"), cancellable = true)
+//    private void modifySkinTexture(CallbackInfoReturnable<Identifier> cir) {
+//        if(MinecraftClient.getInstance().world != null) {
+//            if(this.getUuid().equals(MinecraftClient.getInstance().player.getUuid()) && (!NetworkingUtil.isLoggedIn() || SkinShuffleConfig.get().disableAPIUpload)) {
+//                SkinPreset currentPreset = SkinPresetManager.getChosenPreset();
+//                cir.setReturnValue(Objects.requireNonNullElse(currentPreset.getSkin().getTexture(), new Identifier("textures/skins/default/steve.png")));
+//            }
+//        }
+//    }
 
-    @Inject(method = "getModel", at = @At("HEAD"), cancellable = true)
-    private void modifySkinModel(CallbackInfoReturnable<String> cir) {
+    @Inject(method = "getSkinTextures", at = @At("HEAD"), cancellable = true)
+    private void modifySkinModel(CallbackInfoReturnable<SkinTextures> cir) {
         if(MinecraftClient.getInstance().world != null) {
             if(this.getUuid().equals(MinecraftClient.getInstance().player.getUuid()) && (!NetworkingUtil.isLoggedIn() || SkinShuffleConfig.get().disableAPIUpload)) {
                 SkinPreset currentPreset = SkinPresetManager.getChosenPreset();
-                cir.setReturnValue(Objects.requireNonNullElse(currentPreset.getSkin().getModel(), "default"));
+                cir.setReturnValue(new SkinTextures(currentPreset.getSkin().getTexture(), null, null, null, SkinTextures.Model.fromName(currentPreset.getSkin().getModel()), true));
             }
         }
     }

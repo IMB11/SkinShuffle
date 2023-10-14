@@ -66,7 +66,7 @@ public class SkinAPIs {
                 String token = ((MinecraftClientAuthAccessor) client).getAccessToken();
 
                 JsonObject obj = new JsonObject();
-                obj.addProperty("variant", model.equals("default") ? "classic" : "slim");
+                obj.addProperty("variant", model);
                 obj.addProperty("url", skinURL);
                 var result = Unirest.post("https://api.minecraftservices.com/minecraft/profile/skins")
                         .body(GSON.toJson(obj))
@@ -172,7 +172,7 @@ public class SkinAPIs {
             }
 
             var idString = object.get("id").getAsString();
-            return Optional.of(UUIDTypeAdapter.fromString(idString));
+            return Optional.of(UUID.fromString(idString));
         } catch (Exception e) {
             SkinShuffle.LOGGER.error(e.getMessage());
             return Optional.empty();
@@ -205,7 +205,7 @@ public class SkinAPIs {
 
                 HttpResponse<String> response = Unirest.post("https://api.minecraftservices.com/minecraft/profile/skins")
                         .header("Authorization", "Bearer " + token)
-                        .field("variant", model.equals("default") ? "classic" : "slim")
+                        .field("variant", model)
                         .field("file", skinFile)
                         .asString();
                 JsonObject responseObject = GSON.fromJson(response.getBody(), JsonObject.class);

@@ -60,6 +60,7 @@ public interface Skin {
 
     static ResourceSkin randomDefaultSkin() {
         var uuid = UUID.randomUUID();
-        return new ResourceSkin(DefaultSkinHelper.getTexture(uuid), DefaultSkinHelper.getModel(uuid));
+        var txt = DefaultSkinHelper.getSkinTextures(uuid);
+        return new ResourceSkin(txt.texture(), txt.model().getName());
     }
 }

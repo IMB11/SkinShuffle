@@ -126,7 +126,7 @@ skinshuffle:
   edit:
     customize:
       title: "Preset Settings"
-      classic: "Classic"
+      default: "Classic"
       slim: "Slim"
       model_cycle_prefix: "Model Type"
       preset_name: "Preset Name"

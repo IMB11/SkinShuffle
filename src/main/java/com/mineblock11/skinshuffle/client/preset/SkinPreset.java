@@ -28,7 +28,8 @@ import com.mineblock11.skinshuffle.util.NetworkingUtil;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.Session;
+import net.minecraft.client.session.Session;
+import net.minecraft.client.util.SkinTextures;
 import net.minecraft.util.Identifier;
 
 public class SkinPreset {
@@ -56,16 +57,16 @@ public class SkinPreset {
         String name = session.getUsername();
 
         if(!NetworkingUtil.isLoggedIn()) {
-            Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
-            Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
+            SkinTextures skinTexture = client.getSkinProvider().getSkinTextures(client.getGameProfile());
+            Skin skin = new ResourceSkin(skinTexture.texture(), skinTexture.texture().getPath().contains("/slim/") ? "slim" : "default");
 
             return new SkinPreset(skin, name);
         } else {
-            var skinQueryResult = SkinAPIs.getPlayerSkinTexture(session.getUuid());
+            var skinQueryResult = SkinAPIs.getPlayerSkinTexture(String.valueOf(client.getGameProfile().getId()));
 
             if(skinQueryResult.usesDefaultSkin()) {
-                Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
-                Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
+                SkinTextures skinTexture = client.getSkinProvider().getSkinTextures(client.getGameProfile());
+                Skin skin = new ResourceSkin(skinTexture.texture(), skinTexture.texture().getPath().contains("/slim/") ? "slim" : "default");
 
                 return new SkinPreset(skin, name);
             }

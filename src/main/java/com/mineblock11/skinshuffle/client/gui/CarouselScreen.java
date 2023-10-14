@@ -187,7 +187,7 @@ public abstract class CarouselScreen extends SpruceScreen {
         var cardAreaWidth = getCardWidth() + getCardGap();
 
         // BG stuff
-        this.renderBackground(graphics);
+        this.renderBackground(graphics, mouseX, mouseY, delta);
 
         graphics.fill(0, this.textRenderer.fontHeight * 3, this.width, this.height - (this.textRenderer.fontHeight * 3), 0x7F000000);
         graphics.fillGradient(0, (int) (this.textRenderer.fontHeight * 2.75), this.width, this.textRenderer.fontHeight * 3, 0x00000000, 0x7F000000);
@@ -292,9 +292,9 @@ public abstract class CarouselScreen extends SpruceScreen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         var sign = SkinShuffleConfig.get().invertCarouselScroll ? -1 : 1;
-        scrollCarousel(-amount / 4 * SkinShuffleConfig.get().carouselScrollSensitivity * sign, false);
+        scrollCarousel(-verticalAmount / 4 * SkinShuffleConfig.get().carouselScrollSensitivity * sign, false);
         return true;
     }
 

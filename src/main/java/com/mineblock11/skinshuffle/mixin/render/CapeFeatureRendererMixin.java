@@ -54,7 +54,7 @@ public abstract class CapeFeatureRendererMixin extends FeatureRenderer<AbstractC
             return;
         }
         ci.cancel();
-        if (abstractClientPlayerEntity.canRenderCapeTexture() && !abstractClientPlayerEntity.isInvisible() && abstractClientPlayerEntity.isPartVisible(PlayerModelPart.CAPE) && abstractClientPlayerEntity.getCapeTexture() != null) {
+        if (abstractClientPlayerEntity.getSkinTextures().capeTexture() != null && !abstractClientPlayerEntity.isInvisible() && abstractClientPlayerEntity.isPartVisible(PlayerModelPart.CAPE)) {
             ItemStack itemStack = abstractClientPlayerEntity.getEquippedStack(EquipmentSlot.CHEST);
             if (!itemStack.isOf(Items.ELYTRA)) {
                 matrixStack.push();
@@ -83,7 +83,7 @@ public abstract class CapeFeatureRendererMixin extends FeatureRenderer<AbstractC
 
                 matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(10F));
                 matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180F));
-                VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(abstractClientPlayerEntity.getCapeTexture()));
+                VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(abstractClientPlayerEntity.getSkinTextures().capeTexture()));
                 this.getContextModel().renderCape(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV);
                 matrixStack.pop();
             }

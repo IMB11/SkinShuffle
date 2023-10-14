@@ -45,7 +45,6 @@ public class NetworkingUtil {
         SkinPresetManager.setApiPreset(null);
 
         boolean isSingleplayer = client.isInSingleplayer();
-        boolean isRealms = client.isConnectedToRealms();
         String folderName, serverAddress;
 
         if (isSingleplayer) {
@@ -55,9 +54,13 @@ public class NetworkingUtil {
             client.disconnect(new MessageScreen(Text.translatable("skinshuffle.reconnect.rejoining")));
         } else {
             folderName = null;
-            if(!isRealms)
-                serverAddress = Objects.requireNonNull(client.getCurrentServerEntry()).address;
-            else {
+            if(client.getServer() != null) {
+                if(client.getServer().isRemote()) {
+                    serverAddress = client.getServer().getServerIp();
+                } else {
+                    serverAddress = null;
+                }
+            } else {
                 serverAddress = null;
             }
             client.world.disconnect();
@@ -74,8 +77,7 @@ public class NetworkingUtil {
                     throw new RuntimeException(e);
                 }
             });
-        } else if (isRealms) {
-            // No sodden clue how to reconnect to realms??
+        } else if (serverAddress == null) {
             client.setScreen(new RealmsMainScreen(new TitleScreen()));
         } else {
             client.executeTask(() -> {
