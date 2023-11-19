@@ -76,7 +76,7 @@ public record CursedRegistryEntry<T>(T value, RegistryKey<? extends Registry<T>>
 
     @Override
     public String toString() {
-        return "CursedRegistryEntry(THIS IS FROM SKIN SHUFFLE, SORRY IN ADVANCE FOR ANY ISSUES CAUSED){" + this.value + "}";
+        return "CursedRegistryEntry(THIS IS FROM SHOW ME YOUR SKIN, SORRY IN ADVANCE FOR ANY ISSUES CAUSED){" + this.value + "}";
     }
 
     @Override

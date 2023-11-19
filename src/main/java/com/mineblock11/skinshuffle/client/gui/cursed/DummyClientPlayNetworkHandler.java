@@ -23,8 +23,6 @@ package com.mineblock11.skinshuffle.client.gui.cursed;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.DisconnectedScreen;
-import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.network.ClientConnectionState;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ServerInfo;
@@ -34,16 +32,44 @@ import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkSide;
 import net.minecraft.registry.*;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.resource.featuretoggle.FeatureSet;
+import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.dimension.DimensionTypes;
 
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.Optional;
+import java.util.OptionalLong;
 import java.util.stream.Stream;
 
 public class DummyClientPlayNetworkHandler extends ClientPlayNetworkHandler {
-
+    public static final Registry<DimensionType> CURSED_DIMENSION_TYPE_REGISTRY = new SimpleRegistry<>(RegistryKeys.DIMENSION_TYPE, Lifecycle.stable());
+    static {
+        Registry.register(CURSED_DIMENSION_TYPE_REGISTRY, SkinShuffle.id("dummy"), new DimensionType(
+                OptionalLong.of(6000L),
+                true,
+                false,
+                false,
+                true,
+                1.0,
+                true,
+                false,
+                -64,
+                384,
+                384,
+                BlockTags.INFINIBURN_OVERWORLD,
+                DimensionTypes.OVERWORLD_ID,
+                0.0f,
+                new DimensionType.MonsterSettings(
+                        false,
+                        true,
+                        UniformIntProvider.create(0, 7),
+                        0
+                )
+        ));
+    }
 
     private static DummyClientPlayNetworkHandler instance;
 
@@ -59,7 +85,7 @@ public class DummyClientPlayNetworkHandler extends ClientPlayNetworkHandler {
         }
     };
 
-    private static final DynamicRegistryManager cursedRegistryManager = new DynamicRegistryManager.Immutable() {
+    private static final DynamicRegistryManager.Immutable cursedRegistryManager = new DynamicRegistryManager.Immutable() {
         private final CursedRegistry<DamageType> damageTypes = new CursedRegistry<>(RegistryKeys.DAMAGE_TYPE, SkinShuffle.id("fake_damage"),
                 new DamageType("", DamageScaling.NEVER, 0));
 
@@ -73,6 +99,8 @@ public class DummyClientPlayNetworkHandler extends ClientPlayNetworkHandler {
                 return Optional.of(damageTypes);
             } else if (RegistryKeys.BIOME.equals(key)) {
                 return Optional.of(cursedBiomeRegistry);
+            } else if (RegistryKeys.DIMENSION_TYPE.equals(key)) {
+                return Optional.of(CURSED_DIMENSION_TYPE_REGISTRY);
             }
 
             return Optional.empty();
@@ -90,18 +118,18 @@ public class DummyClientPlayNetworkHandler extends ClientPlayNetworkHandler {
                 new ClientConnection(NetworkSide.CLIENTBOUND),
                 new ClientConnectionState(
                         MinecraftClient.getInstance().getGameProfile(),
-                        MinecraftClient.getInstance().getTelemetryManager().createWorldSession(true, Duration.of(0, ChronoUnit.SECONDS), null),
+                        MinecraftClient.getInstance().getTelemetryManager().createWorldSession(true, Duration.ZERO, null),
                         cursedRegistryManager.toImmutable(),
                         FeatureSet.empty(),
-                        "vanilla",
+                        "",
                         new ServerInfo("", "", ServerInfo.ServerType.OTHER),
-                        new TitleScreen()
-                        )
+                        null
+                )
         );
     }
 
     @Override
     public DynamicRegistryManager.Immutable getRegistryManager() {
-        return cursedRegistryManager.toImmutable();
+        return cursedRegistryManager;
     }
 }

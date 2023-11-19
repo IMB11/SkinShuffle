@@ -28,6 +28,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.QuickPlay;
 import net.minecraft.client.gui.screen.MessageScreen;
 import net.minecraft.client.gui.screen.TitleScreen;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.realms.gui.screen.RealmsMainScreen;
 import net.minecraft.text.Text;
 import net.minecraft.util.WorldSavePath;
@@ -54,12 +55,8 @@ public class NetworkingUtil {
             client.disconnect(new MessageScreen(Text.translatable("skinshuffle.reconnect.rejoining")));
         } else {
             folderName = null;
-            if(client.getServer() != null) {
-                if(client.getServer().isRemote()) {
-                    serverAddress = client.getServer().getServerIp();
-                } else {
-                    serverAddress = null;
-                }
+            if(!client.getNetworkHandler().getConnection().isLocal()) {
+                serverAddress = client.getNetworkHandler().getServerInfo().address;
             } else {
                 serverAddress = null;
             }
@@ -77,8 +74,6 @@ public class NetworkingUtil {
                     throw new RuntimeException(e);
                 }
             });
-        } else if (serverAddress == null) {
-            client.setScreen(new RealmsMainScreen(new TitleScreen()));
         } else {
             client.executeTask(() -> {
                 try {

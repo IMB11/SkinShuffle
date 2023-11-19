@@ -227,13 +227,14 @@ public class SkinPresetManager {
 
             try {
                 if (preset.getSkin() instanceof UrlSkin urlSkin) {
-                    SkinAPIs.setSkinTexture(urlSkin.getUrl(), urlSkin.getModel());
+                    boolean successful = SkinAPIs.setSkinTexture(urlSkin.getUrl(), urlSkin.getModel());
+                    if(successful) setApiPreset(preset);
                 } else {
-                    SkinAPIs.setSkinTexture(configSkin.getFile().toFile(), configSkin.getModel());
+                    boolean successful =  SkinAPIs.setSkinTexture(configSkin.getFile().toFile(), configSkin.getModel());
+                    if(successful) setApiPreset(preset);
                 }
 
                 if (client.world != null && ClientSkinHandling.isInstalledOnServer()) {
-                    setApiPreset(preset);
                     new Thread(() -> {
                         client.executeTask(() -> {
                             try {

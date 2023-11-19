@@ -57,7 +57,7 @@ public class SkinAPIs {
      * @param skinURL The URL of the skin texture.
      * @param model The skin model type.
      */
-    public static void setSkinTexture(String skinURL, String model) {
+    public static boolean setSkinTexture(String skinURL, String model) {
         UserApiService service = ((MinecraftClientAccessor) MinecraftClient.getInstance()).getUserApiService();
 
         if (service instanceof YggdrasilUserApiService apiService) {
@@ -65,8 +65,10 @@ public class SkinAPIs {
                 com.mojang.authlib.minecraft.client.MinecraftClient client = ((YggdrasilUserApiServiceAccessor) apiService).getMinecraftClient();
                 String token = ((MinecraftClientAuthAccessor) client).getAccessToken();
 
+                String safeModel = model.equals("default") ? "classic" : "slim";
+
                 JsonObject obj = new JsonObject();
-                obj.addProperty("variant", model);
+                obj.addProperty("variant", safeModel);
                 obj.addProperty("url", skinURL);
                 var result = Unirest.post("https://api.minecraftservices.com/minecraft/profile/skins")
                         .body(GSON.toJson(obj))
@@ -74,15 +76,19 @@ public class SkinAPIs {
                         .header("Authorization", "Bearer " + token).asString().getBody();
                 SkinShuffle.LOGGER.info("Set player skin: " + skinURL);
             } catch (Exception e) {
-                throw new RuntimeException("Cannot connect to Mojang API.", e);
+                SkinShuffle.LOGGER.error("Cannot connect to Mojang API.", e);
+                return false;
             }
         } else {
-            throw new RuntimeException("Cannot connect to Mojang API - offline mode is active.");
+            SkinShuffle.LOGGER.error("Cannot connect to Mojang API - offline mode is active.");
+            return false;
         }
 
         if(MinecraftClient.getInstance().world != null) {
             ClientPlayNetworking.send(SkinShuffle.id("preset_changed"), PacketByteBufs.empty());
         }
+
+        return true;
     }
 
     /**
@@ -172,7 +178,10 @@ public class SkinAPIs {
             }
 
             var idString = object.get("id").getAsString();
-            return Optional.of(UUID.fromString(idString));
+
+            return Optional.of(UUID.fromString(idString.replaceFirst(
+                    "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5"
+            )));
         } catch (Exception e) {
             SkinShuffle.LOGGER.error(e.getMessage());
             return Optional.empty();
@@ -184,18 +193,17 @@ public class SkinAPIs {
      * @param skinFile The file to upload.
      * @param model The type of skin model.
      */
-    public static void setSkinTexture(File skinFile, String model) {
+    public static boolean setSkinTexture(File skinFile, String model) {
         UserApiService service = ((MinecraftClientAccessor) MinecraftClient.getInstance()).getUserApiService();
 
         try {
             var cachedURL = SkinCacheRegistry.getCachedUploadedSkin(skinFile);
             if (cachedURL != null) {
-                setSkinTexture(cachedURL, model);
-                return;
+                return setSkinTexture(cachedURL, model);
             }
         } catch (IOException e) {
             SkinShuffle.LOGGER.error("Failed to hash file.");
-            return;
+            return false;
         }
 
         if (NetworkingUtil.isLoggedIn()) {
@@ -222,11 +230,14 @@ public class SkinAPIs {
 
                 SkinShuffle.LOGGER.info("Uploaded texture: " + skinURL);
                 SkinShuffle.LOGGER.info("Set player skin: " + skinURL);
+                return true;
             } catch (Exception e) {
                 SkinShuffle.LOGGER.error(e.getMessage());
+                return false;
             }
         } else {
             SkinShuffle.LOGGER.error("Cannot connect to Mojang API.");
+            return false;
         }
     }
 }
