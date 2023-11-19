@@ -65,14 +65,16 @@ public class SkinAPIs {
                 com.mojang.authlib.minecraft.client.MinecraftClient client = ((YggdrasilUserApiServiceAccessor) apiService).getMinecraftClient();
                 String token = ((MinecraftClientAuthAccessor) client).getAccessToken();
 
+                String safeModel = model.equals("default") ? "classic" : "slim";
+
                 JsonObject obj = new JsonObject();
-                obj.addProperty("variant", model);
+                obj.addProperty("variant", safeModel);
                 obj.addProperty("url", skinURL);
                 var result = Unirest.post("https://api.minecraftservices.com/minecraft/profile/skins")
                         .body(GSON.toJson(obj))
                         .contentType("application/json")
                         .header("Authorization", "Bearer " + token).asString().getBody();
-                SkinShuffle.LOGGER.info("Set player skin: " + skinURL);
+                SkinShuffle.LOGGER.info("Set player skin: " + result);
             } catch (Exception e) {
                 throw new RuntimeException("Cannot connect to Mojang API.", e);
             }
