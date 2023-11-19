@@ -172,7 +172,10 @@ public class SkinAPIs {
             }
 
             var idString = object.get("id").getAsString();
-            return Optional.of(UUID.fromString(idString));
+
+            return Optional.of(UUID.fromString(idString.replaceFirst(
+                    "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5"
+            )));
         } catch (Exception e) {
             SkinShuffle.LOGGER.error(e.getMessage());
             return Optional.empty();
