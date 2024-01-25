@@ -64,7 +64,7 @@ public class OpenCarouselButton extends ButtonWidget {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
 
-        if (this.entity != null) {
+        if (this.entity != null && selectedPreset != null) {
             // Don't want to render the entity if the skin is still loading
             if (!selectedPreset.getSkin().isLoading()) {
                 float followX = (float) (this.getX() + (this.getWidth() / 2)) - mouseX;

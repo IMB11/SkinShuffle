@@ -129,10 +129,15 @@ public class SkinPresetManager {
         }
     }
 
+    private static boolean LOADING_LOCK = false;
+
     /**
      * Load presets from the presets.json file.
      */
     public static void loadPresets() {
+        if(LOADING_LOCK) return;
+        LOADING_LOCK = true;
+
         if (!PRESETS.toFile().exists()) {
             // Generate a preset from the currently equipped skin when generating the presets file
             if (chosenPreset == null) {
@@ -169,6 +174,8 @@ public class SkinPresetManager {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        LOADING_LOCK = false;
     }
 
     /**
@@ -260,5 +267,7 @@ public class SkinPresetManager {
         } catch (Exception ignored) {
             SkinShuffle.LOGGER.info("Skipping skin preset application due to skin not being fully loaded. If this is first startup, please ignore this message.");
         }
+
+        SkinPresetManager.savePresets();
     }
 }

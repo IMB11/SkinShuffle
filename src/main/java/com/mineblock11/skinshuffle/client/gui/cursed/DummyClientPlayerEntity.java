@@ -63,7 +63,7 @@ public class DummyClientPlayerEntity extends ClientPlayerEntity {
     public SkinTextures getSkinTextures() {
         @Nullable Identifier presetTexture = skinPreset.getSkin().getTexture();
         if(presetTexture != null) {
-            return new SkinTextures(presetTexture, null, null, null, SkinTextures.Model.fromName(skinPreset.getSkin().getModel()), true);
+            return new SkinTextures(presetTexture, null, null, null, SkinTextures.Model.fromName(skinPreset.getSkin().getModel()), false);
         }
         return DefaultSkinHelper.getSkinTextures(getUuid());
     }

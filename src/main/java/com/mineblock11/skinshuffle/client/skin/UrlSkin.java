@@ -37,6 +37,8 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.mineblock11.skinshuffle.util.LegacySkinConverter.handleLegacyChecks;
+
 public class UrlSkin extends BackedSkin {
     public static final Int2ObjectMap<String> MODEL_CACHE = new Int2ObjectOpenHashMap<>();
 
@@ -100,6 +102,8 @@ public class UrlSkin extends BackedSkin {
             var bytes = Unirest.get(this.url).asBytes().getBody();
 
             Files.write(configSkin.getFile(), bytes);
+
+            handleLegacyChecks(configSkin.getFile());
 
             return configSkin;
         } catch (Exception e) {

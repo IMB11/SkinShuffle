@@ -60,7 +60,7 @@ public abstract class PlayerEntityMixin extends PlayerEntity {
         if(MinecraftClient.getInstance().world != null) {
             if(this.getUuid().equals(MinecraftClient.getInstance().player.getUuid()) && (!NetworkingUtil.isLoggedIn() || SkinShuffleConfig.get().disableAPIUpload)) {
                 SkinPreset currentPreset = SkinPresetManager.getChosenPreset();
-                cir.setReturnValue(new SkinTextures(currentPreset.getSkin().getTexture(), null, null, null, SkinTextures.Model.fromName(currentPreset.getSkin().getModel()), true));
+                cir.setReturnValue(new SkinTextures(currentPreset.getSkin().getTexture(), null, null, null, SkinTextures.Model.fromName(currentPreset.getSkin().getModel()), false));
             }
         }
     }

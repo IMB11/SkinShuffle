@@ -45,6 +45,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -183,7 +184,7 @@ public class SkinAPIs {
                     "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5"
             )));
         } catch (Exception e) {
-            SkinShuffle.LOGGER.error(e.getMessage());
+            SkinShuffle.LOGGER.error(e.toString());
             return Optional.empty();
         }
     }
@@ -195,6 +196,10 @@ public class SkinAPIs {
      */
     public static boolean setSkinTexture(File skinFile, String model) {
         UserApiService service = ((MinecraftClientAccessor) MinecraftClient.getInstance()).getUserApiService();
+
+        if (model.equals("default")) {
+            model = "classic";
+        }
 
         try {
             var cachedURL = SkinCacheRegistry.getCachedUploadedSkin(skinFile);
@@ -217,6 +222,7 @@ public class SkinAPIs {
                         .field("file", skinFile)
                         .asString();
                 JsonObject responseObject = GSON.fromJson(response.getBody(), JsonObject.class);
+
                 String skinURL = responseObject
                         .get("skins").getAsJsonArray()
                         .get(0).getAsJsonObject()
@@ -232,7 +238,7 @@ public class SkinAPIs {
                 SkinShuffle.LOGGER.info("Set player skin: " + skinURL);
                 return true;
             } catch (Exception e) {
-                SkinShuffle.LOGGER.error(e.getMessage());
+                SkinShuffle.LOGGER.error(e.toString());
                 return false;
             }
         } else {

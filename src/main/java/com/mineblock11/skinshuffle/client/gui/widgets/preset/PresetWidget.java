@@ -111,10 +111,12 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
     protected void renderBackground(DrawContext graphics, int mouseX, int mouseY, float delta) {
         int borderColour = this.active ? 0xDF000000 : 0x5F000000;
 
-        if (SkinPresetManager.getChosenPreset() == this.skinPreset) {
+        if (SkinPresetManager.getChosenPreset().equals(this.skinPreset)) {
             borderColour = this.active ? 0xDF0096FF : 0x5F0096FF;
-        } else if (SkinPresetManager.getApiPreset() == this.skinPreset) {
-            borderColour = this.active ? 0xDFFF3600 : 0x5FFF3600;
+        } else if (SkinPresetManager.getApiPreset() != null) {
+            if (SkinPresetManager.getApiPreset().equals(this.skinPreset)) {
+                borderColour = this.active ? 0xDF00FF00 : 0x5F00FF00;
+            }
         }
 
         graphics.drawBorder(getX(), getY(), getWidth(), getHeight(), borderColour);

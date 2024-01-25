@@ -31,6 +31,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.Objects;
 
+import static com.mineblock11.skinshuffle.util.LegacySkinConverter.handleLegacyChecks;
+
 public final class ResourceSkin implements Skin {
     public static final Identifier SERIALIZATION_ID = SkinShuffle.id("resource");
     public static final Codec<ResourceSkin> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -83,6 +85,8 @@ public final class ResourceSkin implements Skin {
         } catch (IOException e) {
             throw new RuntimeException("Failed to save ResourceSkin to config.", e);
         }
+
+        handleLegacyChecks(configSkin.getFile());
 
         return configSkin;
     }
