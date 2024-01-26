@@ -21,17 +21,15 @@
 package com.mineblock11.skinshuffle.client.skin;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
+import com.mineblock11.skinshuffle.util.LegacySkinConverter;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-
-import static com.mineblock11.skinshuffle.util.LegacySkinConverter.handleLegacyChecks;
 
 public abstract class FileBackedSkin extends BackedSkin {
     @Nullable
@@ -45,7 +43,8 @@ public abstract class FileBackedSkin extends BackedSkin {
     @Override
     protected @Nullable AbstractTexture loadTexture(Runnable completionCallback) {
         try (var inputStream = Files.newInputStream(getFile())) {
-            var image = NativeImage.read(inputStream);
+            var image = LegacySkinConverter.processTexture(NativeImage.read(NativeImage.Format.RGBA, inputStream));
+
             var texture = new NativeImageBackedTexture(image);
 
             completionCallback.run();
@@ -81,8 +80,6 @@ public abstract class FileBackedSkin extends BackedSkin {
         try {
             var textureName = String.valueOf(Math.abs(getTextureUniqueness().hashCode()));
             var configSkin = new ConfigSkin(textureName, getModel());
-
-            handleLegacyChecks(configSkin.getFile());
 
             Files.copy(getFile(), configSkin.getFile(), StandardCopyOption.REPLACE_EXISTING);
 

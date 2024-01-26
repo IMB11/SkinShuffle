@@ -47,6 +47,10 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
     protected LivingEntity entity;
     protected double scaleFactor;
 
+    public void refreshEntity() {
+//        this.entity = new DummyClientPlayerEntity(this.skinPreset);
+    }
+
     public PresetWidget(S parent, SkinPreset skinPreset) {
         super(Position.of(0, 0), parent.getCardWidth(), parent.getCardHeight(), parent);
 
@@ -60,7 +64,7 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
             this.editButton = new VariableSpruceButtonWidget(
                     Position.of(0, 0), 0, 0,
                     Text.translatable("skinshuffle.carousel.preset_widget.edit"),
-                    button -> client.setScreen(new PresetEditScreen(this.parent, this.skinPreset))
+                    button -> client.setScreen(new PresetEditScreen(this, this.parent, this.skinPreset))
             );
 
             this.copyButton = new VariableSpruceButtonWidget(

@@ -24,6 +24,7 @@ import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.networking.ClientSkinHandling;
 import net.fabricmc.api.ClientModInitializer;
+import net.minecraft.client.render.entity.PlayerEntityRenderer;
 
 public class SkinShuffleClient implements ClientModInitializer {
     @Override

@@ -26,6 +26,7 @@ import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
 import com.mineblock11.skinshuffle.client.gui.widgets.IconButtonWidget;
+import com.mineblock11.skinshuffle.client.gui.widgets.preset.PresetWidget;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mineblock11.skinshuffle.client.skin.*;
 import com.mineblock11.skinshuffle.util.ToastHelper;
@@ -60,6 +61,7 @@ public class PresetEditScreen extends SpruceScreen {
     private final UrlValidator urlValidator = new UrlValidator(new String[]{"http", "https"});
     private final SkinPreset originalPreset;
     private final SkinPreset preset;
+    private final PresetWidget<?> presetWidget;
     private TabNavigationWidget tabNavigation;
     private SkinSourceTab skinSourceTab;
     private SkinCustomizationTab skinCustomizationTab;
@@ -68,8 +70,9 @@ public class PresetEditScreen extends SpruceScreen {
     private ButtonWidget exitButton;
     private int sideMargins;
 
-    public PresetEditScreen(CarouselScreen parent, SkinPreset preset) {
+    public PresetEditScreen(PresetWidget<?> presetWidget, CarouselScreen parent, SkinPreset preset) {
         super(Text.translatable("skinshuffle.edit.title"));
+        this.presetWidget = presetWidget;
         this.preset = preset.copy();
         this.originalPreset = preset;
         this.parent = parent;
@@ -255,6 +258,8 @@ public class PresetEditScreen extends SpruceScreen {
 
     @Override
     public void close() {
+        this.presetWidget.refreshEntity();
+
         this.client.setScreen(parent);
     }
 

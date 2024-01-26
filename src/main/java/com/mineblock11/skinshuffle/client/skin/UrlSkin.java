@@ -37,8 +37,6 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.mineblock11.skinshuffle.util.LegacySkinConverter.handleLegacyChecks;
-
 public class UrlSkin extends BackedSkin {
     public static final Int2ObjectMap<String> MODEL_CACHE = new Int2ObjectOpenHashMap<>();
 
@@ -103,8 +101,6 @@ public class UrlSkin extends BackedSkin {
 
             Files.write(configSkin.getFile(), bytes);
 
-            handleLegacyChecks(configSkin.getFile());
-
             return configSkin;
         } catch (Exception e) {
             throw new RuntimeException("Failed to save skin to config", e);
@@ -120,11 +116,6 @@ public class UrlSkin extends BackedSkin {
             }
 
             Path temporaryFilePath = cacheFolder.resolve(Math.abs(url.hashCode()) + ".png");
-
-            // Downloading the file this way corrupts it, and is not needed, as PlayerSkinTexture will download it for us
-//            var bytes = Unirest.get(this.url).asBytes().getBody();
-
-//            Files.write(temporaryFilePath, bytes);
 
             return new PlayerSkinTexture(temporaryFilePath.toFile(), url, new Identifier("minecraft:textures/entity/player/wide/steve.png"), true, () -> {
                 completionCallback.run();
