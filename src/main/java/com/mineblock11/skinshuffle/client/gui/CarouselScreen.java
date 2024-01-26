@@ -31,6 +31,7 @@ import com.mineblock11.skinshuffle.client.gui.widgets.preset.PresetWidget;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mineblock11.skinshuffle.client.skin.Skin;
 import com.mineblock11.skinshuffle.networking.ClientSkinHandling;
+import com.mineblock11.skinshuffle.util.NetworkingUtil;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.Tooltip;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
@@ -157,14 +158,18 @@ public abstract class CarouselScreen extends SpruceScreen {
             SkinPresetManager.setChosenPreset(presetWidget.getPreset(), this.hasEditedPreset);
             SkinPresetManager.savePresets();
 
-            if(this.client.world != null && !ClientSkinHandling.isInstalledOnServer()) {
-                this.client.setScreen(GeneratedScreens.getReconnectScreen(this.parent));
-            } else {
-                this.close();
-            }
+            this.handleCloseBehaviour();
         }));
 
         refreshPresetState();
+    }
+
+    public void handleCloseBehaviour() {
+        if(this.client.world != null && !ClientSkinHandling.isInstalledOnServer()) {
+            this.client.setScreen(GeneratedScreens.getReconnectScreen(this.parent));
+        } else {
+            this.close();
+        }
     }
 
     @Override

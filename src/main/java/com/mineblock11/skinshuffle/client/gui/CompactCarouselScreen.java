@@ -52,7 +52,7 @@ public class CompactCarouselScreen extends CarouselScreen {
                 (btn) -> setEditMode(!isEditMode()), (btn) -> SkinShuffle.id("textures/gui/shuffle-mode-" + (isEditMode() ? "on" : "off") + ".png")));
 
         this.addDrawableChild(new SpruceButtonWidget(Position.of(this.width / 2 - 64, this.height - 23), 128, 20, ScreenTexts.DONE, button -> {
-            this.close();
+            this.handleCloseBehaviour();
         }));
 
         this.cancelButton.setVisible(false);
