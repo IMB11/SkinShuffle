@@ -27,7 +27,7 @@ skinshuffle:
     refused_reconnect:
       title: "Skin is not visible to others."
       message: |-
-        You will have to reconnect for your skin to be visible to you and other players.
+        You will have to reconnect for your skin to be visible to other players.
         §7§oYou can disable this toast in the config.
     offline:
       title: "SkinShuffle cannot apply your skin."

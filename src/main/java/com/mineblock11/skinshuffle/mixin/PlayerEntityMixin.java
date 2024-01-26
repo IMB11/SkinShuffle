@@ -23,6 +23,7 @@ package com.mineblock11.skinshuffle.mixin;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
+import com.mineblock11.skinshuffle.networking.ClientSkinHandling;
 import com.mineblock11.skinshuffle.util.NetworkingUtil;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.MinecraftClient;
@@ -58,7 +59,7 @@ public abstract class PlayerEntityMixin extends PlayerEntity {
     @Inject(method = "getSkinTextures", at = @At("HEAD"), cancellable = true)
     private void modifySkinModel(CallbackInfoReturnable<SkinTextures> cir) {
         if(MinecraftClient.getInstance().world != null) {
-            if(this.getUuid().equals(MinecraftClient.getInstance().player.getUuid()) && (!NetworkingUtil.isLoggedIn() || SkinShuffleConfig.get().disableAPIUpload)) {
+            if(this.getUuid().equals(MinecraftClient.getInstance().player.getUuid()) && (!NetworkingUtil.isLoggedIn() || SkinShuffleConfig.get().disableAPIUpload || ClientSkinHandling.isReconnectRequired())) {
                 SkinPreset currentPreset = SkinPresetManager.getChosenPreset();
                 cir.setReturnValue(new SkinTextures(currentPreset.getSkin().getTexture(), null, null, null, SkinTextures.Model.fromName(currentPreset.getSkin().getModel()), false));
             }
