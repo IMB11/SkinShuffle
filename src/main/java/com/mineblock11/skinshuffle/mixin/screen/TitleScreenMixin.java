@@ -69,7 +69,7 @@ public class TitleScreenMixin extends Screen {
     public void close() {
         if (this.openCarouselWidgets != null) {
             for (ClickableWidget openCarouselWidget : this.openCarouselWidgets) {
-                if(openCarouselWidget instanceof  OpenCarouselButton button) {
+                if(openCarouselWidget instanceof OpenCarouselButton button) {
                     button.disposed();
                 }
             }

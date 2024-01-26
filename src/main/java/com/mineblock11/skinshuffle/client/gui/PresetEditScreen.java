@@ -319,7 +319,7 @@ public class PresetEditScreen extends SpruceScreen {
 
             this.textFieldWidget.setChangedListener(str -> updateValidity());
 
-            skinModelButton = new CyclingButtonWidget.Builder<>(Text::of)
+            skinModelButton = new CyclingButtonWidget.Builder<String>(Text::of)
                     .values("default", "slim")
                     .build(0, 0, 192, 20, Text.translatable("skinshuffle.edit.source.skin_model"));
 

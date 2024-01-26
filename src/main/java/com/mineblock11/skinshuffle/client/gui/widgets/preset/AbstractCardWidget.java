@@ -23,6 +23,7 @@ package com.mineblock11.skinshuffle.client.gui.widgets.preset;
 import com.mineblock11.skinshuffle.client.gui.CarouselScreen;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.util.math.MathHelper;
 
@@ -98,6 +99,13 @@ public abstract class AbstractCardWidget<S extends CarouselScreen> extends Spruc
     public void setDragStart(double x, double y) {
         this.dragStartX = x;
         this.dragStartY = y;
+    }
+
+    @Override
+    protected void renderWidget(DrawContext graphics, int mouseX, int mouseY, float delta) {
+        this.renderBackground(graphics, mouseX, mouseY, delta);
+
+        super.renderWidget(graphics, mouseX, mouseY, delta);
     }
 
     @Override
