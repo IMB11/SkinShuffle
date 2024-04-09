@@ -166,6 +166,10 @@ public class PresetEditScreen extends SpruceScreen {
                     return urlValidator.isValid(widget.getText());
                 }
                 case FILE -> {
+                    String txt = widget.getText();
+                    if (txt.substring(0, 1).equals("\"") && txt.substring(txt.length() - 1, txt.length()).equals("\"")) {
+                        widget.setText(txt.substring(0, txt.length - 1);
+                    }
                     return isValidFilePath(widget.getText());
                 }
                 case RESOURCE_LOCATION -> {
