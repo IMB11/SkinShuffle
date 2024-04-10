@@ -166,6 +166,15 @@ public class PresetEditScreen extends SpruceScreen {
                     return urlValidator.isValid(widget.getText());
                 }
                 case FILE -> {
+                    String txt = widget.getText();
+                    if (txt.indexOf(":") == txt.length() - 1) {
+                        return false;
+                    }
+                    if (txt.length() > 1) {
+                        if (txt.substring(0, 1).equals("\"") && txt.substring(txt.length() - 1, txt.length()).equals("\"")) {
+                            widget.setText(txt.substring(1, txt.length() - 1));
+                        }
+                    }
                     return isValidFilePath(widget.getText());
                 }
                 case RESOURCE_LOCATION -> {
@@ -319,7 +328,7 @@ public class PresetEditScreen extends SpruceScreen {
 
             this.textFieldWidget.setChangedListener(str -> updateValidity());
 
-            skinModelButton = new CyclingButtonWidget.Builder<>(Text::of)
+            skinModelButton = new CyclingButtonWidget.Builder<String>(Text::of)
                     .values("default", "slim")
                     .build(0, 0, 192, 20, Text.translatable("skinshuffle.edit.source.skin_model"));
 
