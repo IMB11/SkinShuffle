@@ -31,8 +31,11 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
 
 public class ServerSkinHandling {
+    private static final Identifier REFRESH_PLAYER_LIST_ENTRY_ID = SkinShuffle.id("refresh_player_list_entry");
+
     private static void handleSkinRefresh(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
         Property skinData = buf.readProperty();
         SkinShuffle.LOGGER.info("Recieved skin refresh packet from: " + player.getName().getString());
@@ -53,6 +56,18 @@ public class ServerSkinHandling {
             SkinShufflePlayer skinShufflePlayer = (SkinShufflePlayer) player;
             skinShufflePlayer.skinShuffle$refreshSkin();
         });
+    }
+
+    public static PacketByteBuf createEntityIdPacket(int entityId) {
+        return PacketByteBufs.create().writeVarInt(entityId);
+    }
+
+    public static boolean trySendRefreshPlayerListEntry(ServerPlayerEntity player, PacketByteBuf buf) {
+        if (ServerPlayNetworking.canSend(player, REFRESH_PLAYER_LIST_ENTRY_ID)) {
+            ServerPlayNetworking.send(player, REFRESH_PLAYER_LIST_ENTRY_ID, buf);
+            return true;
+        }
+        return false;
     }
 
     public static void init() {

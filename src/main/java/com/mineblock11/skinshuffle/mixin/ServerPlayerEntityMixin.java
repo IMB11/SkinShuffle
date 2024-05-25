@@ -20,6 +20,7 @@
 
 package com.mineblock11.skinshuffle.mixin;
 
+import com.mineblock11.skinshuffle.networking.ServerSkinHandling;
 import com.mineblock11.skinshuffle.util.SkinShufflePlayer;
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
@@ -27,6 +28,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.*;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -87,59 +89,67 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
         ThreadedAnvilChunkStorage storage = manager.threadedAnvilChunkStorage;
         ThreadedAnvilChunkStorage.EntityTracker trackerEntry = storage.entityTrackers.get(this.getId());
 
+        PacketByteBuf refreshPlayerListEntryPacket = ServerSkinHandling.createEntityIdPacket(getId());
+
         // Refreshing skin in world for all that see the player
-        trackerEntry.listeners.forEach(tracking -> trackerEntry.entry.startTracking(tracking.getPlayer()));
-
-        // need to change the player entity on the client
-        ServerWorld level = this.getServerWorld();
-        this.networkHandler.sendPacket(new PlayerRespawnS2CPacket(
-                new CommonPlayerSpawnInfo(
-                        level.getDimensionKey(),
-                        level.getRegistryKey(),
-                        BiomeAccess.hashSeed(level.getSeed()),
-                        this.interactionManager.getGameMode(),
-                        this.interactionManager.getPreviousGameMode(),
-                        level.isDebugWorld(),
-                        level.isFlat(),
-                        this.getLastDeathPos(),
-                this.getPortalCooldown()), (byte) 3
-        ));
-
-        this.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(this.getX(), this.getY(), this.getZ(), this.getYaw(), this.getPitch(), Collections.emptySet(), 0));
-        this.networkHandler.sendPacket(new UpdateSelectedSlotS2CPacket(this.getInventory().selectedSlot));
-
-        this.networkHandler.sendPacket(new DifficultyS2CPacket(level.getDifficulty(), level.getLevelProperties().isDifficultyLocked()));
-        this.networkHandler.sendPacket(new ExperienceBarUpdateS2CPacket(this.experienceProgress, this.totalExperience, this.experienceLevel));
-        playerManager.sendWorldInfo((ServerPlayerEntity)(Object) this, level);
-        playerManager.sendCommandTree((ServerPlayerEntity)(Object) this);
-
-        this.networkHandler.sendPacket(new HealthUpdateS2CPacket(this.getHealth(), this.getHungerManager().getFoodLevel(), this.getHungerManager().getSaturationLevel()));
-
-        for (StatusEffectInstance statusEffect : this.getStatusEffects()) {
-            this.networkHandler.sendPacket(new EntityStatusEffectS2CPacket(this.getId(), statusEffect));
-        }
-
-        var equipmentList = new ArrayList<Pair<EquipmentSlot, ItemStack>>();
-        for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
-            ItemStack itemStack = this.getEquippedStack(equipmentSlot);
-            if (!itemStack.isEmpty()) {
-                equipmentList.add(new Pair<>(equipmentSlot, itemStack.copy()));
+        trackerEntry.listeners.forEach(tracking -> {
+            if (!ServerSkinHandling.trySendRefreshPlayerListEntry(tracking.getPlayer(), refreshPlayerListEntryPacket)) {
+                trackerEntry.entry.startTracking(tracking.getPlayer());
             }
-        }
+        });
 
-        if (!equipmentList.isEmpty()) {
-            this.networkHandler.sendPacket(new EntityEquipmentUpdateS2CPacket(this.getId(), equipmentList));
-        }
+        if (!ServerSkinHandling.trySendRefreshPlayerListEntry((ServerPlayerEntity) (Object) this, refreshPlayerListEntryPacket)) {
+            // If we could not send refresh packet, we change the player entity on the client
+            ServerWorld level = this.getServerWorld();
+            this.networkHandler.sendPacket(new PlayerRespawnS2CPacket(
+                    new CommonPlayerSpawnInfo(
+                            level.getDimensionKey(),
+                            level.getRegistryKey(),
+                            BiomeAccess.hashSeed(level.getSeed()),
+                            this.interactionManager.getGameMode(),
+                            this.interactionManager.getPreviousGameMode(),
+                            level.isDebugWorld(),
+                            level.isFlat(),
+                            this.getLastDeathPos(),
+                            this.getPortalCooldown()), (byte) 3
+            ));
+
+            this.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(this.getX(), this.getY(), this.getZ(), this.getYaw(), this.getPitch(), Collections.emptySet(), 0));
+            this.networkHandler.sendPacket(new UpdateSelectedSlotS2CPacket(this.getInventory().selectedSlot));
+
+            this.networkHandler.sendPacket(new DifficultyS2CPacket(level.getDifficulty(), level.getLevelProperties().isDifficultyLocked()));
+            this.networkHandler.sendPacket(new ExperienceBarUpdateS2CPacket(this.experienceProgress, this.totalExperience, this.experienceLevel));
+            playerManager.sendWorldInfo((ServerPlayerEntity) (Object) this, level);
+            playerManager.sendCommandTree((ServerPlayerEntity) (Object) this);
+
+            this.networkHandler.sendPacket(new HealthUpdateS2CPacket(this.getHealth(), this.getHungerManager().getFoodLevel(), this.getHungerManager().getSaturationLevel()));
+
+            for (StatusEffectInstance statusEffect : this.getStatusEffects()) {
+                this.networkHandler.sendPacket(new EntityStatusEffectS2CPacket(this.getId(), statusEffect));
+            }
+
+            var equipmentList = new ArrayList<Pair<EquipmentSlot, ItemStack>>();
+            for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
+                ItemStack itemStack = this.getEquippedStack(equipmentSlot);
+                if (!itemStack.isEmpty()) {
+                    equipmentList.add(new Pair<>(equipmentSlot, itemStack.copy()));
+                }
+            }
+
+            if (!equipmentList.isEmpty()) {
+                this.networkHandler.sendPacket(new EntityEquipmentUpdateS2CPacket(this.getId(), equipmentList));
+            }
 
 
-        if (!this.getPassengerList().isEmpty()) {
-            this.networkHandler.sendPacket(new EntityPassengersSetS2CPacket(this));
-        }
-        if (this.hasVehicle()) {
-            this.networkHandler.sendPacket(new EntityPassengersSetS2CPacket(this.getVehicle()));
-        }
+            if (!this.getPassengerList().isEmpty()) {
+                this.networkHandler.sendPacket(new EntityPassengersSetS2CPacket(this));
+            }
+            if (this.hasVehicle()) {
+                this.networkHandler.sendPacket(new EntityPassengersSetS2CPacket(this.getVehicle()));
+            }
 
-        this.sendAbilitiesUpdate();
-        playerManager.sendPlayerStatus((ServerPlayerEntity)(Object) this);
+            this.sendAbilitiesUpdate();
+            playerManager.sendPlayerStatus((ServerPlayerEntity) (Object) this);
+        }
     }
 }

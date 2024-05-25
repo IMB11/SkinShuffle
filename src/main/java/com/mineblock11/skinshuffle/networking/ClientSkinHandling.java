@@ -23,9 +23,13 @@ package com.mineblock11.skinshuffle.networking;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.api.SkinQueryResult;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
+import com.mineblock11.skinshuffle.util.SkinShuffleClientPlayer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketByteBuf;
 
 public class ClientSkinHandling {
@@ -70,6 +74,19 @@ public class ClientSkinHandling {
 
         ClientPlayNetworking.registerGlobalReceiver(SkinShuffle.id("handshake"), (client1, handler1, buf, responseSender) -> {
             handshakeTakenPlace = true;
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(SkinShuffle.id("refresh_player_list_entry"), (client, handler, buf, responseSender) -> {
+            int id = buf.readVarInt();
+            client.execute(() -> {
+                ClientWorld world = client.world;
+                if (world != null) {
+                    Entity entity = world.getEntityById(id);
+                    if (entity instanceof AbstractClientPlayerEntity player) {
+                        ((SkinShuffleClientPlayer) player).skinShuffle$refreshPlayerListEntry();
+                    }
+                }
+            });
         });
     }
 }
