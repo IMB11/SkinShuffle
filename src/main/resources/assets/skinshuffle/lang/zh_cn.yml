@@ -1,0 +1,168 @@
+skinshuffle:
+  indicator: "警告指示器"
+  cape_provider:
+    none: "无"
+    default: "自动"
+    minecraft: "Mojang"
+    optifine: "OptiFine"
+    minecraftcapes: "MinecraftCapes"
+  reconnect:
+    warning: "你需要 %s 以允许包括自身的玩家看见你的皮肤。"
+    reconnecting: 重新连接中...
+    rejoining: 重新加入中...
+    rejoin: 重新加入
+    c_rejoin: 重新加入
+    reconnect_to: 重新连接至
+    reconnect: 重新连接
+    c_reconnect: 重新连接
+    world: 世界
+    server: 服务器
+    realm: Realm
+    title: "建议 %s"
+    message: |-
+      如果你想要你的皮肤对他人可见，你需要 %s 当前的 %s。
+      
+      是否 %s？
+  toasts:
+    refused_reconnect:
+      title: "皮肤对他人不可见。"
+      message: |-
+        你必须重新连接才能使其他人看到你的皮肤。
+        §7§o你可以在配置里关闭该弹窗。
+    offline:
+      title: "SkinShuffle无法应用你的皮肤。"
+      message: |-
+        你没有登陆，皮肤仅对自己可见。
+        §7§o你可以在配置里关闭该弹窗。
+    editor_failure:
+      title: "编辑器发生错误。"
+      message: "请检查日志以获取更多信息。"
+  config:
+    title: "SkinShuffle"
+    popups:
+      title: "弹窗设置"
+      description: "有关在游戏内某些情况下通知或弹窗弹出的设置。"
+      reconnect:
+        name: "禁用皮肤可见性弹窗"
+        description: "禁用在你更换皮肤后没有重连时弹窗的弹出。\n\n该提示仅显示在未安装本模组的服务器上。"
+    general:
+      title: "总选项"
+      description: "更改或切换功能的总选项。"
+
+      behaviour.title: "行为"
+      display.title: "显示"
+      disable_api:
+        name: "禁用 Mojang API 上传"
+        description: |-
+          SkinShuffle 是否不将皮肤上传至 Mojang API？
+
+          如果启用，意味着你的皮肤将对你自己或他人不可见。
+      display_title_screen:
+        name: "主菜单显示控件"
+        description: "是否在主菜单显示当前所选皮肤预设与皮肤预设按钮？"
+      display_pause_screen:
+        name: "暂停菜单显示控件"
+        description: "是否在主菜单显示当前所选皮肤预设与皮肤预设按钮？"
+      carousel_scroll_sensitivity:
+        name: "纸娃娃滚动灵敏度"
+        description: "纸娃娃被滚动时的灵敏度？"
+      invert_carousel_scroll:
+        name: "反转纸娃娃滚动方向"
+        description: "是否反转纸娃娃被滚动时的方向?"
+    rendering:
+      title: "渲染选项"
+      description: "有关皮肤预设在主菜单、暂停菜单、纸娃娃和编辑界面如何渲染的配置。"
+      rotation: "旋转"
+      cursor: "光标"
+      render_player_capes:
+        name: "渲染玩家披风"
+        description: "SkinShuffle 是否要渲染来自 Mojang、Optifine 和 Minecraft Capes 的披风？"
+      rendering_style: |-
+        §l旋转§r 以由“旋转倍速”所决定的固定速度旋转。
+        §l光标§r 使被渲染的玩家始终看向玩家光标，类似于物品栏内。
+      carousel_rendering_style:
+        name: "纸娃娃渲染样式"
+        description: "如何渲染在纸娃娃页面内的当前所选皮肤预设？\n"
+      preset_edit_screen_rendering_style:
+        name: "预览渲染样式"
+        description: "如何渲染在预设编辑页面的当前预览？\n"
+      widget_rendering_style:
+        name: "控件渲染样式"
+        description: "如何渲染在主菜单或暂停菜单的控件？\n"
+      rotation_speed:
+        name: "旋转倍速"
+        description: "如果皮肤旋转开启它将被运用多少的旋转倍速？"
+  button: "皮肤预设"
+  carousel:
+    title: "皮肤预设"
+
+    config_button.tooltip: "打开配置。"
+    view_type_button.large.tooltip: "宽松视图。"
+    view_type_button.compact.tooltip: "紧凑视图。"
+    shuffle_button.tooltip.enable: "启用切换。"
+    shuffle_button.tooltip.disable: "禁用禁用切换。"
+
+    default_tooltip: "§4你不能修改或复制默认预设。"
+
+    create: "新建"
+    new: "新建预设"
+    save_button: "选择预设"
+
+    # These are used for narrations.
+    left: "纸娃娃向左移动"
+    right: "纸娃娃向右移动"
+
+    confirmations:
+      delete_preset:
+        title: "删除预设"
+        message: "你确定要删除这个预设吗？\n它将会永久消失！（真的很久！）"
+
+    preset_widget:
+      edit: "编辑"
+      copy: "复制"
+      delete: "删除"
+      select: "选择"
+
+  edit:
+    customize:
+      title: "预设设置"
+      default: "宽型"
+      slim: "纤细"
+      model_cycle_prefix: "手臂模型"
+      preset_name: "预设名称"
+      cape_provider: "披风来源"
+    source:
+      username: "无效的用户名"
+      invalid_username: |-
+        §4§n无效的用户名§r
+        
+        用户名只能包含 a-Z、0-9；
+        用户名可以包含下划线；
+        用户名长度需为 3-16 字符；
+        用户名必须存在。
+      file: "文件"
+      invalid_file: |-
+        §4§n无效的文件§r
+        
+        文件必须存在并且为 §l.png§r 格式。
+      url: "URL"
+      invalid_url: |-
+        §4§n无效的URL§r
+        
+        URL无效。必须为有效的 §lhttp§r 或 §lhttps§r 协议URL。
+      uuid: "UUID"
+      invalid_uuid: |-
+        §4§n无效的UUID§r
+        
+        UUID需为以下格式：
+        §lxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+      resource_location: "资源位置"
+      invalid_resource_location: |-
+        §4§n无效的资源位置§r
+      
+        资源位置需为已被游戏加载且有效的纹理文件。
+      unchanged: "保持现状"
+      cycle_prefix: "源"
+      title: "皮肤源"
+      skin_model: "皮肤模型"
+      load_skin: "加载皮肤"
