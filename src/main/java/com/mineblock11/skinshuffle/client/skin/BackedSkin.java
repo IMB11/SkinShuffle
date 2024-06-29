@@ -19,6 +19,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.AbstractTexture;
+import net.minecraft.client.util.SkinTextures;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -68,6 +69,13 @@ public abstract class BackedSkin implements Skin {
             setTexture(id);
         }
     }
+
+    /*? if >=1.20.4 {*/
+    @Override
+    public @Nullable SkinTextures getSkinTextures() {
+        return null;
+    }
+    /*?}*/
 
     @Override
     public @Nullable Identifier getTexture() {

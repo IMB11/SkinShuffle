@@ -46,11 +46,19 @@ public class IconButtonWidget extends ButtonWidget {
         this.iconHeight = iconHeight;
     }
 
+    /*? if <1.20.4 {*//*
+    @Override
     public void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
         super.renderButton(context, mouseX, mouseY, delta);
+    //*? } else { */
+    @Override
+    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.renderWidget(context, mouseX, mouseY, delta);
+    //*? } */
         context.drawTexture(this.iconTexture, this.getIconX(), this.getIconY(), this.iconU, this.iconV + (active ? (hovered ? 16 : 0) : this.iconDisabledVOffset), 0, this.iconWidth, this.iconHeight, this.iconTextureWidth, this.iconTextureHeight);
     }
 
+    @Override
     public void drawMessage(DrawContext context, TextRenderer textRenderer, int color) {
         int i = this.getX() + 2;
         int j = this.getX() + this.getWidth() - this.iconWidth - 6;

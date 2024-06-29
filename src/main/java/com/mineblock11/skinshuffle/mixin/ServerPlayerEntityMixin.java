@@ -95,19 +95,23 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
         if (!ServerSkinHandling.trySendRefreshPlayerListEntry((ServerPlayerEntity) (Object) this, refreshPlayerListEntryPacket)) {
             // If we could not send refresh packet, we change the player entity on the client
             ServerWorld level = this.getServerWorld();
-//            this.networkHandler.sendPacket(new PlayerRespawnS2CPacket(
-//                    new CommonPlayerSpawnInfo(
-//                            level.getDimensionKey(),
-//                            level.getRegistryKey(),
-//                            BiomeAccess.hashSeed(level.getSeed()),
-//                            this.interactionManager.getGameMode(),
-//                            this.interactionManager.getPreviousGameMode(),
-//                            level.isDebugWorld(),
-//                            level.isFlat(),
-//                            this.getLastDeathPos(),
-//                            this.getPortalCooldown()), (byte) 3
-//            ));
+
+            /*? if >1.20.4 {*/
+            this.networkHandler.sendPacket(new PlayerRespawnS2CPacket(
+                    new CommonPlayerSpawnInfo(
+                            level.getDimensionKey(),
+                            level.getRegistryKey(),
+                            BiomeAccess.hashSeed(level.getSeed()),
+                            this.interactionManager.getGameMode(),
+                            this.interactionManager.getPreviousGameMode(),
+                            level.isDebugWorld(),
+                            level.isFlat(),
+                            this.getLastDeathPos(),
+                            this.getPortalCooldown()), (byte) 3
+            ));
+            /*?} else {*//*
             this.networkHandler.sendPacket(new PlayerRespawnS2CPacket(level.getDimensionKey(), level.getRegistryKey(), BiomeAccess.hashSeed(level.getSeed()), this.interactionManager.getGameMode(), this.interactionManager.getPreviousGameMode(), level.isDebugWorld(), level.isFlat(), (byte) 3, this.getLastDeathPos(),this.getPortalCooldown()));
+            /*?}*/
 
             this.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(this.getX(), this.getY(), this.getZ(), this.getYaw(), this.getPitch(), Collections.emptySet(), 0));
             this.networkHandler.sendPacket(new UpdateSelectedSlotS2CPacket(this.getInventory().selectedSlot));

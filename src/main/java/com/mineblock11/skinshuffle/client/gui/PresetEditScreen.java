@@ -22,6 +22,7 @@ import com.mineblock11.skinshuffle.client.gui.widgets.IconButtonWidget;
 import com.mineblock11.skinshuffle.client.gui.widgets.preset.PresetWidget;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mineblock11.skinshuffle.client.skin.*;
+import com.mineblock11.skinshuffle.util.DummyBuilder;
 import com.mineblock11.skinshuffle.util.ToastHelper;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
 import net.minecraft.client.gui.DrawContext;
@@ -77,14 +78,14 @@ public class PresetEditScreen extends SpruceScreen {
         this.originalPreset = preset;
         this.parent = parent;
 
-        this.entity = new DummyClientPlayerEntity(null, UUID.randomUUID(), this.preset.getSkin().getTexture(), this.preset.getSkin().getModel());
+        this.entity = DummyBuilder.createDummy(preset);
     }
 
     @Override
     protected void init() {
         super.init();
 
-        this.entity = new DummyClientPlayerEntity(null, UUID.randomUUID(), this.preset.getSkin().getTexture(), this.preset.getSkin().getModel());
+        this.entity = DummyBuilder.createDummy(preset);
         this.skinSourceTab = new SkinSourceTab();
         this.skinCustomizationTab = new SkinCustomizationTab();
         this.tabNavigation = TabNavigationWidget.builder(this.tabManager, this.width)
@@ -359,7 +360,7 @@ public class PresetEditScreen extends SpruceScreen {
                     .build(0, 0, 192, 20, Text.translatable("skinshuffle.edit.source.skin_model"), (widget, val) -> {
                         SkinPreset preset = PresetEditScreen.this.preset;
                         preset.getSkin().setModel(val);
-                        PresetEditScreen.this.entity = new DummyClientPlayerEntity(null, UUID.randomUUID(), preset.getSkin().getTexture(), preset.getSkin().getModel());
+                        PresetEditScreen.this.entity = DummyBuilder.createDummy(preset);
                     });
 
             if (currentSourceType != null) {
@@ -421,7 +422,7 @@ public class PresetEditScreen extends SpruceScreen {
                     Thread.onSpinWait();
                 }
 
-                PresetEditScreen.this.entity = new DummyClientPlayerEntity(null, UUID.randomUUID(), preset.getSkin().getTexture(), preset.getSkin().getModel());
+                PresetEditScreen.this.entity = DummyBuilder.createDummy(preset);
             }, Util.getIoWorkerExecutor());
         }
     }

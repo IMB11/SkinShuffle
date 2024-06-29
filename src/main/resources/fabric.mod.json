@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "skinshuffle",
-  "version": "${version}",
+  "version": "${mod_version}",
   "name": "SkinShuffle",
   "description": "Choose and change your skin in-game!",
   "authors": [
@@ -13,7 +13,7 @@
   },
   "license": "MIT",
   "icon": "assets/skinshuffle/icon.png",
-  "accessWidener": "${minecraft_version}.accesswidener",
+  "accessWidener": "aw/${minecraft_version}.accesswidener",
   "environment": "*",
   "entrypoints": {
     "client": [

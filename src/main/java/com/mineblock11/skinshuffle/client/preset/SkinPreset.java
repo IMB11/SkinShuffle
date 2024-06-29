@@ -22,8 +22,14 @@ import com.mineblock11.skinshuffle.util.NetworkingUtil;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.Session;
 import net.minecraft.util.Identifier;
+
+/*? if <1.20.4 {*//*
+import net.minecraft.client.util.Session;
+*//*? } else {*/
+import net.minecraft.client.util.SkinTextures;
+import net.minecraft.client.session.Session;
+/*? }*/
 
 public class SkinPreset {
     public static final Codec<SkinPreset> CODEC = RecordCodecBuilder.create(instance ->
@@ -49,6 +55,7 @@ public class SkinPreset {
         Session session = client.getSession();
         String name = session.getUsername();
 
+        /*? if <1.20.4 {*//*
         if(!NetworkingUtil.isLoggedIn()) {
             Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
             Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "classic");
@@ -66,7 +73,27 @@ public class SkinPreset {
 
             return new SkinPreset(new UrlSkin(skinQueryResult.skinURL(), skinQueryResult.modelType()), name);
         }
+        *//*? } else {*/
+        if(!NetworkingUtil.isLoggedIn()) {
+            SkinTextures skinTexture = client.getSkinProvider().getSkinTextures(client.getGameProfile());
+            Skin skin = new ResourceSkin(skinTexture.texture(), skinTexture.texture().getPath().contains("/slim/") ? "slim" : "default");
+
+            return new SkinPreset(skin, name);
+        } else {
+            var skinQueryResult = SkinAPIs.getPlayerSkinTexture(String.valueOf(client.getGameProfile().getId()));
+
+            if(skinQueryResult.usesDefaultSkin()) {
+                SkinTextures skinTexture = client.getSkinProvider().getSkinTextures(client.getGameProfile());
+                Skin skin = new ResourceSkin(skinTexture.texture(), skinTexture.texture().getPath().contains("/slim/") ? "slim" : "default");
+
+                return new SkinPreset(skin, name);
+            }
+
+            return new SkinPreset(new UrlSkin(skinQueryResult.skinURL(), skinQueryResult.modelType()), name);
+        }
+        /*? }*/
     }
+
     public Skin getSkin() {
         return skin;
     }

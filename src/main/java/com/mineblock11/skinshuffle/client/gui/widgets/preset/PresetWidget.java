@@ -21,6 +21,7 @@ import com.mineblock11.skinshuffle.client.gui.PresetEditScreen;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
 import com.mineblock11.skinshuffle.client.gui.widgets.VariableSpruceButtonWidget;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
+import com.mineblock11.skinshuffle.util.DummyBuilder;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.widget.SpruceWidget;
 import net.minecraft.client.gui.DrawContext;
@@ -46,21 +47,21 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
     protected double scaleFactor;
 
     public void refreshEntity() {
-        this.entity = new DummyClientPlayerEntity(null, UUID.randomUUID(), skinPreset.getSkin().getTexture(), skinPreset.getSkin().getModel());
+        this.entity = DummyBuilder.createDummy(this.skinPreset);
     }
 
     public PresetWidget(S parent, SkinPreset skinPreset) {
         super(Position.of(0, 0), parent.getCardWidth(), parent.getCardHeight(), parent);
 
         this.skinPreset = skinPreset;
-        this.entity = new DummyClientPlayerEntity(null, UUID.randomUUID(), skinPreset.getSkin().getTexture(), skinPreset.getSkin().getModel());
+        this.entity = DummyBuilder.createDummy(this.skinPreset);
 
         CompletableFuture.runAsync(() -> {
             while(skinPreset.getSkin().isLoading()) {
                 Thread.onSpinWait();
             }
 
-            this.entity = new DummyClientPlayerEntity(null, UUID.randomUUID(), skinPreset.getSkin().getTexture(), skinPreset.getSkin().getModel());
+            this.entity = DummyBuilder.createDummy(this.skinPreset);
         }, Util.getIoWorkerExecutor());
 
         this.showButtons = true;

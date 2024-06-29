@@ -47,8 +47,15 @@ public class WarningIndicatorButton extends IconButtonWidget {
                 client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.rejoin") : I18n.translate("skinshuffle.reconnect.reconnect"))).formatted(Formatting.RED, Formatting.BOLD)));
     }
 
+    /*? if <1.20.4 {*//*
     @Override
     public void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.renderButton(context, mouseX, mouseY, delta);
+    //*?} else { */
+    @Override
+    public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.renderWidget(context, mouseX, mouseY, delta);
+    //*?} */
         context.drawTexture(this.iconTexture, this.getIconX(), this.getIconY(), this.iconU, this.iconV + (hovered ? 16 : 0), 0, this.iconWidth, this.iconHeight, this.iconTextureWidth, this.iconTextureHeight);
     }
 }

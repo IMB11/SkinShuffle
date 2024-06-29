@@ -18,6 +18,7 @@ import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.GeneratedScreens;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
+import com.mineblock11.skinshuffle.util.DummyBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -49,17 +50,22 @@ public class OpenCarouselButton extends ButtonWidget {
 
     public void setSelectedPreset(SkinPreset preset) {
         this.selectedPreset = preset;
-        this.entity = new DummyClientPlayerEntity(null, UUID.randomUUID(), preset.getSkin().getTexture(), preset.getSkin().getModel());
+        this.entity = DummyBuilder.createDummy(selectedPreset);
     }
 
     private float getEntityRotation() {
         return (float) ((GlfwUtil.getTime() - currentTime) * 35.0f);
     }
 
+    /*? if <1.20.4 {*//*
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
-
+    *//*?} else {*/
+    @Override
+    public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.renderWidget(context, mouseX, mouseY, delta);
+    /*?}*/
         if (this.entity != null && selectedPreset != null) {
             // Don't want to render the entity if the skin is still loading
             if (!selectedPreset.getSkin().isLoading()) {

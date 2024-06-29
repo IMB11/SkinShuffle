@@ -83,9 +83,10 @@ dependencies {
 processResources {
     filesMatching('fabric.mod.json') {
         expand 'mod_version': version,
-                'target_minecraft': property('mod.target'),
-                'target_yacl': property('deps.yacl'),
-                'target_cicada': property('deps.cicada'),
+                'target_minecraft': project.property('mod.target'),
+                'target_yacl': project.property('deps.yacl'),
+                'target_cicada': project.property('deps.cicada'),
+                'loader_version': project.property('deps.loader'),
                 'minecraft_version': stonecutter.current.version
     }
 }

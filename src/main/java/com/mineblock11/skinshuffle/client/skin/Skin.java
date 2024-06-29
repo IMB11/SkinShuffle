@@ -15,7 +15,9 @@
 package com.mineblock11.skinshuffle.client.skin;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.DefaultSkinHelper;
+import net.minecraft.client.util.SkinTextures;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,6 +36,14 @@ public interface Skin {
     Codec<Skin> CODEC = Identifier.CODEC.dispatch("type", Skin::getSerializationId, TYPES::get);
 
     @Nullable Identifier getTexture();
+
+    /*? if >=1.20.4 {*/
+    default @Nullable SkinTextures getSkinTextures() {
+            MinecraftClient client = MinecraftClient.getInstance();
+            SkinTextures clientTexture = client.getSkinProvider().getSkinTextures(client.getGameProfile());
+            return new SkinTextures(this.getTexture(), null, clientTexture.capeTexture(), clientTexture.elytraTexture(), SkinTextures.Model.fromName(this.getModel()), true);
+    }
+    /*?}*/
 
     boolean isLoading();
 
@@ -58,8 +68,16 @@ public interface Skin {
 //        return new ResourceSkin(txt.texture(), txt.model().getName());
 //    }
 
+    /*? if <1.20.4 {*//*
     static ResourceSkin randomDefaultSkin() {
         var uuid = UUID.randomUUID();
         return new ResourceSkin(DefaultSkinHelper.getTexture(uuid), DefaultSkinHelper.getModel(uuid));
     }
+    *//*? } else {*/
+    static ResourceSkin randomDefaultSkin() {
+        var uuid = UUID.randomUUID();
+        var txt = DefaultSkinHelper.getSkinTextures(uuid);
+        return new ResourceSkin(txt.texture(), txt.model().getName());
+    }
+    /*? }*/
 }
