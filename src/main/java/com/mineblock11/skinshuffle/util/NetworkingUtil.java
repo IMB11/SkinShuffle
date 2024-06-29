@@ -44,7 +44,7 @@ public class NetworkingUtil {
 
         if (isSingleplayer) {
             serverAddress = null;
-            folderName = client.server.getSavePath(WorldSavePath.ROOT).toFile().getName();
+            folderName = client.getServer().getSavePath(WorldSavePath.ROOT).toFile().getName();
             client.world.disconnect();
             client.disconnect(new MessageScreen(Text.translatable("skinshuffle.reconnect.rejoining")));
         } else {
