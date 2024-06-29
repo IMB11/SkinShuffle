@@ -26,10 +26,10 @@ import net.minecraft.util.Identifier;
 
 /*? if <1.20.4 {*//*
 import net.minecraft.client.util.Session;
-*//*? } else {*/
+*//*?} else {*/
 import net.minecraft.client.util.SkinTextures;
 import net.minecraft.client.session.Session;
-/*? }*/
+/*?}*/
 
 public class SkinPreset {
     public static final Codec<SkinPreset> CODEC = RecordCodecBuilder.create(instance ->
@@ -73,7 +73,7 @@ public class SkinPreset {
 
             return new SkinPreset(new UrlSkin(skinQueryResult.skinURL(), skinQueryResult.modelType()), name);
         }
-        *//*? } else {*/
+        *//*?} else {*/
         if(!NetworkingUtil.isLoggedIn()) {
             SkinTextures skinTexture = client.getSkinProvider().getSkinTextures(client.getGameProfile());
             Skin skin = new ResourceSkin(skinTexture.texture(), skinTexture.texture().getPath().contains("/slim/") ? "slim" : "default");
@@ -91,7 +91,7 @@ public class SkinPreset {
 
             return new SkinPreset(new UrlSkin(skinQueryResult.skinURL(), skinQueryResult.modelType()), name);
         }
-        /*? }*/
+        /*?}*/
     }
 
     public Skin getSkin() {

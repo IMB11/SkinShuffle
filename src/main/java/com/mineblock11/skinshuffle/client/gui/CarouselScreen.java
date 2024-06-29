@@ -188,9 +188,9 @@ public abstract class CarouselScreen extends SpruceScreen {
         // BG stuff
         /*? if <1.20.4 {*//*
         this.renderBackground(graphics);
-        *//*? } else {*/
+        *//*?} else {*/
         this.renderBackground(graphics, mouseX, mouseY, delta);
-        /*? }*/
+        /*?}*/
 
         graphics.fill(0, this.textRenderer.fontHeight * 3, this.width, this.height - (this.textRenderer.fontHeight * 3), 0x7F000000);
         graphics.fillGradient(0, (int) (this.textRenderer.fontHeight * 2.75), this.width, this.textRenderer.fontHeight * 3, 0x00000000, 0x7F000000);

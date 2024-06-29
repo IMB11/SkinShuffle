@@ -97,7 +97,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
             ServerWorld level = this.getServerWorld();
 
             /*? if >1.20.4 {*/
-            this.networkHandler.sendPacket(new PlayerRespawnS2CPacket(
+            /*this.networkHandler.sendPacket(new PlayerRespawnS2CPacket(
                     new CommonPlayerSpawnInfo(
                             level.getDimensionKey(),
                             level.getRegistryKey(),
@@ -109,7 +109,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
                             this.getLastDeathPos(),
                             this.getPortalCooldown()), (byte) 3
             ));
-            /*?} else {*//*
+            *//*?} else {*//*
             this.networkHandler.sendPacket(new PlayerRespawnS2CPacket(level.getDimensionKey(), level.getRegistryKey(), BiomeAccess.hashSeed(level.getSeed()), this.interactionManager.getGameMode(), this.interactionManager.getPreviousGameMode(), level.isDebugWorld(), level.isFlat(), (byte) 3, this.getLastDeathPos(),this.getPortalCooldown()));
             /*?}*/
 

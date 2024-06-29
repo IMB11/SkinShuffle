@@ -51,11 +51,11 @@ public class WarningIndicatorButton extends IconButtonWidget {
     @Override
     public void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
         super.renderButton(context, mouseX, mouseY, delta);
-    //*?} else { */
+    *//*?} else {*/
     @Override
     public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
         super.renderWidget(context, mouseX, mouseY, delta);
-    //*?} */
+    /*?}*/
         context.drawTexture(this.iconTexture, this.getIconX(), this.getIconY(), this.iconU, this.iconV + (hovered ? 16 : 0), 0, this.iconWidth, this.iconHeight, this.iconTextureWidth, this.iconTextureHeight);
     }
 }

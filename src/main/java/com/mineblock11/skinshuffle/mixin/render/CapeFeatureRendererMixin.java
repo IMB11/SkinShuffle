@@ -55,10 +55,10 @@ public abstract class CapeFeatureRendererMixin extends FeatureRenderer<AbstractC
         /*? if <1.20.4 {*//*
         canCape = abstractClientPlayerEntity.canRenderCapeTexture();
         capeTexture = abstractClientPlayerEntity.getCapeTexture();
-        *//*? } else {*/
+        *//*?} else {*/
         capeTexture = abstractClientPlayerEntity.getSkinTextures().capeTexture();
         canCape = capeTexture != null;
-        /*? }*/
+        /*?}*/
 
         if (canCape && !abstractClientPlayerEntity.isInvisible() && abstractClientPlayerEntity.isPartVisible(PlayerModelPart.CAPE) && capeTexture != null) {
             ItemStack itemStack = abstractClientPlayerEntity.getEquippedStack(EquipmentSlot.CHEST);

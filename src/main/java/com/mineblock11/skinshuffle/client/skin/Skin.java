@@ -73,11 +73,11 @@ public interface Skin {
         var uuid = UUID.randomUUID();
         return new ResourceSkin(DefaultSkinHelper.getTexture(uuid), DefaultSkinHelper.getModel(uuid));
     }
-    *//*? } else {*/
+    *//*?} else {*/
     static ResourceSkin randomDefaultSkin() {
         var uuid = UUID.randomUUID();
         var txt = DefaultSkinHelper.getSkinTextures(uuid);
         return new ResourceSkin(txt.texture(), txt.model().getName());
     }
-    /*? }*/
+    /*?}*/
 }

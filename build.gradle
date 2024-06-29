@@ -86,6 +86,7 @@ processResources {
                 'target_minecraft': project.property('mod.target'),
                 'target_yacl': project.property('deps.yacl'),
                 'loader_version': project.property('deps.loader'),
+                'target_fabric_api': project.property('fabric_api.target'),
                 'minecraft_version': stonecutter.current.version
     }
 }

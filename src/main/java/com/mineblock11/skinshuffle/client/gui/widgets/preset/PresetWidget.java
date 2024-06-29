@@ -171,10 +171,13 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
             rotation = 0;
         }
 
-        GuiEntityRenderer.drawEntity(
-                graphics.getMatrices(), previewX, previewY,
-                getPreviewSize(), rotation, followX, followY, entity
-        );
+        try {
+            GuiEntityRenderer.drawEntity(
+                    graphics.getMatrices(), previewX, previewY,
+                    getPreviewSize(), rotation, followX, followY, entity
+            );
+        } catch (Exception e) {
+        }
     }
 
     protected int getPreviewX() {
