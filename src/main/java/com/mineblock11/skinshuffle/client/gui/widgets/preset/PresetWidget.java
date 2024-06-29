@@ -36,9 +36,11 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.Util;
 import nl.enjarai.cicada.api.cursed.DummyClientPlayerEntity;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCardWidget<S> {
     protected final SkinPreset skinPreset;
@@ -46,7 +48,6 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
     protected VariableSpruceButtonWidget copyButton;
     protected VariableSpruceButtonWidget deleteButton;
     private final boolean showButtons;
-    protected boolean hasRefreshed = false;
     protected LivingEntity entity;
     protected double scaleFactor;
 
@@ -59,6 +60,15 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
 
         this.skinPreset = skinPreset;
         this.entity = new DummyClientPlayerEntity(null, UUID.randomUUID(), skinPreset.getSkin().getTexture(), skinPreset.getSkin().getModel());
+
+        CompletableFuture.runAsync(() -> {
+            while(skinPreset.getSkin().isLoading()) {
+                Thread.onSpinWait();
+            }
+
+            this.entity = new DummyClientPlayerEntity(null, UUID.randomUUID(), skinPreset.getSkin().getTexture(), skinPreset.getSkin().getModel());
+        }, Util.getIoWorkerExecutor());
+
         this.showButtons = true;
 
         if (showButtons) {
@@ -131,11 +141,6 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
     @Override
     protected void renderWidget(DrawContext graphics, int mouseX, int mouseY, float delta) {
         super.renderWidget(graphics, mouseX, mouseY, delta);
-
-        if(!hasRefreshed) {
-            hasRefreshed = true;
-            refreshEntity();
-        }
 
         var margin = this.client.textRenderer.fontHeight / 2;
         var name = this.skinPreset.getName() != null ? this.skinPreset.getName() : "Unnamed Preset";

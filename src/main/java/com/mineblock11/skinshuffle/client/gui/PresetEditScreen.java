@@ -333,7 +333,11 @@ public class PresetEditScreen extends SpruceScreen {
 
             skinModelButton = new CyclingButtonWidget.Builder<String>(Text::of)
                     .values("classic", "slim")
-                    .build(0, 0, 192, 20, Text.translatable("skinshuffle.edit.source.skin_model"));
+                    .build(0, 0, 192, 20, Text.translatable("skinshuffle.edit.source.skin_model"), (widget, val) -> {
+                        SkinPreset preset = PresetEditScreen.this.preset;
+                        preset.getSkin().setModel(val);
+                        PresetEditScreen.this.entity = new DummyClientPlayerEntity(null, UUID.randomUUID(), preset.getSkin().getTexture(), preset.getSkin().getModel());
+                    });
 
             if (currentSourceType != null) {
                 gridAdder.add(new CyclingButtonWidget<>(0,
@@ -386,17 +390,16 @@ public class PresetEditScreen extends SpruceScreen {
                 };
 
                 preset.setSkin(skin);
-
-                // Wait 1 sec before refreshing the entity to prevent flickering.
-                CompletableFuture.runAsync(() -> {
-                    try {
-                        Thread.sleep(4000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    PresetEditScreen.this.entity = new DummyClientPlayerEntity(null, UUID.randomUUID(), skin.getTexture(), skin.getModel());
-                }, Util.getIoWorkerExecutor());
+                skin.getTexture();
             }
+
+            CompletableFuture.runAsync(() -> {
+                while(preset.getSkin().isLoading()) {
+                    Thread.onSpinWait();
+                }
+
+                PresetEditScreen.this.entity = new DummyClientPlayerEntity(null, UUID.randomUUID(), preset.getSkin().getTexture(), preset.getSkin().getModel());
+            }, Util.getIoWorkerExecutor());
         }
     }
 
