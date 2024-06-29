@@ -66,10 +66,8 @@ public class SkinAPIs {
                 com.mojang.authlib.minecraft.client.MinecraftClient client = ((YggdrasilUserApiServiceAccessor) apiService).getMinecraftClient();
                 String token = ((MinecraftClientAuthAccessor) client).getAccessToken();
 
-                String safeModel = model.equals("default") ? "classic" : "slim";
-
                 JsonObject obj = new JsonObject();
-                obj.addProperty("variant", safeModel);
+                obj.addProperty("variant", model);
                 obj.addProperty("url", skinURL);
                 var result = Unirest.post("https://api.minecraftservices.com/minecraft/profile/skins")
                         .body(GSON.toJson(obj))
@@ -145,7 +143,7 @@ public class SkinAPIs {
             }
 
             String skinURL = skin.get("url").getAsString();
-            String modelType = "default";
+            String modelType = "classic";
 
             try {
                 modelType = skin

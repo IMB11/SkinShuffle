@@ -69,7 +69,7 @@ public class UrlSkin extends BackedSkin {
             tryLoadModelFromCache();
         }
 
-        return model == null ? "default" : model;
+        return model == null ? "classic" : model;
     }
 
     @Override

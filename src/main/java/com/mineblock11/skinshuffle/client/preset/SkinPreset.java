@@ -57,7 +57,7 @@ public class SkinPreset {
 
         if(!NetworkingUtil.isLoggedIn()) {
             Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
-            Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
+            Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "classic");
 
             return new SkinPreset(skin, name);
         } else {
@@ -65,7 +65,7 @@ public class SkinPreset {
 
             if(skinQueryResult.usesDefaultSkin()) {
                 Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
-                Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
+                Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "classic");
 
                 return new SkinPreset(skin, name);
             }

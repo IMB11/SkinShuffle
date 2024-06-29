@@ -21,7 +21,6 @@
 package com.mineblock11.skinshuffle.api;
 
 import com.mojang.authlib.properties.Property;
-import net.minecraft.client.texture.PlayerSkinProvider;
 import org.jetbrains.annotations.Nullable;
 
 public record SkinQueryResult(boolean usesDefaultSkin, @Nullable String skinURL, @Nullable String modelType, @Nullable String textureSignature, @Nullable String textureValue) {
