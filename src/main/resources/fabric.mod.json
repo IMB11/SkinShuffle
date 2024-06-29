@@ -13,7 +13,7 @@
   },
   "license": "MIT",
   "icon": "assets/skinshuffle/icon.png",
-  "accessWidener": "skinshuffle.accesswidener",
+  "accessWidener": "${minecraft_version}.accesswidener",
   "environment": "*",
   "entrypoints": {
     "client": [
@@ -32,6 +32,8 @@
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
+    "yacl": ">=${target_yacl}",
+    "cicada": ">=${target_cicada}",
     "minecraft": "${target_minecraft}"
   }
 }

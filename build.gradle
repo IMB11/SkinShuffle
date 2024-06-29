@@ -4,7 +4,7 @@ plugins {
     id "org.quiltmc.gradle.licenser" version "2.0.1"
 }
 
-version =  property("mod.version") + "+" + "1.20.1"
+version =  property("mod.version") + "+" + stonecutter.current.version
 group = "dev.imb11"
 
 base {
@@ -12,7 +12,7 @@ base {
 }
 
 license {
-    rule file("./HEADER")
+    rule rootProject.file("./HEADER")
     include '**/*.java'
 }
 
@@ -46,34 +46,34 @@ repositories {
     }
 }
 
-//if (stonecutter.current.active) { // run configs for non-active version would be invalid
-//    loom {
-//        runConfigs.all {
-//            ideConfigGenerated = true // generate IDE tasks for running client, server and testmod, datagen if those are present
-//            runDir "../../run" // use a global run directory for all versions
-//        }
-//    }
-//}
+if (stonecutter.current.active) { // run configs for non-active version would be invalid
+    loom {
+        runConfigs.all {
+            ideConfigGenerated = true // generate IDE tasks for running client, server and testmod, datagen if those are present
+            runDir "../../run" // use a global run directory for all versions
+        }
+    }
+}
 
 loom {
-    accessWidenerPath = file("src/main/resources/skinshuffle.accesswidener")
+    accessWidenerPath = getRootProject().file("src/main/resources/aw/" + stonecutter.current.version + ".accesswidener")
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.'deps.yarn'}:v2"
-    modImplementation "net.fabricmc:fabric-loader:${project.'deps.loader'}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.'deps.fabric_api'}"
+    minecraft "com.mojang:minecraft:${stonecutter.current.version}"
+    mappings "net.fabricmc:yarn:${property('deps.yarn')}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${property('deps.loader')}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${property('deps.fabric_api')}"
 
-    modLocalRuntime modCompileOnly("com.terraformersmc:modmenu:${project.'runtime.modmenu'}")
+    modLocalRuntime modCompileOnly("com.terraformersmc:modmenu:${property('runtime.modmenu')}")
 
     include implementation('com.konghq:unirest-java:3.11.09:standalone')
 
-    include modImplementation("dev.lambdaurora:spruceui:${project.'deps.spruceui'}")
-    include modImplementation("maven.modrinth:cicada:0.8.1+1.20.1")
-    include modImplementation("dev.isxander:yet-another-config-lib:${project.yacl_version}")
+    include modImplementation("dev.lambdaurora:spruceui:${property('deps.spruceui')}")
+    include modImplementation("maven.modrinth:cicada:${property('deps.cicada')}")
+    include modImplementation("dev.isxander:yet-another-config-lib:${property('deps.yacl')}")
 
-    include implementation("org.jsoup:jsoup:${project.'deps.jsoup'}")
+    include implementation("org.jsoup:jsoup:1.16.1")
     include implementation("org.mineskin:java-client:+")
     include implementation("commons-validator:commons-validator:1.7")
 
@@ -81,20 +81,17 @@ dependencies {
 }
 
 processResources {
-    inputs.property "version", project.version
-    inputs.property "minecraft_version", project.minecraft_version
-    inputs.property "loader_version", project.'deps.loader'
-    filteringCharset "UTF-8"
-
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version,
-                "loader_version": project.'deps.loader',
-                "target_minecraft": project.'mod.target'
+    filesMatching('fabric.mod.json') {
+        expand 'mod_version': version,
+                'target_minecraft': property('mod.target'),
+                'target_yacl': property('deps.yacl'),
+                'target_cicada': property('deps.cicada'),
+                'minecraft_version': stonecutter.current.version
     }
 }
 
 java {
-    var version = JavaVersion.VERSION_17
+    var version = stonecutter.eval(stonecutter.current.version, ">1.20.4") ? JavaVersion.VERSION_21 : JavaVersion.VERSION_17
 
     sourceCompatibility = version
     targetCompatibility = version
