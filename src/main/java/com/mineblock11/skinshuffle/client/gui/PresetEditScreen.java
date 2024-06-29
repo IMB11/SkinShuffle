@@ -40,6 +40,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import nl.enjarai.cicada.api.cursed.DummyClientPlayerEntity;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -49,6 +50,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import static net.minecraft.client.gui.screen.world.CreateWorldScreen.LIGHT_DIRT_BACKGROUND_TEXTURE;
 
@@ -56,7 +58,7 @@ public class PresetEditScreen extends SpruceScreen {
     public static final int MAX_WIDTH = 400;
 
     private final CarouselScreen parent;
-    private final LivingEntity entity;
+    private LivingEntity entity;
     private final TabManager tabManager = new TabManager(this::addDrawableChild, this::remove);
     private final UrlValidator urlValidator = new UrlValidator(new String[]{"http", "https"});
     private final SkinPreset originalPreset;
@@ -84,6 +86,7 @@ public class PresetEditScreen extends SpruceScreen {
     protected void init() {
         super.init();
 
+        this.entity = new DummyClientPlayerEntity(null, UUID.randomUUID(), this.preset.getSkin().getTexture(), this.preset.getSkin().getModel());
         this.skinSourceTab = new SkinSourceTab();
         this.skinCustomizationTab = new SkinCustomizationTab();
         this.tabNavigation = TabNavigationWidget.builder(this.tabManager, this.width)
@@ -384,7 +387,15 @@ public class PresetEditScreen extends SpruceScreen {
 
                 preset.setSkin(skin);
 
-                PresetEditScreen.this.presetWidget.refreshEntity();
+                // Wait 1 sec before refreshing the entity to prevent flickering.
+                CompletableFuture.runAsync(() -> {
+                    try {
+                        Thread.sleep(4000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    PresetEditScreen.this.entity = new DummyClientPlayerEntity(null, UUID.randomUUID(), skin.getTexture(), skin.getModel());
+                }, Util.getIoWorkerExecutor());
             }
         }
     }

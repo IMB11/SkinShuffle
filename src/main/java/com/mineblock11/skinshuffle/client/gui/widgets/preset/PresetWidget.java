@@ -46,6 +46,7 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
     protected VariableSpruceButtonWidget copyButton;
     protected VariableSpruceButtonWidget deleteButton;
     private final boolean showButtons;
+    protected boolean hasRefreshed = false;
     protected LivingEntity entity;
     protected double scaleFactor;
 
@@ -57,9 +58,7 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
         super(Position.of(0, 0), parent.getCardWidth(), parent.getCardHeight(), parent);
 
         this.skinPreset = skinPreset;
-
-        entity = new DummyClientPlayerEntity(null, UUID.randomUUID(), skinPreset.getSkin().getTexture(), skinPreset.getSkin().getModel());
-
+        this.entity = new DummyClientPlayerEntity(null, UUID.randomUUID(), skinPreset.getSkin().getTexture(), skinPreset.getSkin().getModel());
         this.showButtons = true;
 
         if (showButtons) {
@@ -132,6 +131,11 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
     @Override
     protected void renderWidget(DrawContext graphics, int mouseX, int mouseY, float delta) {
         super.renderWidget(graphics, mouseX, mouseY, delta);
+
+        if(!hasRefreshed) {
+            hasRefreshed = true;
+            refreshEntity();
+        }
 
         var margin = this.client.textRenderer.fontHeight / 2;
         var name = this.skinPreset.getName() != null ? this.skinPreset.getName() : "Unnamed Preset";
