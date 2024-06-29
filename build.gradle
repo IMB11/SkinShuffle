@@ -65,7 +65,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${property('deps.loader')}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${property('deps.fabric_api')}"
 
-    modLocalRuntime modCompileOnly("com.terraformersmc:modmenu:${property('runtime.modmenu')}")
+    modLocalRuntime modCompileOnly("maven.modrinth:modmenu:${property('runtime.modmenu')}")
 
     include implementation('com.konghq:unirest-java:3.11.09:standalone')
 
@@ -85,7 +85,6 @@ processResources {
         expand 'mod_version': version,
                 'target_minecraft': project.property('mod.target'),
                 'target_yacl': project.property('deps.yacl'),
-                'target_cicada': project.property('deps.cicada'),
                 'loader_version': project.property('deps.loader'),
                 'minecraft_version': stonecutter.current.version
     }

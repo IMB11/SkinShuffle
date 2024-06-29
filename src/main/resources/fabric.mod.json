@@ -32,8 +32,7 @@
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
-    "yacl": ">=${target_yacl}",
-    "cicada": ">=${target_cicada}",
+    "yet_another_config_lib_v3": ">=${target_yacl}",
     "minecraft": "${target_minecraft}"
   }
 }

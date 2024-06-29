@@ -16,11 +16,17 @@ package com.mineblock11.skinshuffle.util;
 
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import nl.enjarai.cicada.api.cursed.DummyClientPlayerEntity;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
 public class DummyBuilder {
-    public static DummyClientPlayerEntity createDummy(SkinPreset preset) {
+    @Nullable
+    public static DummyClientPlayerEntity createDummy(@Nullable SkinPreset preset) {
+        if(preset == null) {
+            return null;
+        }
+
         /*? if <1.20.4 {*//*
         return new DummyClientPlayerEntity(null, UUID.randomUUID(), preset.getSkin().getTexture(), preset.getSkin().getModel());
         *//*?} else {*/
