@@ -46,7 +46,11 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -141,9 +145,32 @@ public class PresetEditScreen extends SpruceScreen {
         updateValidity();
     }
 
-    private boolean isValidFilePath(String path) {
-        File f = new File(path);
-        return f.exists() && FilenameUtils.getExtension(path).equals("png");
+    private boolean isValidPngFilePath(String pathStr) {
+        // Trim leading and trailing spaces
+        pathStr = pathStr.trim();
+
+        // Remove surrounding quotation marks if present
+        if (pathStr.startsWith("\"") && pathStr.endsWith("\"")) {
+            pathStr = pathStr.substring(1, pathStr.length() - 1);
+        }
+
+        // Allow ~ as a shortcut for the user's home directory
+        if (pathStr.startsWith("~")) {
+            String home = System.getProperty("user.home");
+            pathStr = home + pathStr.substring(1);
+        }
+
+        // Resolve the path
+        Path path = Paths.get(pathStr);
+
+        // Check if the file exists, follows symlinks, and is a regular file
+        if (Files.exists(path) && Files.isRegularFile(path)) {
+            // Check if the file has a .png extension (case insensitive)
+            String fileName = path.getFileName().toString().toLowerCase();
+            return fileName.endsWith(".png");
+        }
+
+        return false;
     }
 
     private boolean isValidUUID(String uuid) {
@@ -169,16 +196,7 @@ public class PresetEditScreen extends SpruceScreen {
                     return urlValidator.isValid(widget.getText());
                 }
                 case FILE -> {
-                    String txt = widget.getText();
-                    if (txt.indexOf(":") == txt.length() - 1) {
-                        return false;
-                    }
-                    if (txt.length() > 1) {
-                        if (txt.substring(0, 1).equals("\"") && txt.substring(txt.length() - 1, txt.length()).equals("\"")) {
-                            widget.setText(txt.substring(1, txt.length() - 1));
-                        }
-                    }
-                    return isValidFilePath(widget.getText());
+                    return isValidPngFilePath(widget.getText());
                 }
                 case RESOURCE_LOCATION -> {
                     if (Identifier.isValid(widget.getText())) {
@@ -324,6 +342,17 @@ public class PresetEditScreen extends SpruceScreen {
                     SkinShuffle.id("textures/gui/reload-button-icon.png"),
                     button -> {
                         if (currentSourceType != SourceType.UNCHANGED) {
+                            if(currentSourceType == SourceType.FILE) {
+                                // Expand ~ to the user's home directory
+                                String pathStr = textFieldWidget.getText();
+                                if (pathStr.startsWith("~")) {
+                                    String home = System.getProperty("user.home");
+                                    pathStr = home + pathStr.substring(1);
+                                }
+
+                                textFieldWidget.setText(pathStr);
+                            }
+
                             loadSkin();
                         }
                     }
