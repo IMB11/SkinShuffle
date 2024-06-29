@@ -23,7 +23,6 @@ package com.mineblock11.skinshuffle.client.gui;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
-import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
 import com.mineblock11.skinshuffle.client.gui.widgets.IconButtonWidget;
 import com.mineblock11.skinshuffle.client.gui.widgets.preset.PresetWidget;
@@ -41,6 +40,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import nl.enjarai.cicada.api.cursed.DummyClientPlayerEntity;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 
@@ -77,7 +77,7 @@ public class PresetEditScreen extends SpruceScreen {
         this.originalPreset = preset;
         this.parent = parent;
 
-        this.entity = new DummyClientPlayerEntity(this.preset);
+        this.entity = new DummyClientPlayerEntity(null, UUID.randomUUID(), this.preset.getSkin().getTexture(), this.preset.getSkin().getModel());
     }
 
     @Override

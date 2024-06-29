@@ -58,9 +58,14 @@ public interface Skin {
 
     void setModel(String value);
 
+//    static ResourceSkin randomDefaultSkin() {
+//        var uuid = UUID.randomUUID();
+//        var txt = DefaultSkinHelper.getSkinTextures(uuid);
+//        return new ResourceSkin(txt.texture(), txt.model().getName());
+//    }
+
     static ResourceSkin randomDefaultSkin() {
         var uuid = UUID.randomUUID();
-        var txt = DefaultSkinHelper.getSkinTextures(uuid);
-        return new ResourceSkin(txt.texture(), txt.model().getName());
+        return new ResourceSkin(DefaultSkinHelper.getTexture(uuid), DefaultSkinHelper.getModel(uuid));
     }
 }

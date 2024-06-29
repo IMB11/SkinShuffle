@@ -28,8 +28,7 @@ import com.mineblock11.skinshuffle.util.NetworkingUtil;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.session.Session;
-import net.minecraft.client.util.SkinTextures;
+import net.minecraft.client.util.Session;
 import net.minecraft.util.Identifier;
 
 public class SkinPreset {
@@ -57,16 +56,16 @@ public class SkinPreset {
         String name = session.getUsername();
 
         if(!NetworkingUtil.isLoggedIn()) {
-            SkinTextures skinTexture = client.getSkinProvider().getSkinTextures(client.getGameProfile());
-            Skin skin = new ResourceSkin(skinTexture.texture(), skinTexture.texture().getPath().contains("/slim/") ? "slim" : "default");
+            Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
+            Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
 
             return new SkinPreset(skin, name);
         } else {
-            var skinQueryResult = SkinAPIs.getPlayerSkinTexture(String.valueOf(client.getGameProfile().getId()));
+            var skinQueryResult = SkinAPIs.getPlayerSkinTexture(session.getUuid());
 
             if(skinQueryResult.usesDefaultSkin()) {
-                SkinTextures skinTexture = client.getSkinProvider().getSkinTextures(client.getGameProfile());
-                Skin skin = new ResourceSkin(skinTexture.texture(), skinTexture.texture().getPath().contains("/slim/") ? "slim" : "default");
+                Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
+                Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "default");
 
                 return new SkinPreset(skin, name);
             }
@@ -74,7 +73,6 @@ public class SkinPreset {
             return new SkinPreset(new UrlSkin(skinQueryResult.skinURL(), skinQueryResult.modelType()), name);
         }
     }
-
     public Skin getSkin() {
         return skin;
     }

@@ -22,7 +22,6 @@ package com.mineblock11.skinshuffle.client.gui.widgets;
 
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.GeneratedScreens;
-import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import net.minecraft.client.MinecraftClient;
@@ -30,6 +29,9 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.text.Text;
+import nl.enjarai.cicada.api.cursed.DummyClientPlayerEntity;
+
+import java.util.UUID;
 
 public class OpenCarouselButton extends ButtonWidget {
     private SkinPreset selectedPreset;
@@ -53,7 +55,7 @@ public class OpenCarouselButton extends ButtonWidget {
 
     public void setSelectedPreset(SkinPreset preset) {
         this.selectedPreset = preset;
-        this.entity = new DummyClientPlayerEntity(this.selectedPreset);
+        this.entity = new DummyClientPlayerEntity(null, UUID.randomUUID(), preset.getSkin().getTexture(), preset.getSkin().getModel());
     }
 
     private float getEntityRotation() {

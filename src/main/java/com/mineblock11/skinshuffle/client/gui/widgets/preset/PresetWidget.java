@@ -24,7 +24,6 @@ import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.CarouselScreen;
 import com.mineblock11.skinshuffle.client.gui.PresetEditScreen;
-import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
 import com.mineblock11.skinshuffle.client.gui.widgets.VariableSpruceButtonWidget;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
@@ -37,6 +36,9 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.text.Text;
+import nl.enjarai.cicada.api.cursed.DummyClientPlayerEntity;
+
+import java.util.UUID;
 
 public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCardWidget<S> {
     protected final SkinPreset skinPreset;
@@ -56,7 +58,7 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
 
         this.skinPreset = skinPreset;
 
-        entity = new DummyClientPlayerEntity(this.skinPreset);
+        entity = new DummyClientPlayerEntity(null, UUID.randomUUID(), skinPreset.getSkin().getTexture(), skinPreset.getSkin().getModel());
 
         this.showButtons = true;
 

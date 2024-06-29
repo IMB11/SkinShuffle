@@ -20,9 +20,9 @@
 
 package com.mineblock11.skinshuffle.mixin.render;
 
-import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.entity.LivingEntity;
+import nl.enjarai.cicada.api.cursed.DummyClientPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

@@ -20,7 +20,6 @@
 
 package com.mineblock11.skinshuffle.mixin.render;
 
-import com.mineblock11.skinshuffle.client.gui.cursed.DummyClientPlayerEntity;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
@@ -37,6 +36,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
+import nl.enjarai.cicada.api.cursed.DummyClientPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -54,7 +54,7 @@ public abstract class CapeFeatureRendererMixin extends FeatureRenderer<AbstractC
             return;
         }
         ci.cancel();
-        if (abstractClientPlayerEntity.getSkinTextures().capeTexture() != null && !abstractClientPlayerEntity.isInvisible() && abstractClientPlayerEntity.isPartVisible(PlayerModelPart.CAPE)) {
+        if (abstractClientPlayerEntity.canRenderCapeTexture() && !abstractClientPlayerEntity.isInvisible() && abstractClientPlayerEntity.isPartVisible(PlayerModelPart.CAPE) && abstractClientPlayerEntity.getCapeTexture() != null) {
             ItemStack itemStack = abstractClientPlayerEntity.getEquippedStack(EquipmentSlot.CHEST);
             if (!itemStack.isOf(Items.ELYTRA)) {
                 matrixStack.push();
@@ -83,7 +83,7 @@ public abstract class CapeFeatureRendererMixin extends FeatureRenderer<AbstractC
 
                 matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(10F));
                 matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180F));
-                VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(abstractClientPlayerEntity.getSkinTextures().capeTexture()));
+                VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(abstractClientPlayerEntity.getCapeTexture()));
                 this.getContextModel().renderCape(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV);
                 matrixStack.pop();
             }
