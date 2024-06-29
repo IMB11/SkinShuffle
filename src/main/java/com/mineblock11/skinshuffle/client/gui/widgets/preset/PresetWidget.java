@@ -50,7 +50,7 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
     protected double scaleFactor;
 
     public void refreshEntity() {
-//        this.entity = new DummyClientPlayerEntity(this.skinPreset);
+        this.entity = new DummyClientPlayerEntity(null, UUID.randomUUID(), skinPreset.getSkin().getTexture(), skinPreset.getSkin().getModel());
     }
 
     public PresetWidget(S parent, SkinPreset skinPreset) {
@@ -204,7 +204,7 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
 
     @Override
     public void refreshState() {
-
+        super.refreshState();
     }
 
     @Override

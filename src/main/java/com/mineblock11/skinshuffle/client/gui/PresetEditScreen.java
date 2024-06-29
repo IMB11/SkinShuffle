@@ -383,6 +383,8 @@ public class PresetEditScreen extends SpruceScreen {
                 };
 
                 preset.setSkin(skin);
+
+                PresetEditScreen.this.presetWidget.refreshEntity();
             }
         }
     }
