@@ -178,7 +178,7 @@ public abstract class CarouselScreen extends SpruceScreen {
 
         SkinPresetManager.savePresets();
 
-        this.client.setScreenAndRender(parent);
+        this.client.setScreen(parent);
     }
 
     @Override

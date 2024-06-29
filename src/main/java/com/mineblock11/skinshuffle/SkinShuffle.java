@@ -15,6 +15,7 @@
 package com.mineblock11.skinshuffle;
 
 import com.mineblock11.skinshuffle.compat.CompatLoader;
+import com.mineblock11.skinshuffle.networking.ClientSkinHandling;
 import com.mineblock11.skinshuffle.networking.ServerSkinHandling;
 import com.mineblock11.skinshuffle.util.SkinCacheRegistry;
 import net.fabricmc.api.ModInitializer;

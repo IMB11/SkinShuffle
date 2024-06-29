@@ -24,6 +24,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.util.Util;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,6 +32,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
 
 @Mixin(GameMenuScreen.class)
 public abstract class GameMenuScreenMixin extends ScreenMixin {
@@ -80,10 +82,8 @@ public abstract class GameMenuScreenMixin extends ScreenMixin {
         for (ClickableWidget carouselWidget : this.openCarouselWidgets) {
             this.addDrawableChild(carouselWidget);
             if(carouselWidget instanceof OpenCarouselButton button) {
-                new Thread(() -> {
-                    SkinPresetManager.loadPresets();
-                    button.setSelectedPreset(SkinPresetManager.getChosenPreset());
-                }).start();
+                SkinPresetManager.loadPresets();
+                button.setSelectedPreset(SkinPresetManager.getChosenPreset());
             }
             if(carouselWidget instanceof WarningIndicatorButton warningIndicatorButton) {
                 this.warningIndicator = warningIndicatorButton;

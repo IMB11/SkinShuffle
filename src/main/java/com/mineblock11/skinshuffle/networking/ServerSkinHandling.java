@@ -67,7 +67,10 @@ public class ServerSkinHandling {
     public static void init() {
         // Send handshake packet to client.
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-            ServerPlayNetworking.send(handler.getPlayer(), SkinShuffle.id("handshake"), PacketByteBufs.empty());
+            if (ServerPlayNetworking.canSend(handler.getPlayer(), SkinShuffle.id("handshake"))) {
+                ServerPlayNetworking.send(handler.getPlayer(), SkinShuffle.id("handshake"), PacketByteBufs.empty());
+            }
+
         });
 
         ServerPlayNetworking.registerGlobalReceiver(SkinShuffle.id("refresh"), ServerSkinHandling::handleSkinRefresh);

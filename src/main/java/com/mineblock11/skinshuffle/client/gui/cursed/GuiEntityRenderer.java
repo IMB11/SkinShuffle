@@ -30,6 +30,7 @@ public class GuiEntityRenderer {
      * Render a player in the GUI.
      */
     public static void drawEntity(MatrixStack matrices, int x, int y, int size, float rotation, double mouseX, double mouseY, LivingEntity entity) {
+        if(entity == null) return;
         float f = (float) Math.atan(mouseX / 40.0F);
         float g = (float) Math.atan(mouseY / 40.0F);
         Quaternionf quaternionf = (new Quaternionf()).rotateZ(3.1415927F);
@@ -55,6 +56,7 @@ public class GuiEntityRenderer {
 
     @SuppressWarnings("deprecation")
     private static void drawEntity(MatrixStack matrices, int x, int y, int size, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity) {
+        if(entity == null) return;
         MatrixStack matrixStack = RenderSystem.getModelViewStack();
         matrixStack.push();
         matrixStack.translate(0.0, 0.0, 1000.0);

@@ -24,6 +24,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
+import net.minecraft.util.Util;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -33,9 +34,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
 
 @Mixin(TitleScreen.class)
 public class TitleScreenMixin extends Screen {
+    @Unique
     private static boolean appliedConfiguration = false;
     @Shadow
     @Final
@@ -94,10 +97,8 @@ public class TitleScreenMixin extends Screen {
         for (ClickableWidget carouselWidget : this.openCarouselWidgets) {
             this.addDrawableChild(carouselWidget);
             if(carouselWidget instanceof OpenCarouselButton button) {
-                new Thread(() -> {
-                    SkinPresetManager.loadPresets();
-                    button.setSelectedPreset(SkinPresetManager.getChosenPreset());
-                }).start();
+                SkinPresetManager.loadPresets();
+                button.setSelectedPreset(SkinPresetManager.getChosenPreset());
             }
         }
     }

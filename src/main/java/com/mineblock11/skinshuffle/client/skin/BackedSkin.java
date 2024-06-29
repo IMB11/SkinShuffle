@@ -70,13 +70,6 @@ public abstract class BackedSkin implements Skin {
         }
     }
 
-    /*? if >=1.20.4 {*/
-    @Override
-    public @Nullable SkinTextures getSkinTextures() {
-        return null;
-    }
-    /*?}*/
-
     @Override
     public @Nullable Identifier getTexture() {
         // Fetch the skin if it hasn't been fetched yet and isn't being fetched

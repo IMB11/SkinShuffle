@@ -123,7 +123,7 @@ public class SkinPresetManager {
         }
     }
 
-    private static boolean LOADING_LOCK = false;
+    public static boolean LOADING_LOCK = false;
 
     /**
      * Load presets from the presets.json file.
