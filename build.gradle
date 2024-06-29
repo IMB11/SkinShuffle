@@ -1,12 +1,16 @@
 plugins {
-    id 'fabric-loom' version '1.6-SNAPSHOT'
+    id 'fabric-loom' version '1.7-SNAPSHOT'
     id 'maven-publish'
     id 'me.fallenbreath.yamlang' version '1.3.0'
     id "org.quiltmc.gradle.licenser" version "2.0.1"
 }
 
-version = project.mod_version
-group = project.maven_group
+version =  property("mod.version") + "+" + "1.20.1"
+group = "dev.imb11"
+
+base {
+    archivesName = property("mod.name")
+}
 
 license {
     rule file("./HEADER")
@@ -43,6 +47,15 @@ repositories {
     }
 }
 
+//if (stonecutter.current.active) { // run configs for non-active version would be invalid
+//    loom {
+//        runConfigs.all {
+//            ideConfigGenerated = true // generate IDE tasks for running client, server and testmod, datagen if those are present
+//            runDir "../../run" // use a global run directory for all versions
+//        }
+//    }
+//}
+
 loom {
     accessWidenerPath = file("src/main/resources/skinshuffle.accesswidener")
 }
@@ -54,72 +67,48 @@ yamlang {
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    mappings "net.fabricmc:yarn:${project.'deps.yarn'}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.'deps.loader'}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.'deps.fabric_api'}"
 
-    modLocalRuntime modCompileOnly("com.terraformersmc:modmenu:${project.modmenu_version}")
+    modLocalRuntime modCompileOnly("com.terraformersmc:modmenu:${project.'runtime.modmenu'}")
 
-//    modImplementation "com.ptsmods:devlogin:3.5"
     include implementation('com.konghq:unirest-java:3.11.09:standalone')
 
-    include modImplementation("dev.lambdaurora:spruceui:${project.spruceui_version}")
+    include modImplementation("dev.lambdaurora:spruceui:${project.'deps.spruceui'}")
     include modImplementation("maven.modrinth:cicada:0.8.1+1.20.1")
     include modImplementation("dev.isxander:yet-another-config-lib:${project.yacl_version}")
 
-    include implementation("org.jsoup:jsoup:${project.jsoup_version}")
+    include implementation("org.jsoup:jsoup:${project.'deps.jsoup'}")
     include implementation("org.mineskin:java-client:+")
     include implementation("commons-validator:commons-validator:1.7")
 
-
-
     modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:1.2.0")
-
-    // FancyMenu testing.
-//    modImplementation "curse.maven:konkrete-fabric-416797:4581979"
-//    modImplementation "curse.maven:fancymenu-fabric-416796:4584010"
 }
 
 processResources {
     inputs.property "version", project.version
     inputs.property "minecraft_version", project.minecraft_version
-    inputs.property "loader_version", project.loader_version
+    inputs.property "loader_version", project.'deps.loader'
     filteringCharset "UTF-8"
 
     filesMatching("fabric.mod.json") {
         expand "version": project.version,
                 "minecraft_version": project.minecraft_version,
-                "loader_version": project.loader_version
-    }
-}
-
-def targetJavaVersion = 17
-tasks.withType(JavaCompile).configureEach {
-    // ensure that the encoding is set to UTF-8, no matter what the system default is
-    // this fixes some edge cases with special characters not displaying correctly
-    // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-    // If Javadoc is generated, this must be specified in that task too.
-    it.options.encoding = "UTF-8"
-    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
-        it.options.release = targetJavaVersion
+                "loader_version": project.'deps.loader'
     }
 }
 
 java {
-    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-    }
-    archivesBaseName = project.archives_base_name
-    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-    // if it is present.
-    // If you remove this line, sources will not be generated.
-    withSourcesJar()
+    var version = JavaVersion.VERSION_17
+
+    sourceCompatibility = version
+    targetCompatibility = version
 }
 
 jar {
     from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}" }
+        rename { "${it}_${project.base.archivesName.get()}"}
     }
 }
 

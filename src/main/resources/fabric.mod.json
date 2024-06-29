@@ -5,11 +5,11 @@
   "name": "SkinShuffle",
   "description": "Choose and change your skin in-game!",
   "authors": [
-    "mineblock11",
+    "IMB11 (mineblock11)",
     "enjarai"
   ],
   "contact": {
-    "repo": "https://github.com/mineblock11/skinshuffle"
+    "repo": "https://github.com/IMB11/skinshuffle"
   },
   "license": "MIT",
   "icon": "assets/skinshuffle/icon.png",
@@ -32,6 +32,6 @@
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
-    "minecraft": ">=1.20"
+    "minecraft": "${target_minecraft}"
   }
 }
