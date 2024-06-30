@@ -17,6 +17,7 @@ package com.mineblock11.skinshuffle.client.gui.widgets.preset;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.CarouselScreen;
+import com.mineblock11.skinshuffle.client.gui.CompactCarouselScreen;
 import com.mineblock11.skinshuffle.client.gui.PresetEditScreen;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
 import com.mineblock11.skinshuffle.client.gui.widgets.VariableSpruceButtonWidget;
@@ -196,7 +197,7 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
     }
 
     private float getEntityRotation() {
-        return isActive() && SkinShuffleConfig.get().carouselSkinRenderStyle.equals(SkinShuffleConfig.SkinRenderStyle.ROTATION) ? (float) (GlfwUtil.getTime() - (parent != null ? parent.getLastCardSwitchTime() : 0)) * 35.0f : 0.0f;
+        return isActive() && SkinShuffleConfig.get().carouselSkinRenderStyle.equals(SkinShuffleConfig.SkinRenderStyle.ROTATION) ? (float) (GlfwUtil.getTime() - (parent != null && !(parent instanceof CompactCarouselScreen) ? parent.getLastCardSwitchTime() : 0)) * 35.0f : 0.0f;
     }
 
     public SkinPreset getPreset() {

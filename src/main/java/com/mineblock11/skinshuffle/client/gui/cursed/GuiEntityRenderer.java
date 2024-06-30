@@ -16,25 +16,21 @@ package com.mineblock11.skinshuffle.client.gui.cursed;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
-import nl.enjarai.cicada.api.screen.DrawUtils;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fStack;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 public class GuiEntityRenderer {
     /**
      * Render a player in the GUI.
      */
     public static void drawEntity(MatrixStack matrices, int x, int y, int size, float rotation, double mouseX, double mouseY, LivingEntity entity) {
-        float yaw = (float) (Math.atan((mouseX) / 40.0F) * Math.sin((rotation / 180.0 + 0.5) * Math.PI));
+        float yaw = (float) Math.atan(mouseX / 40.0F);
         float pitch = (float) Math.atan((mouseY) / 40.0F);
 
         Quaternionf entityRotation = new Quaternionf().rotateZ((float) Math.PI);
@@ -46,8 +42,8 @@ public class GuiEntityRenderer {
         float oldPitch = entity.getPitch();
         float oldPrevHeadYaw = entity.prevHeadYaw;
         float oldHeadYaw = entity.headYaw;
-        entity.bodyYaw = 180.0F + yaw * 20.0F;
-        entity.setYaw(180.0F + yaw * 40.0F);
+        entity.bodyYaw = 180.0F + yaw * 20.0F + rotation;
+        entity.setYaw(180.0F + yaw * 40.0F + rotation);
         entity.setPitch(-pitch * 20.0F);
         entity.headYaw = entity.getYaw();
         entity.prevHeadYaw = entity.getYaw();

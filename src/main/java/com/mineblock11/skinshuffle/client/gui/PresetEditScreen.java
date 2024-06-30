@@ -36,14 +36,9 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
-import nl.enjarai.cicada.api.cursed.DummyClientPlayerEntity;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -286,7 +281,7 @@ public class PresetEditScreen extends SpruceScreen {
     *//*?}*/
 
     private float getEntityRotation() {
-        return (float) GlfwUtil.getTime() * 35.0f;
+        return (float) GlfwUtil.getTime() * 35f;
     }
 
     @Override
