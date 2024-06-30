@@ -30,6 +30,7 @@ public class GuiEntityRenderer {
      * Render a player in the GUI.
      */
     public static void drawEntity(MatrixStack matrices, int x, int y, int size, float rotation, double mouseX, double mouseY, LivingEntity entity) {
+        if(entity == null) return;
         float yaw = (float) Math.atan(mouseX / 40.0F);
         float pitch = (float) Math.atan((mouseY) / 40.0F);
 

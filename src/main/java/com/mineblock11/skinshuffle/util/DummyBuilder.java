@@ -31,16 +31,10 @@ public class DummyBuilder {
             return null;
         }
 
-        ClientWorld world = MinecraftClient.getInstance().world;
-        
-        if(world == null) {
-            world = DummyClientWorld.getInstance();
-        }
-
         /*? if <1.20.4 {*/
         /*return new DummyClientPlayerEntity(null, UUID.randomUUID(), preset.getSkin().getTexture(), preset.getSkin().getModel());
         *//*?} else {*/
-        return new DummyClientPlayerEntity(null, UUID.randomUUID(), preset.getSkin().getSkinTextures(), world, DummyClientPlayNetworkHandler.getInstance());
+        return new DummyClientPlayerEntity(null, UUID.randomUUID(), preset.getSkin().getSkinTextures());
         /*?}*/
     }
 }
