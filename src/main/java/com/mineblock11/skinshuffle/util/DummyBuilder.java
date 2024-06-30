@@ -15,7 +15,11 @@
 package com.mineblock11.skinshuffle.util;
 
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.world.ClientWorld;
+import nl.enjarai.cicada.api.cursed.DummyClientPlayNetworkHandler;
 import nl.enjarai.cicada.api.cursed.DummyClientPlayerEntity;
+import nl.enjarai.cicada.api.cursed.DummyClientWorld;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -27,10 +31,16 @@ public class DummyBuilder {
             return null;
         }
 
+        ClientWorld world = MinecraftClient.getInstance().world;
+        
+        if(world == null) {
+            world = DummyClientWorld.getInstance();
+        }
+
         /*? if <1.20.4 {*/
         /*return new DummyClientPlayerEntity(null, UUID.randomUUID(), preset.getSkin().getTexture(), preset.getSkin().getModel());
         *//*?} else {*/
-        return new DummyClientPlayerEntity(null, UUID.randomUUID(), preset.getSkin().getSkinTextures());
+        return new DummyClientPlayerEntity(null, UUID.randomUUID(), preset.getSkin().getSkinTextures(), world, DummyClientPlayNetworkHandler.getInstance());
         /*?}*/
     }
 }

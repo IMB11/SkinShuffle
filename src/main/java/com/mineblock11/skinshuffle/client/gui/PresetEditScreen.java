@@ -258,10 +258,12 @@ public class PresetEditScreen extends SpruceScreen {
                 rotation = getEntityRotation() * SkinShuffleConfig.get().rotationMultiplier;
             }
 
+            graphics.getMatrices().push();
             GuiEntityRenderer.drawEntity(
                     graphics.getMatrices(), entityX, entityY, previewSpanY / 10 * 8,
                     rotation, followX, followY, entity
             );
+            graphics.getMatrices().pop();
         } else {
             // We call getTexture() anyway to make sure the texture is being loaded in the background.
             this.preset.getSkin().getTexture();

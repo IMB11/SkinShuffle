@@ -81,10 +81,12 @@ public class OpenCarouselButton extends ButtonWidget {
                     rotation = getEntityRotation() * SkinShuffleConfig.get().rotationMultiplier;
                 }
 
+                context.getMatrices().push();
                 GuiEntityRenderer.drawEntity(
                         context.getMatrices(), this.getX() + (this.getWidth() / 2), this.getY() - 12,
                         45, rotation, followX, followY, entity
                 );
+                context.getMatrices().pop();
             } else {
                 // Make sure to call getTexture anyway, otherwise the skin will never load
                 selectedPreset.getSkin().getTexture();
