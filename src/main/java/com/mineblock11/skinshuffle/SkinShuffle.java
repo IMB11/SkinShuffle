@@ -15,7 +15,6 @@
 package com.mineblock11.skinshuffle;
 
 import com.mineblock11.skinshuffle.compat.CompatLoader;
-import com.mineblock11.skinshuffle.networking.RefreshPlayerListEntryPayload;
 import com.mineblock11.skinshuffle.networking.ServerSkinHandling;
 import com.mineblock11.skinshuffle.util.SkinCacheRegistry;
 import net.fabricmc.api.ModInitializer;
@@ -46,7 +45,7 @@ public class SkinShuffle implements ModInitializer {
         );
         net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry.playS2C().register(
                 com.mineblock11.skinshuffle.networking.RefreshPlayerListEntryPayload.PACKET_ID,
-                RefreshPlayerListEntryPayload.PACKET_CODEC
+                com.mineblock11.skinshuffle.networking.RefreshPlayerListEntryPayload.PACKET_CODEC
         );
         /*?}*/
         

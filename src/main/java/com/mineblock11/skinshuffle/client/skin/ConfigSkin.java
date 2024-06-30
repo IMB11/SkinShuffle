@@ -26,7 +26,11 @@ import java.util.Objects;
 
 public class ConfigSkin extends FileBackedSkin {
     public static final Identifier SERIALIZATION_ID = SkinShuffle.id("config");
+    /*? if >=1.20.5 {*/
     public static final MapCodec<ConfigSkin> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+    /*?} else {*/
+    /*public static final Codec<ConfigSkin> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            *//*?}*/
             Codec.STRING.fieldOf("skin_name").forGetter(skin -> skin.skinName),
             Codec.STRING.fieldOf("model").forGetter(ConfigSkin::getModel)
     ).apply(instance, ConfigSkin::new));

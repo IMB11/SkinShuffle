@@ -1,3 +1,4 @@
+/*? if >1.20.5 {*/
 package com.mineblock11.skinshuffle.networking;
 
 import net.minecraft.network.RegistryByteBuf;
@@ -19,3 +20,4 @@ public record RefreshPlayerListEntryPayload(int entityID) implements CustomPaylo
         return PACKET_ID;
     }
 }
+/*?}*/

@@ -30,7 +30,11 @@ import java.util.UUID;
 
 public class UsernameSkin extends UUIDSkin {
     public static final Identifier SERIALIZATION_ID = SkinShuffle.id("username");
+    /*? if >=1.20.5 {*/
     public static final MapCodec<UsernameSkin> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+    /*?} else {*/
+    /*public static final Codec<UsernameSkin> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            *//*?}*/
             Codec.STRING.fieldOf("username").forGetter(skin -> skin.username),
             Codec.STRING.optionalFieldOf("model").forGetter(skin -> Optional.ofNullable(skin.model))
     ).apply(instance, UsernameSkin::new));

@@ -1,4 +1,4 @@
-/*? >=1.20.5 {*/
+/*? if >=1.20.5 {*/
 package com.mineblock11.skinshuffle.networking;
 
 import net.minecraft.network.packet.CustomPayload;

@@ -56,8 +56,8 @@ public class GuiEntityRenderer {
         Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
         modelViewStack.pushMatrix();
         modelViewStack.translate(0.0f, 0.0f, 1000.0f);
-        /*?} else {*//*
-        MatrixStack modelViewStack = RenderSystem.getModelViewStack();
+        /*?} else {*/
+        /*MatrixStack modelViewStack = RenderSystem.getModelViewStack();
         modelViewStack.push();
         modelViewStack.translate(0.0, 0.0, 1000.0);
         *//*?}*/
@@ -89,8 +89,8 @@ public class GuiEntityRenderer {
 
         /*? if >=1.20.5 {*/
         modelViewStack.popMatrix();
-        /*?} else {*//*
-        modelViewStack.pop();
+        /*?} else {*/
+        /*modelViewStack.pop();
         *//*?}*/
         RenderSystem.applyModelViewMatrix();
 

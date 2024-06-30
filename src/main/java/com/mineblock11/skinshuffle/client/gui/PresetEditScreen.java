@@ -272,8 +272,8 @@ public class PresetEditScreen extends SpruceScreen {
         this.exitButton.active = !this.preset.equals(this.originalPreset);
     }
 
-    /*? if <1.20.6 {*//*
-    public void renderBackgroundTexture(DrawContext context) {
+    /*? if <1.20.6 {*/
+    /*public void renderBackgroundTexture(DrawContext context) {
         // If we don't explicitly have this, the background color will be slightly off from the tab color.
         context.drawTexture(net.minecraft.client.gui.screen.world.CreateWorldScreen.LIGHT_DIRT_BACKGROUND_TEXTURE, 0, 0, 0, 0.0F, 0.0F, this.width, this.height, 32, 32);
     }

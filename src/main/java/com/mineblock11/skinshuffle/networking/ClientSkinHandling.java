@@ -45,8 +45,8 @@ public class ClientSkinHandling {
     }
 
     public static void sendRefresh(SkinQueryResult result) {
-        /*? <1.20.5 {*//*
-        PacketByteBuf buf = PacketByteBufs.create();
+        /*? <1.20.5 {*/
+        /*PacketByteBuf buf = PacketByteBufs.create();
         buf.writeProperty(result.toProperty());
         ClientPlayNetworking.send(SkinShuffle.id("refresh"), buf);
         *//*?} else {*/
@@ -71,8 +71,8 @@ public class ClientSkinHandling {
             SkinPresetManager.setApiPreset(null);
         });
 
-        /*? <1.20.5 {*//*
-        ClientPlayNetworking.registerGlobalReceiver(SkinShuffle.id("handshake"), (client1, handler1, buf, responseSender) -> {
+        /*? <1.20.5 {*/
+        /*ClientPlayNetworking.registerGlobalReceiver(SkinShuffle.id("handshake"), (client1, handler1, buf, responseSender) -> {
             handshakeTakenPlace = true;
         });
 

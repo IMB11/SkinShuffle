@@ -93,7 +93,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
             // If we could not send refresh packet, we change the player entity on the client
             ServerWorld level = this.getServerWorld();
 
-            /*? if >1.20.4 {*/
+            /*? if >=1.20.4 {*/
             this.networkHandler.sendPacket(new PlayerRespawnS2CPacket(
                     new CommonPlayerSpawnInfo(
                             //? if >=1.20.6 {
@@ -109,8 +109,8 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
                             this.getLastDeathPos(),
                             this.getPortalCooldown()), (byte) 3)
             );
-            /*?} else {*//*
-            this.networkHandler.sendPacket(new PlayerRespawnS2CPacket(level.getDimensionKey(), level.getRegistryKey(), BiomeAccess.hashSeed(level.getSeed()), this.interactionManager.getGameMode(), this.interactionManager.getPreviousGameMode(), level.isDebugWorld(), level.isFlat(), (byte) 3, this.getLastDeathPos(),this.getPortalCooldown()));
+            /*?} else {*/
+            /*this.networkHandler.sendPacket(new PlayerRespawnS2CPacket(level.getDimensionKey(), level.getRegistryKey(), BiomeAccess.hashSeed(level.getSeed()), this.interactionManager.getGameMode(), this.interactionManager.getPreviousGameMode(), level.isDebugWorld(), level.isFlat(), (byte) 3, this.getLastDeathPos(),this.getPortalCooldown()));
             *//*?}*/
 
             this.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(this.getX(), this.getY(), this.getZ(), this.getYaw(), this.getPitch(), Collections.emptySet(), 0));
@@ -124,8 +124,8 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
             this.networkHandler.sendPacket(new HealthUpdateS2CPacket(this.getHealth(), this.getHungerManager().getFoodLevel(), this.getHungerManager().getSaturationLevel()));
 
             for (StatusEffectInstance statusEffect : this.getStatusEffects()) {
-                /*? if <1.20.6 {*//*
-                this.networkHandler.sendPacket(new EntityStatusEffectS2CPacket(this.getId(), statusEffect));
+                /*? if <1.20.6 {*/
+                /*this.networkHandler.sendPacket(new EntityStatusEffectS2CPacket(this.getId(), statusEffect));
                 *//*?} else {*/
                 this.networkHandler.sendPacket(new EntityStatusEffectS2CPacket(this.getId(), statusEffect, false));
                 /*?}*/

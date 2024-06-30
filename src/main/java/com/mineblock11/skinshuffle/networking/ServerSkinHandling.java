@@ -52,12 +52,11 @@ public class ServerSkinHandling {
      * @return Whether the refresh was successful.
      */
     public static boolean attemptPlayerListEntryRefresh(ServerPlayerEntity player, int entityID) {
-        /*? if <1.20.5 {*//*
-        if (ServerPlayNetworking.canSend(player, SkinShuffle.id("refresh_player_list_entry"))) {
-            ServerPlayNetworking.send(player, SkinShuffle.id("refresh_player_list_entry"), PacketByteBufs.create().writeVarInt(entityId));
+        /*? if <1.20.5 {*/
+        /*if (ServerPlayNetworking.canSend(player, SkinShuffle.id("refresh_player_list_entry"))) {
+            ServerPlayNetworking.send(player, SkinShuffle.id("refresh_player_list_entry"), net.fabricmc.fabric.api.networking.v1.PacketByteBufs.create().writeVarInt(entityID));
             return true;
         }
-        return false;
         *//*?} else {*/
         if (ServerPlayNetworking.canSend(player, RefreshPlayerListEntryPayload.PACKET_ID)) {
             ServerPlayNetworking.send(player, new RefreshPlayerListEntryPayload(entityID));
@@ -71,9 +70,9 @@ public class ServerSkinHandling {
         // Send handshake packet to client.
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 
-            /*? if <1.20.5 {*//*
-            if (ServerPlayNetworking.canSend(handler.getPlayer(), SkinShuffle.id("handshake"))) {
-                ServerPlayNetworking.send(handler.getPlayer(), SkinShuffle.id("handshake"), PacketByteBufs.empty());
+            /*? if <1.20.5 {*/
+            /*if (ServerPlayNetworking.canSend(handler.getPlayer(), SkinShuffle.id("handshake"))) {
+                ServerPlayNetworking.send(handler.getPlayer(), SkinShuffle.id("handshake"), net.fabricmc.fabric.api.networking.v1.PacketByteBufs.empty());
             }
             *//*?} else {*/
             if (ServerPlayNetworking.canSend(handler.getPlayer(), HandshakePayload.PACKET_ID)) {
@@ -83,8 +82,14 @@ public class ServerSkinHandling {
 
         });
 
-        /*? if <1.20.5 {*//*
-        ServerPlayNetworking.registerGlobalReceiver(SkinShuffle.id("refresh"), ServerSkinHandling::handleSkinRefresh);
+        /*? if <1.20.5 {*/
+        /*ServerPlayNetworking.registerGlobalReceiver(SkinShuffle.id("refresh"), (server, player, handler, buf, responseSender) -> {
+            try {
+                handleSkinRefresh(server, player, buf.readProperty());
+            } catch (Exception e) {
+                SkinShuffle.LOGGER.error("Failed to handle skin refresh packet from " + player.getName().getString() + "\n" + e.getMessage());
+            }
+        });
         *//*?} else {*/
         ServerPlayNetworking.registerGlobalReceiver(SkinRefreshPayload.PACKET_ID, (payload, context) -> {
             try {

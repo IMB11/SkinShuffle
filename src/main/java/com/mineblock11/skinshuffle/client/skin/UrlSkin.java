@@ -36,7 +36,11 @@ public class UrlSkin extends BackedSkin {
     public static final Int2ObjectMap<String> MODEL_CACHE = new Int2ObjectOpenHashMap<>();
 
     public static final Identifier SERIALIZATION_ID = SkinShuffle.id("url");
+    /*? if >=1.20.5 {*/
     public static final MapCodec<UrlSkin> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+    /*?} else {*/
+    /*public static final Codec<UrlSkin> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    *//*?}*/
             Codec.STRING.fieldOf("url").forGetter(skin -> skin.url),
             Codec.STRING.optionalFieldOf("model").forGetter(skin -> Optional.ofNullable(skin.model))
     ).apply(instance, UrlSkin::new));
