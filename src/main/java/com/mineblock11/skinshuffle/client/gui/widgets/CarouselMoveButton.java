@@ -23,7 +23,7 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 public class CarouselMoveButton extends AbstractSpruceWidget {
-    private static Identifier ARROW_TEXTURES = new Identifier(SkinShuffle.MOD_ID, "textures/gui/carousel_arrows.png");
+    private static Identifier ARROW_TEXTURES = SkinShuffle.id("textures/gui/carousel_arrows.png");
     private final Type type;
     private @Nullable Runnable action;
 

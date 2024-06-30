@@ -1,32 +1,57 @@
-name: Upload release assets
-
+name: Distribute JARs
 on:
   release:
     types: [published]
 
 jobs:
-  upload_asset:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: "ubuntu-latest"
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
-      - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v1
-      - uses: burrunan/gradle-cache-action@v1
-        with:
-          gradle-distribution-sha-256-sum-warning: false
+        uses: actions/checkout@v4
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
-          distribution: temurin
+          distribution: corretto
           cache: gradle
-          java-version: 17
-      - run: chmod +x gradlew
-      - name: Build
-        run: ./gradlew build
-      - uses: Kir-Antipov/mc-publish@v3.3
+          java-version: 21
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
         with:
-#          version-type: beta
+          gradle-version: "wrapper"
+      - name: Build JARs
+        uses: Wandalen/wretry.action@master
+        with:
+          command: "gradle chiseledBuild"
+          attempt_limit: 3
+      - name: Upload Built JARs
+        uses: actions/upload-artifact@v4
+        with:
+          name: built-jars
+          path: |
+            ./versions/**/build/libs/*.jar
+
+  distribute:
+    needs: build
+    runs-on: "ubuntu-latest"
+    strategy:
+      matrix:
+        game_version: [ "1.20.1", "1.20.4", "1.20.6", "1.21" ]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Download Built JARs
+        uses: actions/download-artifact@v4
+        with:
+          name: built-jars
+          path: ./versions
+      - name: Publish to Modrinth, CurseForge, etc.
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          files: |
+            versions/${{ matrix.game_version }}/build/libs/!(*-@(dev|sources|javadoc)).jar
+            versions/${{ matrix.game_version }}/build/libs/*-@(dev|sources|javadoc).jar
+          version: ${{ github.ref_name }}+${{ matrix.game_version }}
           modrinth-id: ${{ vars.MODRINTH_ID }}
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           curseforge-id: ${{ vars.CURSEFORGE_ID }}

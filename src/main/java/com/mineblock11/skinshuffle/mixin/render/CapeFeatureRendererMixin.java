@@ -19,7 +19,6 @@ import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.PlayerModelPart;
 import net.minecraft.client.render.entity.feature.CapeFeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
@@ -60,7 +59,13 @@ public abstract class CapeFeatureRendererMixin extends FeatureRenderer<AbstractC
         canCape = capeTexture != null;
         /*?}*/
 
-        if (canCape && !abstractClientPlayerEntity.isInvisible() && abstractClientPlayerEntity.isPartVisible(PlayerModelPart.CAPE) && capeTexture != null) {
+        /*? if >=1.21 {*/
+        var part = net.minecraft.entity.player.PlayerModelPart.CAPE;
+        /*?} else {*/
+        /*var part = net.minecraft.client.render.entity.PlayerModelPart.CAPE;
+        *//*?}*/
+
+        if (canCape && !abstractClientPlayerEntity.isInvisible() && abstractClientPlayerEntity.isPartVisible(part) && capeTexture != null) {
             ItemStack itemStack = abstractClientPlayerEntity.getEquippedStack(EquipmentSlot.CHEST);
             if (!itemStack.isOf(Items.ELYTRA)) {
                 matrixStack.push();

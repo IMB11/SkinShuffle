@@ -116,7 +116,7 @@ public class UrlSkin extends BackedSkin {
 
             Path temporaryFilePath = cacheFolder.resolve(Math.abs(url.hashCode()) + ".png");
 
-            return new PlayerSkinTexture(temporaryFilePath.toFile(), url, new Identifier("minecraft:textures/entity/player/wide/steve.png"), true, () -> {
+            return new PlayerSkinTexture(temporaryFilePath.toFile(), url, Identifier.of("minecraft", "textures/entity/player/wide/steve.png"), true, () -> {
                 completionCallback.run();
 
                 try {

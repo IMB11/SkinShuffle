@@ -192,9 +192,15 @@ public class PresetEditScreen extends SpruceScreen {
                     return isValidPngFilePath(widget.getText());
                 }
                 case RESOURCE_LOCATION -> {
-                    if (Identifier.isValid(widget.getText())) {
+                    /*? if <1.21 {*/
+                    /*if (Identifier.isValid(widget.getText())) {
                         return client.getResourceManager().getResource(new Identifier(widget.getText())).isPresent();
                     } else return false;
+                    *//*?} else {*/
+                    if (Identifier.validate(widget.getText()).isSuccess()) {
+                        return client.getResourceManager().getResource(Identifier.tryParse(widget.getText())).isPresent();
+                    } else return false;
+                    /*?}*/
                 }
                 case USERNAME -> {
                     return isValidUsername(widget.getText());
@@ -411,7 +417,7 @@ public class PresetEditScreen extends SpruceScreen {
                     case FILE -> new FileSkin(Path.of(skinSource), model);
                     case UUID -> new UUIDSkin(UUID.fromString(skinSource), model);
                     case USERNAME -> new UsernameSkin(skinSource, model);
-                    case RESOURCE_LOCATION -> new ResourceSkin(new Identifier(skinSource), model);
+                    case RESOURCE_LOCATION -> new ResourceSkin(Identifier.tryParse(skinSource), model);
                     default -> Skin.randomDefaultSkin();
                 };
 

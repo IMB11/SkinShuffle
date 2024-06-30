@@ -29,7 +29,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.server.world.ThreadedAnvilChunkStorage;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.source.BiomeAccess;
@@ -79,8 +78,14 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
         playerManager.sendToAll(PlayerListS2CPacket.entryFromPlayer(Collections.singleton((ServerPlayerEntity) (Object) this)));
 
         ServerChunkManager manager = this.getServerWorld().getChunkManager();
-        ThreadedAnvilChunkStorage storage = manager.threadedAnvilChunkStorage;
-        ThreadedAnvilChunkStorage.EntityTracker trackerEntry = storage.entityTrackers.get(this.getId());
+
+        /*? if <1.21 {*/
+        /*var storage = manager.threadedAnvilChunkStorage;
+        var trackerEntry = storage.entityTrackers.get(this.getId());
+        *//*?} else {*/
+        var storage = manager.chunkLoadingManager;
+        var trackerEntry = storage.entityTrackers.get(this.getId());
+        /*?}*/
 
         // Refreshing skin in world for all that see the player
         trackerEntry.listeners.forEach(tracking -> {
