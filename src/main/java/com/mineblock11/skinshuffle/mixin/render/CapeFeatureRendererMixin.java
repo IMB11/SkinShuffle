@@ -52,8 +52,8 @@ public abstract class CapeFeatureRendererMixin extends FeatureRenderer<AbstractC
 
         boolean canCape;
         Identifier capeTexture;
-        /*? if <1.20.4 {*//*
-        canCape = abstractClientPlayerEntity.canRenderCapeTexture();
+        /*? if <1.20.4 {*/
+        /*canCape = abstractClientPlayerEntity.canRenderCapeTexture();
         capeTexture = abstractClientPlayerEntity.getCapeTexture();
         *//*?} else {*/
         capeTexture = abstractClientPlayerEntity.getSkinTextures().capeTexture();

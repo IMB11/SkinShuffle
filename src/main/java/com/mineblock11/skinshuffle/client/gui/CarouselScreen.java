@@ -186,8 +186,8 @@ public abstract class CarouselScreen extends SpruceScreen {
         var cardAreaWidth = getCardWidth() + getCardGap();
 
         // BG stuff
-        /*? if <1.20.4 {*//*
-        this.renderBackground(graphics);
+        /*? if <1.20.4 {*/
+        /*this.renderBackground(graphics);
         *//*?} else {*/
         this.renderBackground(graphics, mouseX, mouseY, delta);
         /*?}*/
@@ -294,8 +294,8 @@ public abstract class CarouselScreen extends SpruceScreen {
         setCardIndex(cardIndex);
     }
 
-    /*? if <1.20.4 {*//*
-    @Override
+    /*? if <1.20.4 {*/
+    /*@Override
     public boolean mouseScrolled(double mouseX, double mouseY, double verticalAmount) {
     *//*?} else {*/
     @Override

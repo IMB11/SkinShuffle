@@ -24,8 +24,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
 
-/*? if <1.20.4 {*//*
-import net.minecraft.client.util.Session;
+/*? if <1.20.4 {*/
+/*import net.minecraft.client.util.Session;
 *//*?} else {*/
 import net.minecraft.client.util.SkinTextures;
 import net.minecraft.client.session.Session;
@@ -55,8 +55,8 @@ public class SkinPreset {
         Session session = client.getSession();
         String name = session.getUsername();
 
-        /*? if <1.20.4 {*//*
-        if(!NetworkingUtil.isLoggedIn()) {
+        /*? if <1.20.4 {*/
+        /*if(!NetworkingUtil.isLoggedIn()) {
             Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
             Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "classic");
 

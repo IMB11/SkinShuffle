@@ -27,8 +27,8 @@ public class DummyBuilder {
             return null;
         }
 
-        /*? if <1.20.4 {*//*
-        return new DummyClientPlayerEntity(null, UUID.randomUUID(), preset.getSkin().getTexture(), preset.getSkin().getModel());
+        /*? if <1.20.4 {*/
+        /*return new DummyClientPlayerEntity(null, UUID.randomUUID(), preset.getSkin().getTexture(), preset.getSkin().getModel());
         *//*?} else {*/
         return new DummyClientPlayerEntity(null, UUID.randomUUID(), preset.getSkin().getSkinTextures());
         /*?}*/

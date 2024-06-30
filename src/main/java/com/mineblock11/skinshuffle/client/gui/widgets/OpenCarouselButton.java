@@ -57,8 +57,8 @@ public class OpenCarouselButton extends ButtonWidget {
         return (float) ((GlfwUtil.getTime() - currentTime) * 35.0f);
     }
 
-    /*? if <1.20.4 {*//*
-    @Override
+    /*? if <1.20.4 {*/
+    /*@Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
     *//*?} else {*/

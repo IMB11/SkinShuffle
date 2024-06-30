@@ -46,8 +46,8 @@ public class IconButtonWidget extends ButtonWidget {
         this.iconHeight = iconHeight;
     }
 
-    /*? if <1.20.4 {*//*
-    @Override
+    /*? if <1.20.4 {*/
+    /*@Override
     public void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
         super.renderButton(context, mouseX, mouseY, delta);
     *//*?} else {*/
