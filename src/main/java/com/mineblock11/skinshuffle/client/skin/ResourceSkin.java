@@ -16,6 +16,7 @@ package com.mineblock11.skinshuffle.client.skin;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.ResourceTexture;
@@ -27,7 +28,7 @@ import java.util.Objects;
 
 public final class ResourceSkin implements Skin {
     public static final Identifier SERIALIZATION_ID = SkinShuffle.id("resource");
-    public static final Codec<ResourceSkin> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static final MapCodec<ResourceSkin> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Identifier.CODEC.fieldOf("texture").forGetter(ResourceSkin::getTexture),
             Codec.STRING.fieldOf("model").forGetter(ResourceSkin::getModel)
     ).apply(instance, ResourceSkin::new));

@@ -22,6 +22,7 @@ import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.mixin.accessor.MinecraftClientAccessor;
 import com.mineblock11.skinshuffle.mixin.accessor.MinecraftClientAuthAccessor;
 import com.mineblock11.skinshuffle.mixin.accessor.YggdrasilUserApiServiceAccessor;
+import com.mineblock11.skinshuffle.networking.ClientSkinHandling;
 import com.mineblock11.skinshuffle.util.NetworkingUtil;
 import com.mineblock11.skinshuffle.util.SkinCacheRegistry;
 import com.mojang.authlib.minecraft.UserApiService;
@@ -73,10 +74,6 @@ public class SkinAPIs {
         } else {
             SkinShuffle.LOGGER.error("Cannot connect to Mojang API - offline mode is active.");
             return false;
-        }
-
-        if(MinecraftClient.getInstance().world != null) {
-            ClientPlayNetworking.send(SkinShuffle.id("preset_changed"), PacketByteBufs.empty());
         }
 
         return true;
@@ -219,10 +216,6 @@ public class SkinAPIs {
                         .get("url").getAsString();
 
                 SkinCacheRegistry.saveUploadedSkin(skinFile, skinURL);
-
-                if(MinecraftClient.getInstance().world != null) {
-                    ClientPlayNetworking.send(SkinShuffle.id("preset_changed"), PacketByteBufs.create().writeString(skinURL));
-                }
 
                 SkinShuffle.LOGGER.info("Uploaded texture: " + skinURL);
                 SkinShuffle.LOGGER.info("Set player skin: " + skinURL);

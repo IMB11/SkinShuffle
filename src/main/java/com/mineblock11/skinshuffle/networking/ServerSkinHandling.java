@@ -17,21 +17,14 @@ package com.mineblock11.skinshuffle.networking;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.util.SkinShufflePlayer;
 import com.mojang.authlib.properties.Property;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
 
 public class ServerSkinHandling {
-    private static final Identifier REFRESH_PLAYER_LIST_ENTRY_ID = SkinShuffle.id("refresh_player_list_entry");
 
-    private static void handleSkinRefresh(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-        Property skinData = buf.readProperty();
+    private static void handleSkinRefresh(MinecraftServer server, ServerPlayerEntity player, Property skinData) {
         SkinShuffle.LOGGER.info("Recieved skin refresh packet from: " + player.getName().getString());
 
         server.execute(() -> {
@@ -52,27 +45,54 @@ public class ServerSkinHandling {
         });
     }
 
-    public static PacketByteBuf createEntityIdPacket(int entityId) {
-        return PacketByteBufs.create().writeVarInt(entityId);
-    }
-
-    public static boolean trySendRefreshPlayerListEntry(ServerPlayerEntity player, PacketByteBuf buf) {
-        if (ServerPlayNetworking.canSend(player, REFRESH_PLAYER_LIST_ENTRY_ID)) {
-            ServerPlayNetworking.send(player, REFRESH_PLAYER_LIST_ENTRY_ID, buf);
+    /**
+     * Attempt to refresh the player list entry for a player.
+     * @param player The player to refresh the entry for.
+     * @param entityID The entity ID of the player.
+     * @return Whether the refresh was successful.
+     */
+    public static boolean attemptPlayerListEntryRefresh(ServerPlayerEntity player, int entityID) {
+        /*? if <1.20.5 {*//*
+        if (ServerPlayNetworking.canSend(player, SkinShuffle.id("refresh_player_list_entry"))) {
+            ServerPlayNetworking.send(player, SkinShuffle.id("refresh_player_list_entry"), PacketByteBufs.create().writeVarInt(entityId));
             return true;
         }
+        return false;
+        *//*?} else {*/
+        if (ServerPlayNetworking.canSend(player, RefreshPlayerListEntryPayload.PACKET_ID)) {
+            ServerPlayNetworking.send(player, new RefreshPlayerListEntryPayload(entityID));
+            return true;
+        }
+        /*?}*/
         return false;
     }
 
     public static void init() {
         // Send handshake packet to client.
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+
+            /*? if <1.20.5 {*//*
             if (ServerPlayNetworking.canSend(handler.getPlayer(), SkinShuffle.id("handshake"))) {
                 ServerPlayNetworking.send(handler.getPlayer(), SkinShuffle.id("handshake"), PacketByteBufs.empty());
             }
+            *//*?} else {*/
+            if (ServerPlayNetworking.canSend(handler.getPlayer(), HandshakePayload.PACKET_ID)) {
+                ServerPlayNetworking.send(handler.getPlayer(), new HandshakePayload());
+            }
+            /*?}*/
 
         });
 
+        /*? if <1.20.5 {*//*
         ServerPlayNetworking.registerGlobalReceiver(SkinShuffle.id("refresh"), ServerSkinHandling::handleSkinRefresh);
+        *//*?} else {*/
+        ServerPlayNetworking.registerGlobalReceiver(SkinRefreshPayload.PACKET_ID, (payload, context) -> {
+            try {
+                ServerSkinHandling.handleSkinRefresh(context.server(), context.player(), payload.textureProperty());
+            } catch (Exception e) {
+                SkinShuffle.LOGGER.error("Failed to handle skin refresh packet from " + context.player().getName().getString() + "\n" + e.getMessage());
+            }
+        });
+        /*?}*/
     }
 }

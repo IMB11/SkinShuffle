@@ -22,7 +22,6 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.*;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -83,23 +82,24 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
         ThreadedAnvilChunkStorage storage = manager.threadedAnvilChunkStorage;
         ThreadedAnvilChunkStorage.EntityTracker trackerEntry = storage.entityTrackers.get(this.getId());
 
-        PacketByteBuf refreshPlayerListEntryPacket = ServerSkinHandling.createEntityIdPacket(getId());
-
         // Refreshing skin in world for all that see the player
         trackerEntry.listeners.forEach(tracking -> {
-            if (!ServerSkinHandling.trySendRefreshPlayerListEntry(tracking.getPlayer(), refreshPlayerListEntryPacket)) {
+            if (!ServerSkinHandling.attemptPlayerListEntryRefresh(tracking.getPlayer(), this.getId())) {
                 trackerEntry.entry.startTracking(tracking.getPlayer());
             }
         });
 
-        if (!ServerSkinHandling.trySendRefreshPlayerListEntry((ServerPlayerEntity) (Object) this, refreshPlayerListEntryPacket)) {
+        if (!ServerSkinHandling.attemptPlayerListEntryRefresh((ServerPlayerEntity) (Object) this, this.getId())) {
             // If we could not send refresh packet, we change the player entity on the client
             ServerWorld level = this.getServerWorld();
 
             /*? if >1.20.4 {*/
-            /*this.networkHandler.sendPacket(new PlayerRespawnS2CPacket(
+            this.networkHandler.sendPacket(new PlayerRespawnS2CPacket(
                     new CommonPlayerSpawnInfo(
-                            level.getDimensionKey(),
+                            //? if >=1.20.6 {
+                            level.getDimensionEntry(),
+                            //?} else
+                            /*level.getDimensionKey(),*/
                             level.getRegistryKey(),
                             BiomeAccess.hashSeed(level.getSeed()),
                             this.interactionManager.getGameMode(),
@@ -107,11 +107,11 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
                             level.isDebugWorld(),
                             level.isFlat(),
                             this.getLastDeathPos(),
-                            this.getPortalCooldown()), (byte) 3
-            ));
-            *//*?} else {*//*
+                            this.getPortalCooldown()), (byte) 3)
+            );
+            /*?} else {*//*
             this.networkHandler.sendPacket(new PlayerRespawnS2CPacket(level.getDimensionKey(), level.getRegistryKey(), BiomeAccess.hashSeed(level.getSeed()), this.interactionManager.getGameMode(), this.interactionManager.getPreviousGameMode(), level.isDebugWorld(), level.isFlat(), (byte) 3, this.getLastDeathPos(),this.getPortalCooldown()));
-            /*?}*/
+            *//*?}*/
 
             this.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(this.getX(), this.getY(), this.getZ(), this.getYaw(), this.getPitch(), Collections.emptySet(), 0));
             this.networkHandler.sendPacket(new UpdateSelectedSlotS2CPacket(this.getInventory().selectedSlot));
@@ -124,7 +124,11 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
             this.networkHandler.sendPacket(new HealthUpdateS2CPacket(this.getHealth(), this.getHungerManager().getFoodLevel(), this.getHungerManager().getSaturationLevel()));
 
             for (StatusEffectInstance statusEffect : this.getStatusEffects()) {
+                /*? if <1.20.6 {*//*
                 this.networkHandler.sendPacket(new EntityStatusEffectS2CPacket(this.getId(), statusEffect));
+                *//*?} else {*/
+                this.networkHandler.sendPacket(new EntityStatusEffectS2CPacket(this.getId(), statusEffect, false));
+                /*?}*/
             }
 
             var equipmentList = new ArrayList<Pair<EquipmentSlot, ItemStack>>();

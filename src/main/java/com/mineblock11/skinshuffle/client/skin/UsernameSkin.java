@@ -18,6 +18,7 @@ import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.api.SkinAPIs;
 import com.mineblock11.skinshuffle.api.SkinQueryResult;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.util.Identifier;
@@ -29,7 +30,7 @@ import java.util.UUID;
 
 public class UsernameSkin extends UUIDSkin {
     public static final Identifier SERIALIZATION_ID = SkinShuffle.id("username");
-    public static final Codec<UsernameSkin> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static final MapCodec<UsernameSkin> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.STRING.fieldOf("username").forGetter(skin -> skin.username),
             Codec.STRING.optionalFieldOf("model").forGetter(skin -> Optional.ofNullable(skin.model))
     ).apply(instance, UsernameSkin::new));

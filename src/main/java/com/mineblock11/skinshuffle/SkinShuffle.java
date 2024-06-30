@@ -15,7 +15,7 @@
 package com.mineblock11.skinshuffle;
 
 import com.mineblock11.skinshuffle.compat.CompatLoader;
-import com.mineblock11.skinshuffle.networking.ClientSkinHandling;
+import com.mineblock11.skinshuffle.networking.RefreshPlayerListEntryPayload;
 import com.mineblock11.skinshuffle.networking.ServerSkinHandling;
 import com.mineblock11.skinshuffle.util.SkinCacheRegistry;
 import net.fabricmc.api.ModInitializer;
@@ -35,6 +35,21 @@ public class SkinShuffle implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        /*? if >=1.20.5 {*/
+        net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry.playC2S().register(
+                com.mineblock11.skinshuffle.networking.SkinRefreshPayload.PACKET_ID,
+                com.mineblock11.skinshuffle.networking.SkinRefreshPayload.PACKET_CODEC
+        );
+        net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry.playS2C().register(
+                com.mineblock11.skinshuffle.networking.HandshakePayload.PACKET_ID,
+                net.minecraft.network.codec.PacketCodec.unit(com.mineblock11.skinshuffle.networking.HandshakePayload.INSTANCE)
+        );
+        net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry.playS2C().register(
+                com.mineblock11.skinshuffle.networking.RefreshPlayerListEntryPayload.PACKET_ID,
+                RefreshPlayerListEntryPayload.PACKET_CODEC
+        );
+        /*?}*/
+        
         ensureDataDir();
         SkinCacheRegistry.initialize();
         ServerSkinHandling.init();

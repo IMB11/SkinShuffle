@@ -51,8 +51,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-import static net.minecraft.client.gui.screen.world.CreateWorldScreen.LIGHT_DIRT_BACKGROUND_TEXTURE;
-
 public class PresetEditScreen extends SpruceScreen {
     public static final int MAX_WIDTH = 400;
 
@@ -272,10 +270,12 @@ public class PresetEditScreen extends SpruceScreen {
         this.exitButton.active = !this.preset.equals(this.originalPreset);
     }
 
+    /*? if <1.20.6 {*//*
     public void renderBackgroundTexture(DrawContext context) {
         // If we don't explicitly have this, the background color will be slightly off from the tab color.
-        context.drawTexture(LIGHT_DIRT_BACKGROUND_TEXTURE, 0, 0, 0, 0.0F, 0.0F, this.width, this.height, 32, 32);
+        context.drawTexture(net.minecraft.client.gui.screen.world.CreateWorldScreen.LIGHT_DIRT_BACKGROUND_TEXTURE, 0, 0, 0, 0.0F, 0.0F, this.width, this.height, 32, 32);
     }
+    *//*?}*/
 
     private float getEntityRotation() {
         return (float) GlfwUtil.getTime() * 35.0f;

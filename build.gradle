@@ -1,7 +1,6 @@
 plugins {
     id 'fabric-loom' version '1.7-SNAPSHOT'
     id 'maven-publish'
-    id "org.quiltmc.gradle.licenser" version "2.0.1"
 }
 
 version =  property("mod.version") + "+" + stonecutter.current.version
@@ -9,11 +8,6 @@ group = "dev.imb11"
 
 base {
     archivesName = property("mod.name")
-}
-
-license {
-    rule rootProject.file("./HEADER")
-    include '**/*.java'
 }
 
 repositories {
@@ -86,7 +80,6 @@ processResources {
                 'target_minecraft': project.property('mod.target'),
                 'target_yacl': project.property('deps.yacl'),
                 'loader_version': project.property('deps.loader'),
-                'target_fabric_api': project.property('fabric_api.target'),
                 'minecraft_version': stonecutter.current.version
     }
 }

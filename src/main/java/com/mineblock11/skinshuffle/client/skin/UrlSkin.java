@@ -16,6 +16,7 @@ package com.mineblock11.skinshuffle.client.skin;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -35,7 +36,7 @@ public class UrlSkin extends BackedSkin {
     public static final Int2ObjectMap<String> MODEL_CACHE = new Int2ObjectOpenHashMap<>();
 
     public static final Identifier SERIALIZATION_ID = SkinShuffle.id("url");
-    public static final Codec<UrlSkin> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static final MapCodec<UrlSkin> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.STRING.fieldOf("url").forGetter(skin -> skin.url),
             Codec.STRING.optionalFieldOf("model").forGetter(skin -> Optional.ofNullable(skin.model))
     ).apply(instance, UrlSkin::new));

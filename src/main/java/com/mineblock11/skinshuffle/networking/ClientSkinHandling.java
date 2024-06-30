@@ -21,6 +21,7 @@ import com.mineblock11.skinshuffle.util.SkinShuffleClientPlayer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
@@ -44,9 +45,13 @@ public class ClientSkinHandling {
     }
 
     public static void sendRefresh(SkinQueryResult result) {
+        /*? <1.20.5 {*//*
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeProperty(result.toProperty());
         ClientPlayNetworking.send(SkinShuffle.id("refresh"), buf);
+        *//*?} else {*/
+        ClientPlayNetworking.send(new SkinRefreshPayload(result.toProperty()));
+        /*?}*/
     }
 
     public static void init() {
@@ -66,6 +71,7 @@ public class ClientSkinHandling {
             SkinPresetManager.setApiPreset(null);
         });
 
+        /*? <1.20.5 {*//*
         ClientPlayNetworking.registerGlobalReceiver(SkinShuffle.id("handshake"), (client1, handler1, buf, responseSender) -> {
             handshakeTakenPlace = true;
         });
@@ -82,5 +88,24 @@ public class ClientSkinHandling {
                 }
             });
         });
+        *//*?} else {*/
+        ClientPlayNetworking.registerGlobalReceiver(HandshakePayload.PACKET_ID, (payload, context) -> {
+            handshakeTakenPlace = true;
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(RefreshPlayerListEntryPayload.PACKET_ID, (payload, context) -> {
+            int id = payload.entityID();
+            MinecraftClient client = context.client();
+            client.execute(() -> {
+                ClientWorld world = client.world;
+                if (world != null) {
+                    Entity entity = world.getEntityById(id);
+                    if (entity instanceof AbstractClientPlayerEntity player) {
+                        ((SkinShuffleClientPlayer) player).skinShuffle$refreshPlayerListEntry();
+                    }
+                }
+            });
+        });
+        /*?}*/
     }
 }

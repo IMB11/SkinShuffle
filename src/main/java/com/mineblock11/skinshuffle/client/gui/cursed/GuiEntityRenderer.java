@@ -21,8 +21,10 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
+import nl.enjarai.cicada.api.screen.DrawUtils;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
+import org.joml.Matrix4fStack;
 import org.joml.Quaternionf;
 
 public class GuiEntityRenderer {
@@ -57,9 +59,15 @@ public class GuiEntityRenderer {
     @SuppressWarnings("deprecation")
     private static void drawEntity(MatrixStack matrices, int x, int y, int size, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity) {
         if(entity == null) return;
+        /*? if <1.20.5 { *//*
         MatrixStack matrixStack = RenderSystem.getModelViewStack();
         matrixStack.push();
         matrixStack.translate(0.0, 0.0, 1000.0);
+        *//*? } else { */
+        Matrix4fStack matrixStack = RenderSystem.getModelViewStack();
+        matrixStack.pushMatrix();
+        matrixStack.translate(0.0F, 0.0F, 1000.0F);
+        /*? }*/
         RenderSystem.applyModelViewMatrix();
         matrices.push();
         matrices.translate(x, y, -950.0);
@@ -80,7 +88,13 @@ public class GuiEntityRenderer {
         immediate.draw();
         matrices.pop();
         DiffuseLighting.enableGuiDepthLighting();
+
+        /*? if <1.20.5 { *//*
         matrixStack.pop();
+        *//*? } else { */
+        matrixStack.popMatrix();
+        /*? }*/
+
         RenderSystem.applyModelViewMatrix();
     }
 }

@@ -17,6 +17,7 @@ package com.mineblock11.skinshuffle.client.skin;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
 
@@ -25,7 +26,7 @@ import java.util.Objects;
 
 public class ConfigSkin extends FileBackedSkin {
     public static final Identifier SERIALIZATION_ID = SkinShuffle.id("config");
-    public static final Codec<ConfigSkin> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static final MapCodec<ConfigSkin> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.STRING.fieldOf("skin_name").forGetter(skin -> skin.skinName),
             Codec.STRING.fieldOf("model").forGetter(ConfigSkin::getModel)
     ).apply(instance, ConfigSkin::new));

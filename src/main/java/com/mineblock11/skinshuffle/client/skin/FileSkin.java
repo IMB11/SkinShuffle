@@ -17,6 +17,7 @@ package com.mineblock11.skinshuffle.client.skin;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
 
@@ -25,7 +26,7 @@ import java.util.Objects;
 
 public class FileSkin extends FileBackedSkin {
     public static final Identifier SERIALIZATION_ID = SkinShuffle.id("file");
-    public static final Codec<FileSkin> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static final MapCodec<FileSkin> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.STRING.comapFlatMap(string -> {
                 try {
                     return DataResult.success(Path.of(string));
