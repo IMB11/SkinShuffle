@@ -14,7 +14,9 @@
 
 package com.mineblock11.skinshuffle.client.gui.cursed;
 
+import com.mineblock11.skinshuffle.compat.ETFCompat;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -74,6 +76,10 @@ public class GuiEntityRenderer {
             dispatcher.setRotation(pitchRotation);
         }
         dispatcher.setRenderShadows(false);
+
+        if(FabricLoader.getInstance().isModLoaded("entity_texture_features")) {
+            ETFCompat.preventRenderLayerIssue();
+        }
 
         VertexConsumerProvider.Immediate vertexConsumers = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
         dispatcher.render(entity, 0.0, 0.0, 0.0, 0.0f, 1.0f, matrices, vertexConsumers, 0xF000F0);
