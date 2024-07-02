@@ -184,7 +184,11 @@ public class PresetEditScreen extends SpruceScreen {
                     return urlValidator.isValid(widget.getText());
                 }
                 case FILE -> {
-                    return isValidPngFilePath(widget.getText());
+                    try {
+                        return isValidPngFilePath(widget.getText());
+                    } catch (Exception ignored) {
+                        return false;
+                    }
                 }
                 case RESOURCE_LOCATION -> {
                     /*? if <1.21 {*/
