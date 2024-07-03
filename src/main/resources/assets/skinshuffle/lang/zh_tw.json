@@ -90,7 +90,7 @@
   "skinshuffle.edit.source.url": "URL",
   "skinshuffle.edit.source.invalid_url": "§4§n無效的 URL§r\n\nURL 無效。必須為有效的 §lhttp§r 或 §lhttps§r 協議 URL。",
   "skinshuffle.edit.source.uuid": "UUID",
-  "skinshuffle.edit.source.invalid_uuid": "§4§n無效的UUID§r\n\nUUID需為以下格式：\n§lxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+  "skinshuffle.edit.source.invalid_uuid": "§4§n無效的UUID§r\n\nUUID 需為以下格式：\n§lxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
   "skinshuffle.edit.source.resource_location": "資源位置",
   "skinshuffle.edit.source.invalid_resource_location": "§4§n無效的資源位置§r\n\n資源位置需為已被遊戲載入且有效的紋理文件。",
   "skinshuffle.edit.source.unchanged": "保持現狀",
