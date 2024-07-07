@@ -352,6 +352,11 @@ public class PresetEditScreen extends SpruceScreen {
                                     pathStr = home + pathStr.substring(1);
                                 }
 
+                                // Remove quotes from around the path
+                                if (pathStr.startsWith("\"") && pathStr.endsWith("\"")) {
+                                    pathStr = pathStr.substring(1, pathStr.length() - 1);
+                                }
+
                                 textFieldWidget.setText(pathStr);
                             }
 
