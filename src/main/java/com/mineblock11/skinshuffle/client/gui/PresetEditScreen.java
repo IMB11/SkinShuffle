@@ -93,6 +93,29 @@ public class PresetEditScreen extends SpruceScreen {
         }).build());
 
         this.exitButton = ButtonWidget.builder(ScreenTexts.OK, (button) -> {
+            if (this.skinSourceTab.currentSourceType != SourceType.UNCHANGED) {
+                if (this.skinSourceTab.currentSourceType == SourceType.FILE) {
+                    // Expand ~ to the user's home directory
+                    String pathStr = this.skinSourceTab.textFieldWidget.getText();
+                    if (pathStr.startsWith("~")) {
+                        String home = System.getProperty("user.home");
+                        pathStr = home + pathStr.substring(1);
+                    }
+
+                    this.skinSourceTab.textFieldWidget.setText(pathStr);
+                }
+
+                if (this.skinSourceTab.currentSourceType == SourceType.FILE || this.skinSourceTab.currentSourceType == SourceType.URL) {
+                    // Remove quotes from around the path
+                    String sre = this.skinSourceTab.textFieldWidget.getText();
+                    if (sre.startsWith("\"") && sre.endsWith("\"")) {
+                        sre = sre.substring(1, sre.length() - 1);
+                    }
+
+                    this.skinSourceTab.textFieldWidget.setText(sre);
+                }
+            }
+
             this.originalPreset.copyFrom(this.preset);
             // We try to save the skin to config, but if it fails, it's safe to ignore.
             try {
@@ -344,7 +367,7 @@ public class PresetEditScreen extends SpruceScreen {
                     SkinShuffle.id("textures/gui/reload-button-icon.png"),
                     button -> {
                         if (currentSourceType != SourceType.UNCHANGED) {
-                            if(currentSourceType == SourceType.FILE) {
+                            if (currentSourceType == SourceType.FILE) {
                                 // Expand ~ to the user's home directory
                                 String pathStr = textFieldWidget.getText();
                                 if (pathStr.startsWith("~")) {
@@ -352,12 +375,17 @@ public class PresetEditScreen extends SpruceScreen {
                                     pathStr = home + pathStr.substring(1);
                                 }
 
+                                textFieldWidget.setText(pathStr);
+                            }
+
+                            if (currentSourceType == SourceType.FILE || currentSourceType == SourceType.URL) {
                                 // Remove quotes from around the path
-                                if (pathStr.startsWith("\"") && pathStr.endsWith("\"")) {
-                                    pathStr = pathStr.substring(1, pathStr.length() - 1);
+                                String sre = textFieldWidget.getText();
+                                if (sre.startsWith("\"") && sre.endsWith("\"")) {
+                                    sre = sre.substring(1, sre.length() - 1);
                                 }
 
-                                textFieldWidget.setText(pathStr);
+                                textFieldWidget.setText(sre);
                             }
 
                             loadSkin();
@@ -430,7 +458,7 @@ public class PresetEditScreen extends SpruceScreen {
             }
 
             CompletableFuture.runAsync(() -> {
-                while(preset.getSkin().isLoading()) {
+                while (preset.getSkin().isLoading()) {
                     Thread.onSpinWait();
                 }
 
