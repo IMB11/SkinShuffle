@@ -37,12 +37,11 @@ public abstract class FileBackedSkin extends BackedSkin {
     @Override
     protected @Nullable AbstractTexture loadTexture(Runnable completionCallback) {
         try (var inputStream = Files.newInputStream(getFile())) {
-            var image = LegacySkinConverter.processTexture(NativeImage.read(NativeImage.Format.RGBA, inputStream));
-
-            var texture = new NativeImageBackedTexture(image);
-
-            completionCallback.run();
-            return texture;
+            try (var image = LegacySkinConverter.processTexture(NativeImage.read(NativeImage.Format.RGBA, inputStream))) {
+                var texture = new NativeImageBackedTexture(image);
+                completionCallback.run();
+                return texture;
+            }
         } catch (Exception e) {
             SkinShuffle.LOGGER.warn("Failed to load skin from file: " + getFile(), e);
             return null;

@@ -23,6 +23,10 @@ public class LegacySkinConverter {
      * @return The converted image.
      */
     public static NativeImage processTexture(NativeImage image) {
+        if (image == null) {
+            return image;
+        }
+
         int imageHeight = image.getHeight();
         int imageWidth = image.getWidth();
 
