@@ -61,6 +61,8 @@ dependencies {
 
     modLocalRuntime modCompileOnly("maven.modrinth:modmenu:${property('runtime.modmenu')}")
     modLocalRuntime modCompileOnly("maven.modrinth:entitytexturefeatures:${property('runtime.etf')}")
+    modCompileOnly("maven.modrinth:tslatentitystatus:${property('runtime.tslatentitystatus')}")
+    modLocalRuntime modCompileOnly("maven.modrinth:provis-health-bars:${property('runtime.provis')}")
 
     include implementation('com.konghq:unirest-java:3.11.09:standalone')
 
