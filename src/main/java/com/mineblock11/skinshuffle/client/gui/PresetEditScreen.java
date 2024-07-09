@@ -278,7 +278,7 @@ public class PresetEditScreen extends SpruceScreen {
             float followY = entityY - previewSpanY * 1.2f - mouseY;
             float rotation = 0;
 
-            SkinShuffleConfig.SkinRenderStyle renderStyle = SkinShuffleConfig.get().carouselSkinRenderStyle;
+            SkinShuffleConfig.SkinRenderStyle renderStyle = SkinShuffleConfig.get().presetEditScreenRenderStyle;
 
             if (renderStyle.equals(SkinShuffleConfig.SkinRenderStyle.ROTATION)) {
                 followX = 0;
