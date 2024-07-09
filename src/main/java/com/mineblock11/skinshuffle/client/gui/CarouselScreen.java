@@ -168,6 +168,8 @@ public abstract class CarouselScreen extends SpruceScreen {
 
     @Override
     public void close() {
+        this.client.setScreen(parent);
+
         // Save all presets to config when closing the screen, skipping any we can't
         for (var preset : SkinPresetManager.getLoadedPresets()) {
             try {
@@ -177,8 +179,6 @@ public abstract class CarouselScreen extends SpruceScreen {
         }
 
         SkinPresetManager.savePresets();
-
-        this.client.setScreen(parent);
     }
 
     @Override
