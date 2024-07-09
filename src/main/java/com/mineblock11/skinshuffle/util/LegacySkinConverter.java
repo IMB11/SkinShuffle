@@ -57,8 +57,8 @@ public class LegacySkinConverter {
             }
             if (isImageHeight32) {
                 boolean finished = false;
-                int i = 0;
-                int j = 0;
+                int i;
+                int j;
                 for(i = 32; i < 64; ++i) {
                     for(j = 0; j < 32; ++j) {
                         int k = image.getColor(i, j);

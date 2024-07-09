@@ -39,6 +39,8 @@ public abstract class FileBackedSkin extends BackedSkin {
         try (var inputStream = Files.newInputStream(getFile())) {
             var image = LegacySkinConverter.processTexture(NativeImage.read(NativeImage.Format.RGBA, inputStream));
 
+            if(image == null) throw new RuntimeException("Texture is null!");
+
             var texture = new NativeImageBackedTexture(image);
 
             completionCallback.run();
