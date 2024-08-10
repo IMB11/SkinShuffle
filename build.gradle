@@ -74,7 +74,7 @@ dependencies {
     include implementation("org.mineskin:java-client:+")
     include implementation("commons-validator:commons-validator:1.7")
 
-    modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:1.2.0")
+//    modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:1.2.0")
 }
 
 processResources {

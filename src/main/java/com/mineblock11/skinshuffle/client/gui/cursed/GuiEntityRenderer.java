@@ -81,9 +81,14 @@ public class GuiEntityRenderer {
             ETFCompat.preventRenderLayerIssue();
         }
 
-        VertexConsumerProvider.Immediate vertexConsumers = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-        dispatcher.render(entity, 0.0, 0.0, 0.0, 0.0f, 1.0f, matrices, vertexConsumers, 0xF000F0);
-        vertexConsumers.draw();
+        try {
+            VertexConsumerProvider.Immediate vertexConsumers = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+            dispatcher.render(entity, 0.0, 0.0, 0.0, 0.0f, 1.0f, matrices, vertexConsumers, 0xF000F0);
+            vertexConsumers.draw();
+        } catch (Exception ignored) {
+
+        }
+
 
         dispatcher.setRenderShadows(true);
 
