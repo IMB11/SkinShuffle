@@ -12,11 +12,13 @@
     ],
     "client": [
         "PlayerEntityMixin",
+        "accessor.DummyClientPlayerEntityAccessor",
         "accessor.GameMenuScreenAccessor",
         "accessor.MinecraftClientAccessor",
         "accessor.ToastManagerAccessor",
         "render.CapeFeatureRendererMixin",
         "render.LivingEntityRendererMixin",
+        "screen.AccessibilityOnboardingScreenMixin",
         "screen.GameMenuScreenMixin",
         "screen.ScreenMixin",
         "screen.TitleScreenMixin"

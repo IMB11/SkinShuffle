@@ -20,6 +20,7 @@ import com.mineblock11.skinshuffle.client.gui.GeneratedScreens;
 import com.mineblock11.skinshuffle.client.gui.widgets.OpenCarouselButton;
 import com.mineblock11.skinshuffle.util.NetworkingUtil;
 import com.mineblock11.skinshuffle.util.ToastHelper;
+import net.minecraft.client.gui.screen.AccessibilityOnboardingScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -54,6 +55,7 @@ public class TitleScreenMixin extends Screen {
     public void refreshConfig(CallbackInfo ci) {
         if (!appliedConfiguration && this.doBackgroundFade) {
             appliedConfiguration = true;
+            SkinPresetManager.loadPresets();
             SkinPresetManager.apply();
 
             if(!NetworkingUtil.isLoggedIn()) {
@@ -97,7 +99,6 @@ public class TitleScreenMixin extends Screen {
         for (ClickableWidget carouselWidget : this.openCarouselWidgets) {
             this.addDrawableChild(carouselWidget);
             if(carouselWidget instanceof OpenCarouselButton button) {
-                SkinPresetManager.loadPresets();
                 button.setSelectedPreset(SkinPresetManager.getChosenPreset());
             }
         }
