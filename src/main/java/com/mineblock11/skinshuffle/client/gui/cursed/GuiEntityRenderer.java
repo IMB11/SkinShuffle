@@ -14,6 +14,7 @@
 
 package com.mineblock11.skinshuffle.client.gui.cursed;
 
+import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.compat.ETFCompat;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.loader.api.FabricLoader;
@@ -32,7 +33,7 @@ public class GuiEntityRenderer {
      * Render a player in the GUI.
      */
     public static void drawEntity(MatrixStack matrices, int x, int y, int size, float rotation, double mouseX, double mouseY, LivingEntity entity) {
-        if(entity == null) return;
+        if(entity == null || !SkinPresetManager.hasLoadedPresets()) return;
         float yaw = (float) Math.atan(mouseX / 40.0F);
         float pitch = (float) Math.atan((mouseY) / 40.0F);
 

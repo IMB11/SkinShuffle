@@ -71,7 +71,7 @@ dependencies {
     include modImplementation("dev.isxander:yet-another-config-lib:${property('deps.yacl')}")
 
     include implementation("org.jsoup:jsoup:1.16.1")
-    include implementation("org.mineskin:java-client:+")
+    include implementation("org.mineskin:java-client:1.2.4-SNAPSHOT")
     include implementation("commons-validator:commons-validator:1.7")
 
     modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:1.2.0")

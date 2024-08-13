@@ -18,6 +18,7 @@ import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.GeneratedScreens;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
+import com.mineblock11.skinshuffle.mixin.accessor.DummyClientPlayerEntityAccessor;
 import com.mineblock11.skinshuffle.util.DummyBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -66,9 +67,22 @@ public class OpenCarouselButton extends ButtonWidget {
     public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
         super.renderWidget(context, mouseX, mouseY, delta);
     /*?}*/
+
         if (this.entity != null && selectedPreset != null) {
             // Don't want to render the entity if the skin is still loading
             if (!selectedPreset.getSkin().isLoading()) {
+
+                // Solve null crashes and desync issues.
+                //? if >=1.20.4 {
+                if(!this.entity.getSkinTextures().equals(selectedPreset.getSkin().getSkinTextures())) {
+                    ((DummyClientPlayerEntityAccessor) this.entity).setSkinTextures(selectedPreset.getSkin().getSkinTextures());
+                }
+                //?} else {
+                /*if(this.entity.getSkinTexture() != selectedPreset.getSkin().getTexture()) {
+                    ((DummyClientPlayerEntityAccessor) this.entity).setSkinIdentifier(selectedPreset.getSkin().getTexture());
+                }
+                *///?}
+
                 float followX = (float) (this.getX() + (this.getWidth() / 2)) - mouseX;
                 float followY = (float) (this.getY() - 90) - mouseY;
                 float rotation = 0;
