@@ -49,14 +49,7 @@ public abstract class GameMenuScreenMixin extends ScreenMixin {
 
     @Override
     public void closeHook(CallbackInfo ci) {
-        if (this.openCarouselWidgets != null) {
-            for (ClickableWidget openCarouselWidget : this.openCarouselWidgets) {
-                if(openCarouselWidget instanceof  OpenCarouselButton button) {
-                    button.disposed();
-                }
-            }
-            this.openCarouselWidgets = null;
-        }
+        this.openCarouselWidgets = null;
     }
 
     @Override

@@ -1,5 +1,6 @@
 accessWidener   v1  named
 
+accessible method net/minecraft/client/render/entity/model/BipedEntityModel getPreferredArm (Lnet/minecraft/entity/LivingEntity;)Lnet/minecraft/util/Arm;
 accessible class net/minecraft/client/texture/ResourceTexture$TextureData
 accessible method net/minecraft/client/QuickPlay startSingleplayer (Lnet/minecraft/client/MinecraftClient;Ljava/lang/String;)V
 accessible method net/minecraft/client/QuickPlay startMultiplayer (Lnet/minecraft/client/MinecraftClient;Ljava/lang/String;)V

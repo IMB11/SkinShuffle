@@ -31,7 +31,6 @@ import java.util.UUID;
 
 public class OpenCarouselButton extends ButtonWidget {
     private SkinPreset selectedPreset;
-    private DummyClientPlayerEntity entity;
     private double currentTime = 0;
 
     public OpenCarouselButton(int x, int y, int width, int height) {
@@ -43,15 +42,8 @@ public class OpenCarouselButton extends ButtonWidget {
         currentTime = GlfwUtil.getTime();
     }
 
-    public void disposed() {
-        if (this.entity != null) {
-            this.entity.kill();
-        }
-    }
-
     public void setSelectedPreset(SkinPreset preset) {
         this.selectedPreset = preset;
-        this.entity = DummyBuilder.createDummy(selectedPreset);
     }
 
     private float getEntityRotation() {
@@ -68,21 +60,9 @@ public class OpenCarouselButton extends ButtonWidget {
         super.renderWidget(context, mouseX, mouseY, delta);
     /*?}*/
 
-        if (this.entity != null && selectedPreset != null) {
+        if (selectedPreset != null) {
             // Don't want to render the entity if the skin is still loading
             if (!selectedPreset.getSkin().isLoading()) {
-
-                // Solve null crashes and desync issues.
-                //? if >=1.20.4 {
-                if(!this.entity.getSkinTextures().equals(selectedPreset.getSkin().getSkinTextures())) {
-                    ((DummyClientPlayerEntityAccessor) this.entity).setSkinTextures(selectedPreset.getSkin().getSkinTextures());
-                }
-                //?} else {
-                /*if(this.entity.getSkinTexture() != selectedPreset.getSkin().getTexture()) {
-                    ((DummyClientPlayerEntityAccessor) this.entity).setSkinIdentifier(selectedPreset.getSkin().getTexture());
-                }
-                *///?}
-
                 float followX = (float) (this.getX() + (this.getWidth() / 2)) - mouseX;
                 float followY = (float) (this.getY() - 90) - mouseY;
                 float rotation = 0;
@@ -98,7 +78,7 @@ public class OpenCarouselButton extends ButtonWidget {
                 context.getMatrices().push();
                 GuiEntityRenderer.drawEntity(
                         context.getMatrices(), this.getX() + (this.getWidth() / 2), this.getY() - 12,
-                        45, rotation, followX, followY, entity
+                        45, rotation, followX, followY, this.selectedPreset.getSkin()
                 );
                 context.getMatrices().pop();
             } else {

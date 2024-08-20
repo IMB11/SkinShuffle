@@ -44,25 +44,18 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
     protected VariableSpruceButtonWidget copyButton;
     protected VariableSpruceButtonWidget deleteButton;
     private final boolean showButtons;
-    protected LivingEntity entity;
     protected double scaleFactor;
-
-    public void refreshEntity() {
-        this.entity = DummyBuilder.createDummy(this.skinPreset);
-    }
 
     public PresetWidget(S parent, SkinPreset skinPreset) {
         super(Position.of(0, 0), parent.getCardWidth(), parent.getCardHeight(), parent);
 
         this.skinPreset = skinPreset;
-        this.entity = DummyBuilder.createDummy(this.skinPreset);
 
         CompletableFuture.runAsync(() -> {
             while(skinPreset.getSkin().isLoading()) {
                 Thread.onSpinWait();
             }
-
-            this.entity = DummyBuilder.createDummy(this.skinPreset);
+            
         }, Util.getIoWorkerExecutor());
 
         this.showButtons = true;
@@ -175,7 +168,7 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
         graphics.getMatrices().push();
         GuiEntityRenderer.drawEntity(
                 graphics.getMatrices(), previewX, previewY,
-                getPreviewSize(), rotation, followX, followY, entity
+                getPreviewSize(), rotation, followX, followY,  this.skinPreset.getSkin()
         );
         graphics.getMatrices().pop();
     }

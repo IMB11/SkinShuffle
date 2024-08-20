@@ -50,7 +50,6 @@ public class PresetEditScreen extends SpruceScreen {
     public static final int MAX_WIDTH = 400;
 
     private final CarouselScreen parent;
-    private LivingEntity entity;
     private final TabManager tabManager = new TabManager(this::addDrawableChild, this::remove);
     private final UrlValidator urlValidator = new UrlValidator(new String[]{"http", "https"});
     private final SkinPreset originalPreset;
@@ -70,15 +69,12 @@ public class PresetEditScreen extends SpruceScreen {
         this.preset = preset.copy();
         this.originalPreset = preset;
         this.parent = parent;
-
-        this.entity = DummyBuilder.createDummy(preset);
     }
 
     @Override
     protected void init() {
         super.init();
 
-        this.entity = DummyBuilder.createDummy(preset);
         this.skinSourceTab = new SkinSourceTab();
         this.skinCustomizationTab = new SkinCustomizationTab();
         this.tabNavigation = TabNavigationWidget.builder(this.tabManager, this.width)
@@ -289,7 +285,7 @@ public class PresetEditScreen extends SpruceScreen {
             graphics.getMatrices().push();
             GuiEntityRenderer.drawEntity(
                     graphics.getMatrices(), entityX, entityY, previewSpanY / 10 * 8,
-                    rotation, followX, followY, entity
+                    rotation, followX, followY, this.preset.getSkin()
             );
             graphics.getMatrices().pop();
         } else {
@@ -313,8 +309,6 @@ public class PresetEditScreen extends SpruceScreen {
 
     @Override
     public void close() {
-        this.presetWidget.refreshEntity();
-
         this.client.setScreen(parent);
     }
 
@@ -400,7 +394,6 @@ public class PresetEditScreen extends SpruceScreen {
                     .build(0, 0, 192, 20, Text.translatable("skinshuffle.edit.source.skin_model"), (widget, val) -> {
                         SkinPreset preset = PresetEditScreen.this.preset;
                         preset.getSkin().setModel(val);
-                        PresetEditScreen.this.entity = DummyBuilder.createDummy(preset);
                     });
 
             if (currentSourceType != null) {
@@ -461,8 +454,6 @@ public class PresetEditScreen extends SpruceScreen {
                 while (preset.getSkin().isLoading()) {
                     Thread.onSpinWait();
                 }
-
-                PresetEditScreen.this.entity = DummyBuilder.createDummy(preset);
             }, Util.getIoWorkerExecutor());
         }
     }

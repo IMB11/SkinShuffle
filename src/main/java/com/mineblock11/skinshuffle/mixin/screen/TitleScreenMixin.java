@@ -66,14 +66,7 @@ public class TitleScreenMixin extends Screen {
 
     @Override
     public void close() {
-        if (this.openCarouselWidgets != null) {
-            for (ClickableWidget openCarouselWidget : this.openCarouselWidgets) {
-                if(openCarouselWidget instanceof  OpenCarouselButton button) {
-                    button.disposed();
-                }
-            }
-            this.openCarouselWidgets = null;
-        }
+        this.openCarouselWidgets = null;
     }
 
     @Inject(method = "onDisplayed", at = @At("TAIL"), cancellable = false)

@@ -15,15 +15,22 @@
 package com.mineblock11.skinshuffle.client.gui.cursed;
 
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
+import com.mineblock11.skinshuffle.client.skin.Skin;
 import com.mineblock11.skinshuffle.compat.ETFCompat;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.model.Dilation;
+import net.minecraft.client.model.ModelPart;
+import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.render.DiffuseLighting;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.Arm;
+import net.minecraft.util.math.MathHelper;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fStack;
 import org.joml.Quaternionf;
@@ -32,25 +39,11 @@ public class GuiEntityRenderer {
     /**
      * Render a player in the GUI.
      */
-    public static void drawEntity(MatrixStack matrices, int x, int y, int size, float rotation, double mouseX, double mouseY, LivingEntity entity) {
-        if(entity == null || !SkinPresetManager.hasLoadedPresets()) return;
+    static float totalDeltaTicks = 0;
+    public static void drawEntity(MatrixStack matrices, int x, int y, int size, float rotation, double mouseX, double mouseY, Skin skin) {
+        totalDeltaTicks += MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true);
         float yaw = (float) Math.atan(mouseX / 40.0F);
         float pitch = (float) Math.atan((mouseY) / 40.0F);
-
-        Quaternionf entityRotation = new Quaternionf().rotateZ((float) Math.PI);
-        Quaternionf pitchRotation = new Quaternionf().rotateX(pitch * 20.0F * 0.017453292F);
-        entityRotation.mul(pitchRotation);
-
-        float oldBodyYaw = entity.bodyYaw;
-        float oldYaw = entity.getYaw();
-        float oldPitch = entity.getPitch();
-        float oldPrevHeadYaw = entity.prevHeadYaw;
-        float oldHeadYaw = entity.headYaw;
-        entity.bodyYaw = 180.0F + yaw * 20.0F + rotation;
-        entity.setYaw(180.0F + yaw * 40.0F + rotation);
-        entity.setPitch(-pitch * 20.0F);
-        entity.headYaw = entity.getYaw();
-        entity.prevHeadYaw = entity.getYaw();
 
         /*? if >=1.20.5 {*/
         Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
@@ -67,26 +60,29 @@ public class GuiEntityRenderer {
         matrices.translate(x, y, -950.0);
         matrices.multiplyPositionMatrix(new Matrix4f().scaling(size, size, -size));
         matrices.translate(0, -1, 0);
-        matrices.multiply(entityRotation);
+        matrices.multiply(new Quaternionf().rotateZ(rotation));
         matrices.translate(0, -1, 0);
         DiffuseLighting.method_34742();
 
-        EntityRenderDispatcher dispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
-        if (pitchRotation != null) {
-            pitchRotation.conjugate();
-            dispatcher.setRotation(pitchRotation);
-        }
-        dispatcher.setRenderShadows(false);
+        var modelData = PlayerEntityModel.getTexturedModelData(Dilation.NONE, false);
+        NoEntityPlayerModel model = new NoEntityPlayerModel(TexturedModelData.of(modelData, 64, 64).createModel(), false);
+
+        model.swingArmsGently(totalDeltaTicks);
+
+        model.setHeadPos(yaw, pitch);
 
         if(FabricLoader.getInstance().isModLoaded("entity_texture_features")) {
             ETFCompat.preventRenderLayerIssue();
         }
 
         VertexConsumerProvider.Immediate vertexConsumers = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-        dispatcher.render(entity, 0.0, 0.0, 0.0, 0.0f, 1.0f, matrices, vertexConsumers, 0xF000F0);
+        model.render(
+                matrices,
+                vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(skin.getTexture())),
+                0,
+                OverlayTexture.DEFAULT_UV,
+                0xFFFFFFFF);
         vertexConsumers.draw();
-
-        dispatcher.setRenderShadows(true);
 
         matrices.pop();
         DiffuseLighting.enableGuiDepthLighting();
@@ -97,12 +93,28 @@ public class GuiEntityRenderer {
         /*modelViewStack.pop();
         *//*?}*/
         RenderSystem.applyModelViewMatrix();
+    }
 
-        entity.bodyYaw = oldBodyYaw;
-        entity.setYaw(oldYaw);
-        entity.setPitch(oldPitch);
-        entity.prevHeadYaw = oldPrevHeadYaw;
-        entity.headYaw = oldHeadYaw;
+    public static class NoEntityPlayerModel extends PlayerEntityModel {
+        public NoEntityPlayerModel(ModelPart root, boolean thinArms) {
+            super(root, thinArms);
+            this.child = false;
+        }
+
+        public void swingArmsGently(float totalDeltaTick) {
+            float f = MathHelper.sin(totalDeltaTick * 0.067F) * 0.05F;
+            this.rightArm.roll = f + 0.06F;
+            this.rightSleeve.roll = f + 0.06F;
+            this.leftArm.roll = -f - 0.06F;
+            this.leftSleeve.roll = -f - 0.06F;
+        }
+
+        public void setHeadPos(float headYaw, float headPitch) {
+            this.head.yaw = headYaw;
+            this.hat.yaw = headYaw;
+            this.head.pitch = headPitch;
+            this.hat.pitch = headPitch;
+        }
     }
 
 //    @SuppressWarnings("deprecation")
