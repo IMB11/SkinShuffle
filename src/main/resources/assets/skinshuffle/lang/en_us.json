@@ -58,6 +58,8 @@
   "skinshuffle.config.rendering.widget_rendering_style.description": "How should the widget on the title screen and pause screen be rendered?\n",
   "skinshuffle.config.rendering.rotation_speed.name": "Rotation Speed Multiplier",
   "skinshuffle.config.rendering.rotation_speed.description": "What rotation speed multiplier should be applied to skins if rotation is enabled?",
+  "skinshuffle.config.rendering.show_cape_in_preview.name": "Show Cape In Preview",
+  "skinshuffle.config.rendering.show_cape_in_preview.description": "Should the currently selected cape (selected via minecraft.net or Minecraft Launcher) be shown in the skin preview in the preset edit screen?",
   "skinshuffle.button": "Skin Presets",
   "skinshuffle.carousel.title": "Skin Presets",
   "skinshuffle.carousel.config_button.tooltip": "Open the config screen.",

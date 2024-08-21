@@ -38,6 +38,7 @@ import java.util.concurrent.CompletableFuture;
 public abstract class GameMenuScreenMixin extends ScreenMixin {
     @Unique
     private ArrayList<ClickableWidget> openCarouselWidgets;
+    @Unique
     private WarningIndicatorButton warningIndicator;
 
     @Inject(method = "render", at = @At("HEAD"))

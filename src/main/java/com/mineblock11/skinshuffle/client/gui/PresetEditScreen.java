@@ -22,7 +22,6 @@ import com.mineblock11.skinshuffle.client.gui.widgets.IconButtonWidget;
 import com.mineblock11.skinshuffle.client.gui.widgets.preset.PresetWidget;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mineblock11.skinshuffle.client.skin.*;
-import com.mineblock11.skinshuffle.util.DummyBuilder;
 import com.mineblock11.skinshuffle.util.ToastHelper;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
 import net.minecraft.client.gui.DrawContext;
@@ -271,7 +270,7 @@ public class PresetEditScreen extends SpruceScreen {
             var entityY = previewCenterY + previewSpanY / 10 * 8;
 
             float followX = entityX - mouseX;
-            float followY = entityY - previewSpanY * 1.2f - mouseY;
+            float followY = entityY - previewSpanY * 1.2f - mouseY + 20f;
             float rotation = 0;
 
             SkinShuffleConfig.SkinRenderStyle renderStyle = SkinShuffleConfig.get().presetEditScreenRenderStyle;
@@ -282,12 +281,14 @@ public class PresetEditScreen extends SpruceScreen {
                 rotation = getEntityRotation() * SkinShuffleConfig.get().rotationMultiplier;
             }
 
-            graphics.getMatrices().push();
-            GuiEntityRenderer.drawEntity(
-                    graphics.getMatrices(), entityX, entityY, previewSpanY / 10 * 8,
-                    rotation, followX, followY, this.preset.getSkin()
-            );
-            graphics.getMatrices().pop();
+            if (!this.preset.getSkin().isLoading()) {
+                graphics.getMatrices().push();
+                GuiEntityRenderer.drawEntity(
+                        graphics.getMatrices(), entityX, entityY, previewSpanY / 10 * 8,
+                        rotation, followX, followY, this.preset.getSkin(), renderStyle
+                );
+                graphics.getMatrices().pop();
+            }
         } else {
             // We call getTexture() anyway to make sure the texture is being loaded in the background.
             this.preset.getSkin().getTexture();

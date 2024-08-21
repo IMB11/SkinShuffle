@@ -22,7 +22,6 @@ import com.mineblock11.skinshuffle.client.gui.PresetEditScreen;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
 import com.mineblock11.skinshuffle.client.gui.widgets.VariableSpruceButtonWidget;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
-import com.mineblock11.skinshuffle.util.DummyBuilder;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.widget.SpruceWidget;
 import net.minecraft.client.gui.DrawContext;
@@ -33,7 +32,6 @@ import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
-import nl.enjarai.cicada.api.cursed.DummyClientPlayerEntity;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -50,13 +48,7 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
         super(Position.of(0, 0), parent.getCardWidth(), parent.getCardHeight(), parent);
 
         this.skinPreset = skinPreset;
-
-        CompletableFuture.runAsync(() -> {
-            while(skinPreset.getSkin().isLoading()) {
-                Thread.onSpinWait();
-            }
-            
-        }, Util.getIoWorkerExecutor());
+        this.skinPreset.getSkin().getTexture();
 
         this.showButtons = true;
 
@@ -148,7 +140,7 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
         var previewY = getPreviewY();
 
         float followX = (float) previewX - mouseX;
-        float followY = (float) (previewY - this.height / 40 * 16) - mouseY;
+        float followY = (float) (previewY - this.height / 40 * 16) - mouseY - 20f;
         float rotation = 0;
 
         SkinShuffleConfig.SkinRenderStyle renderStyle = SkinShuffleConfig.get().carouselSkinRenderStyle;
@@ -165,12 +157,14 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
             rotation = 0;
         }
 
-        graphics.getMatrices().push();
-        GuiEntityRenderer.drawEntity(
-                graphics.getMatrices(), previewX, previewY,
-                getPreviewSize(), rotation, followX, followY,  this.skinPreset.getSkin()
-        );
-        graphics.getMatrices().pop();
+        if(!this.skinPreset.getSkin().isLoading()) {
+            graphics.getMatrices().push();
+            GuiEntityRenderer.drawEntity(
+                    graphics.getMatrices(), previewX, previewY,
+                    getPreviewSize(), rotation, followX, followY,  this.skinPreset.getSkin(), renderStyle
+            );
+            graphics.getMatrices().pop();
+        }
     }
 
     protected int getPreviewX() {
@@ -178,7 +172,7 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
     }
 
     protected int getPreviewY() {
-        return (int) (this.getY() + (showButtons ? this.height / 1.6 : this.height * (1.5 / 2)));
+        return (int) (this.getY() + (showButtons ? this.height / 1.6 : this.height * (1.5 / 2))) + 20;
     }
 
     protected int getPreviewSize() {

@@ -14,12 +14,14 @@
 
 package com.mineblock11.skinshuffle.client.gui.cursed;
 
-import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
+import com.mineblock11.skinshuffle.client.SkinShuffleClient;
+import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.skin.Skin;
 import com.mineblock11.skinshuffle.compat.ETFCompat;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.model.Dilation;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.model.TexturedModelData;
@@ -29,49 +31,68 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Arm;
 import net.minecraft.util.math.MathHelper;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fStack;
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 public class GuiEntityRenderer {
-    /**
-     * Render a player in the GUI.
-     */
-    static float totalDeltaTicks = 0;
-    public static void drawEntity(MatrixStack matrices, int x, int y, int size, float rotation, double mouseX, double mouseY, Skin skin) {
-        totalDeltaTicks += MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true);
-        float yaw = (float) Math.atan(mouseX / 40.0F);
-        float pitch = (float) Math.atan((mouseY) / 40.0F);
+    public static void drawEntity(MatrixStack matrices, int x, int y, int size, float rotation, double mouseX, double mouseY, Skin skin, SkinShuffleConfig.SkinRenderStyle style) {
+        float yaw = (float) (Math.atan2(mouseX, 120.0F));
+        float pitch = (float) (Math.atan2(-mouseY, 120.0F));
 
+        Quaternionf entityRotation = new Quaternionf().rotateY(rotation * 0.025f);
+
+        if (style == SkinShuffleConfig.SkinRenderStyle.CURSOR) {
+            Quaternionf pitchRotation = new Quaternionf().rotateX(pitch * 10.0F * 0.017453292F);
+            Quaternionf yawRotation = new Quaternionf().rotateY(yaw * 10.0F * 0.017453292F);
+            entityRotation.mul(pitchRotation);
+            entityRotation.mul(yawRotation);
+        }
+
+        setupModelViewStack();
+        setupMatrices(matrices, x, y, size, entityRotation);
+
+        renderEntity(matrices, yaw, pitch, skin, SkinShuffleClient.TOTAL_TICK_DELTA);
+
+        cleanupMatrices(matrices);
+        cleanupModelViewStack();
+    }
+
+    private static void setupModelViewStack() {
         /*? if >=1.20.5 {*/
         Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
         modelViewStack.pushMatrix();
         modelViewStack.translate(0.0f, 0.0f, 1000.0f);
+        RenderSystem.applyModelViewMatrix();
         /*?} else {*/
         /*MatrixStack modelViewStack = RenderSystem.getModelViewStack();
         modelViewStack.push();
         modelViewStack.translate(0.0, 0.0, 1000.0);
-        *//*?}*/
-        RenderSystem.applyModelViewMatrix();
+        RenderSystem.applyModelViewMatrix();*/
+        /*?}*/
+    }
 
+    private static void setupMatrices(MatrixStack matrices, int x, int y, int size, Quaternionf entityRotation) {
         matrices.push();
         matrices.translate(x, y, -950.0);
         matrices.multiplyPositionMatrix(new Matrix4f().scaling(size, size, -size));
         matrices.translate(0, -1, 0);
-        matrices.multiply(new Quaternionf().rotateZ(rotation));
+        matrices.multiply(entityRotation);
         matrices.translate(0, -1, 0);
         DiffuseLighting.method_34742();
+    }
 
+    private static void renderEntity(MatrixStack matrices, float yaw, float pitch, Skin skin, float totalTickDelta) {
         var modelData = PlayerEntityModel.getTexturedModelData(Dilation.NONE, false);
         NoEntityPlayerModel model = new NoEntityPlayerModel(TexturedModelData.of(modelData, 64, 64).createModel(), false);
 
-        model.swingArmsGently(totalDeltaTicks);
-
+        model.swingArmsGently(totalTickDelta);
         model.setHeadPos(yaw, pitch);
+        model.waveCapeGently(totalTickDelta);
 
-        if(FabricLoader.getInstance().isModLoaded("entity_texture_features")) {
+        if (FabricLoader.getInstance().isModLoaded("entity_texture_features")) {
             ETFCompat.preventRenderLayerIssue();
         }
 
@@ -82,16 +103,29 @@ public class GuiEntityRenderer {
                 0,
                 OverlayTexture.DEFAULT_UV,
                 0xFFFFFFFF);
+        if (skin.getSkinTextures().capeTexture() != null) {
+            matrices.push();
+            matrices.translate(0.0F, 0.0F, 0.2F);
+//            matrices.multiply(new Quaternionf().rotateY(180F));
+            model.renderCape(
+                    matrices,
+                    vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(skin.getSkinTextures().capeTexture())),
+                    0,
+                    OverlayTexture.DEFAULT_UV
+            );
+            matrices.pop();
+        }
         vertexConsumers.draw();
+    }
 
+    private static void cleanupMatrices(MatrixStack matrices) {
         matrices.pop();
         DiffuseLighting.enableGuiDepthLighting();
+    }
 
-        /*? if >=1.20.5 {*/
+    private static void cleanupModelViewStack() {
+        Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
         modelViewStack.popMatrix();
-        /*?} else {*/
-        /*modelViewStack.pop();
-        *//*?}*/
         RenderSystem.applyModelViewMatrix();
     }
 
@@ -115,47 +149,10 @@ public class GuiEntityRenderer {
             this.head.pitch = headPitch;
             this.hat.pitch = headPitch;
         }
-    }
 
-//    @SuppressWarnings("deprecation")
-//    private static void drawEntity(MatrixStack matrices, int x, int y, int size, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity) {
-//        if(entity == null) return;
-//        /*? if <1.20.5 { *//*
-//        MatrixStack matrixStack = RenderSystem.getModelViewStack();
-//        matrixStack.push();
-//        matrixStack.translate(0.0, 0.0, 1000.0);
-//        *//*? } else { */
-//        Matrix4fStack matrixStack = RenderSystem.getModelViewStack();
-//        matrixStack.pushMatrix();
-//        matrixStack.translate(0.0F, 0.0F, 1000.0F);
-//        /*? }*/
-//        RenderSystem.applyModelViewMatrix();
-//        matrices.push();
-//        matrices.translate(x, y, -950.0);
-//        matrices.multiplyPositionMatrix(new Matrix4f().scaling(size, size, -size));
-//        matrices.translate(0, -1, 0);
-//        matrices.multiply(quaternionf);
-//        matrices.translate(0, -1, 0);
-//        DiffuseLighting.method_34742();
-//        EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
-//        if (quaternionf2 != null) {
-//            quaternionf2.conjugate();
-//            entityRenderDispatcher.setRotation(quaternionf2);
-//        }
-//        VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-//        entityRenderDispatcher.setRenderShadows(false);
-//        entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0f, 1.0f, matrices, immediate, 0xF000F0);
-//        entityRenderDispatcher.setRenderShadows(true);
-//        immediate.draw();
-//        matrices.pop();
-//        DiffuseLighting.enableGuiDepthLighting();
-//
-//        /*? if <1.20.5 { *//*
-//        matrixStack.pop();
-//        *//*? } else { */
-//        matrixStack.popMatrix();
-//        /*? }*/
-//
-//        RenderSystem.applyModelViewMatrix();
-//    }
+        public void waveCapeGently(float totalDeltaTick) {
+            float f = MathHelper.sin(totalDeltaTick * 0.067F) * 0.05F;
+            this.cloak.pitch = f;
+        }
+    }
 }

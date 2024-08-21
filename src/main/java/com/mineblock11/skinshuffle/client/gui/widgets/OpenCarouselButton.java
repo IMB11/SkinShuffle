@@ -18,20 +18,17 @@ import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.GeneratedScreens;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
-import com.mineblock11.skinshuffle.mixin.accessor.DummyClientPlayerEntityAccessor;
-import com.mineblock11.skinshuffle.util.DummyBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.text.Text;
-import nl.enjarai.cicada.api.cursed.DummyClientPlayerEntity;
 
 import java.util.UUID;
 
 public class OpenCarouselButton extends ButtonWidget {
     private SkinPreset selectedPreset;
-    private double currentTime = 0;
+    private final double currentTime;
 
     public OpenCarouselButton(int x, int y, int width, int height) {
         super(x, y, width, height, Text.translatable("skinshuffle.button"), (btn) -> {
@@ -44,6 +41,10 @@ public class OpenCarouselButton extends ButtonWidget {
 
     public void setSelectedPreset(SkinPreset preset) {
         this.selectedPreset = preset;
+
+        if (selectedPreset != null) {
+            this.selectedPreset.getSkin().getTexture();
+        }
     }
 
     private float getEntityRotation() {
@@ -77,8 +78,8 @@ public class OpenCarouselButton extends ButtonWidget {
 
                 context.getMatrices().push();
                 GuiEntityRenderer.drawEntity(
-                        context.getMatrices(), this.getX() + (this.getWidth() / 2), this.getY() - 12,
-                        45, rotation, followX, followY, this.selectedPreset.getSkin()
+                        context.getMatrices(), this.getX() + (this.getWidth() / 2), this.getY() + 5,
+                        45, rotation, followX, followY, this.selectedPreset.getSkin(), renderStyle
                 );
                 context.getMatrices().pop();
             } else {

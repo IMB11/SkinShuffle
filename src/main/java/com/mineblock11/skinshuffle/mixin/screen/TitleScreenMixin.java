@@ -61,6 +61,12 @@ public class TitleScreenMixin extends Screen {
             if(!NetworkingUtil.isLoggedIn()) {
                 ToastHelper.showOfflineModeToast();
             }
+
+            openCarouselWidgets.forEach(clickableWidget -> {
+                if(clickableWidget instanceof OpenCarouselButton button) {
+                    button.setSelectedPreset(SkinPresetManager.getChosenPreset());
+                }
+            });
         }
     }
 
@@ -91,8 +97,11 @@ public class TitleScreenMixin extends Screen {
 
         for (ClickableWidget carouselWidget : this.openCarouselWidgets) {
             this.addDrawableChild(carouselWidget);
-            if(carouselWidget instanceof OpenCarouselButton button) {
-                button.setSelectedPreset(SkinPresetManager.getChosenPreset());
+
+            if (appliedConfiguration) {
+                if (carouselWidget instanceof OpenCarouselButton button) {
+                    button.setSelectedPreset(SkinPresetManager.getChosenPreset());
+                }
             }
         }
     }

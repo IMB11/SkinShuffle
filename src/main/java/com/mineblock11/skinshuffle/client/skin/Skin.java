@@ -42,7 +42,7 @@ public interface Skin {
     @Nullable Identifier getTexture();
 
     /*? if >=1.20.4 {*/
-    default @Nullable net.minecraft.client.util.SkinTextures getSkinTextures() {
+    default net.minecraft.client.util.SkinTextures getSkinTextures() {
             MinecraftClient client = MinecraftClient.getInstance();
             net.minecraft.client.util.SkinTextures clientTexture = client.getSkinProvider().getSkinTextures(client.getGameProfile());
             return new net.minecraft.client.util.SkinTextures(this.getTexture(), null, clientTexture.capeTexture(), clientTexture.elytraTexture(), net.minecraft.client.util.SkinTextures.Model.fromName(this.getModel()), false);

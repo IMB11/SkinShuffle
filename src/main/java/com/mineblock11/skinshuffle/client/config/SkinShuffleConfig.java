@@ -20,8 +20,8 @@ import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
-import dev.isxander.yacl3.config.ConfigEntry;
 import dev.isxander.yacl3.config.GsonConfigInstance;
+import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import net.minecraft.text.Text;
 
 import java.nio.file.Path;
@@ -97,6 +97,12 @@ public class SkinShuffleConfig {
                             .binding(defaults.rotationMultiplier, () -> config.rotationMultiplier, val -> config.rotationMultiplier = val)
                             .controller(floatOption -> FloatSliderControllerBuilder.create(floatOption).range(0f, 5f).step(0.5f)).build();
 
+                    var showCapeInPreview = Option.<Boolean>createBuilder()
+                            .name(translatable("skinshuffle.config.rendering.show_cape_in_preview.name"))
+                            .description(OptionDescription.createBuilder().text(translatable("skinshuffle.config.rendering.show_cape_in_preview.description")).build())
+                            .binding(defaults.showCapeInPreview, () -> config.showCapeInPreview, val -> config.showCapeInPreview = val)
+                            .controller(TickBoxControllerBuilder::create).build();
+
                     var disableApi = Option.<Boolean>createBuilder()
                             .name(translatable("skinshuffle.config.general.disable_api.name"))
                             .description(OptionDescription.createBuilder()
@@ -162,22 +168,23 @@ public class SkinShuffleConfig {
         );
     }
 
-    @ConfigEntry public boolean disableReconnectToast = false;
+    @SerialEntry public boolean disableReconnectToast = false;
 
-    @ConfigEntry public boolean disableAPIUpload = false;
+    @SerialEntry public boolean disableAPIUpload = false;
 
-    @ConfigEntry public boolean displayInPauseMenu = true;
-    @ConfigEntry public boolean displayInTitleScreen = true;
+    @SerialEntry public boolean displayInPauseMenu = true;
+    @SerialEntry public boolean displayInTitleScreen = true;
 
-    @ConfigEntry public float carouselScrollSensitivity = 1.0f;
-    @ConfigEntry public boolean invertCarouselScroll = false;
+    @SerialEntry public float carouselScrollSensitivity = 1.0f;
+    @SerialEntry public boolean invertCarouselScroll = false;
 
-    @ConfigEntry public SkinRenderStyle widgetSkinRenderStyle = SkinRenderStyle.CURSOR;
-    @ConfigEntry public SkinRenderStyle carouselSkinRenderStyle = SkinRenderStyle.ROTATION;
-    @ConfigEntry public SkinRenderStyle presetEditScreenRenderStyle = SkinRenderStyle.ROTATION;
-    @ConfigEntry public float rotationMultiplier = 1.0f;
+    @SerialEntry public SkinRenderStyle widgetSkinRenderStyle = SkinRenderStyle.CURSOR;
+    @SerialEntry public SkinRenderStyle carouselSkinRenderStyle = SkinRenderStyle.ROTATION;
+    @SerialEntry public SkinRenderStyle presetEditScreenRenderStyle = SkinRenderStyle.ROTATION;
+    @SerialEntry public float rotationMultiplier = 1.0f;
+    @SerialEntry public boolean showCapeInPreview = true;
 
-    @ConfigEntry public CarouselView carouselView = CarouselView.LARGE;
+    @SerialEntry public CarouselView carouselView = CarouselView.LARGE;
 
     public enum SkinRenderStyle {
         ROTATION,

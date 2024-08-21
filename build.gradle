@@ -50,7 +50,7 @@ if (stonecutter.current.active) { // run configs for non-active version would be
 }
 
 loom {
-    accessWidenerPath = getRootProject().file("src/main/resources/aw/" + stonecutter.current.version + ".accesswidener")
+    accessWidenerPath = getRootProject().file("src/main/resources/skinshuffle.accesswidener")
 }
 
 dependencies {
@@ -61,13 +61,10 @@ dependencies {
 
     modLocalRuntime modCompileOnly("maven.modrinth:modmenu:${property('runtime.modmenu')}")
     modLocalRuntime modCompileOnly("maven.modrinth:entitytexturefeatures:${property('runtime.etf')}")
-    modCompileOnly("maven.modrinth:tslatentitystatus:${property('runtime.tslatentitystatus')}")
-    modCompileOnly("maven.modrinth:provis-health-bars:${property('runtime.provis')}")
 
     include implementation('com.konghq:unirest-java:3.11.09:standalone')
 
     include modImplementation("dev.lambdaurora:spruceui:${property('deps.spruceui')}")
-    include modImplementation("maven.modrinth:cicada:${property('deps.cicada')}")
     include modImplementation("dev.isxander:yet-another-config-lib:${property('deps.yacl')}")
 
     include implementation("org.jsoup:jsoup:1.16.1")

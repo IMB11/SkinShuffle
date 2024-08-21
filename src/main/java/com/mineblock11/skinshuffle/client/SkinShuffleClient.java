@@ -21,6 +21,8 @@ import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 
 public class SkinShuffleClient implements ClientModInitializer {
+    public static float TOTAL_TICK_DELTA = 0;
+
     @Override
     public void onInitializeClient() {
         SkinPresetManager.setup();

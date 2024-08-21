@@ -6,18 +6,14 @@
     "mixins": [
         "ServerPlayerEntityMixin",
         "accessor.MinecraftClientAuthAccessor",
-        "accessor.YggdrasilUserApiServiceAccessor",
-        "compat.ProvisCompat",
-        "compat.TESCompat"
+        "accessor.YggdrasilUserApiServiceAccessor"
     ],
     "client": [
+        "MinecraftClientMixin",
         "PlayerEntityMixin",
-        "accessor.DummyClientPlayerEntityAccessor",
         "accessor.GameMenuScreenAccessor",
         "accessor.MinecraftClientAccessor",
         "accessor.ToastManagerAccessor",
-        "render.CapeFeatureRendererMixin",
-        "render.LivingEntityRendererMixin",
         "screen.AccessibilityOnboardingScreenMixin",
         "screen.GameMenuScreenMixin",
         "screen.ScreenMixin",
