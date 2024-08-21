@@ -42,7 +42,7 @@ public class GeneratedScreens {
 
     public static ArrayList<ClickableWidget> createCarouselWidgets(Screen screen) {
         ArrayList<ClickableWidget> widgets = new ArrayList<>();
-        int y = (screen.height / 4 + 48) + 72;
+        int y = (screen.height / 4 + 48) + 84;
         int x = screen.width / 2 + 104 + 25;
 
         if(screen instanceof GameMenuScreen gameMenuScreen) {
@@ -53,13 +53,6 @@ public class GeneratedScreens {
             x -= 25 / 2;
 
             widgets.add(new WarningIndicatorButton(x + 72, y, gameMenuScreen));
-        }
-
-        if (FabricLoader.getInstance().isModLoaded("modmenu")) {
-            if(!SkinShuffleConfig.get().displayInTitleScreen) return widgets;
-            if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.CLASSIC && screen instanceof TitleScreen) {
-                y += 51 / 4;
-            }
         }
 
         widgets.add(new OpenCarouselButton(x, y, 72, 20));
