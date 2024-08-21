@@ -14,6 +14,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.util.Util;
 import org.mineskin.data.Skin;
 
 import java.io.IOException;
@@ -23,6 +24,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class SkinPresetManager {
     public static final Path PERSISTENT_SKINS_DIR = SkinShuffle.DATA_DIR.resolve("skins");
@@ -152,7 +154,7 @@ public class SkinPresetManager {
     public static void deletePreset(SkinPreset skinPreset) {
         loadedPresets.remove(skinPreset);
         if (chosenPreset == skinPreset && !loadedPresets.isEmpty()) {
-            chosenPreset = loadedPresets.get(0);
+            chosenPreset = loadedPresets.getFirst();
         }
         savePresets();
     }
@@ -184,21 +186,19 @@ public class SkinPresetManager {
                 if (successful) setApiPreset(preset);
 
                 if (client.world != null && ClientSkinHandling.isInstalledOnServer()) {
-                    new Thread(() -> {
-                        client.executeTask(() -> {
-                            try {
-                                String cachedURL = SkinCacheRegistry.getCachedUploadedSkin(configSkin.getFile().toFile());
-                                Skin result = cachedURL != null
-                                        ? SkinAPIs.MINESKIN_CLIENT.generateUrl(cachedURL).join()
-                                        : SkinAPIs.MINESKIN_CLIENT.generateUpload(configSkin.getFile().toFile()).join();
+                    CompletableFuture.runAsync(() -> client.executeTask(() -> {
+                        try {
+                            String cachedURL = SkinCacheRegistry.getCachedUploadedSkin(configSkin.getFile().toFile());
+                            Skin result = cachedURL != null
+                                    ? SkinAPIs.MINESKIN_CLIENT.generateUrl(cachedURL).join()
+                                    : SkinAPIs.MINESKIN_CLIENT.generateUpload(configSkin.getFile().toFile()).join();
 
-                                SkinQueryResult queryResult = new SkinQueryResult(false, null, preset.getSkin().getModel(), result.data.texture.signature, result.data.texture.value);
-                                ClientSkinHandling.sendRefresh(queryResult);
-                            } catch (Exception e) {
-                                SkinShuffle.LOGGER.error(e.getMessage());
-                            }
-                        });
-                    }).start();
+                            SkinQueryResult queryResult = new SkinQueryResult(false, null, preset.getSkin().getModel(), result.data.texture.signature, result.data.texture.value);
+                            ClientSkinHandling.sendRefresh(queryResult);
+                        } catch (Exception e) {
+                            SkinShuffle.LOGGER.error(e.getMessage());
+                        }
+                    }), Util.getMainWorkerExecutor());
                 }
             } catch (Exception e) {
                 SkinShuffle.LOGGER.error("Failed to apply skin preset.", e);

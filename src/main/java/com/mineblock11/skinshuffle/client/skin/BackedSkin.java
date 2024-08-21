@@ -20,7 +20,10 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.concurrent.CompletableFuture;
 
 public abstract class BackedSkin implements Skin {
     // Keep track of how many instances exist for each texture id, so we can clean them up when they're no longer used
@@ -40,7 +43,7 @@ public abstract class BackedSkin implements Skin {
             // Texture doesn't exist, we need to fetch it.
             fetching = true;
 
-            new Thread(() -> {
+            CompletableFuture.runAsync(() -> {
                 try {
                     var texture = loadTexture(() -> {
                         fetching = false;
@@ -61,7 +64,7 @@ public abstract class BackedSkin implements Skin {
                     fetched = true;
                     setTexture(null);
                 }
-            }, getClass().getTypeName() + "Fetcher").start();
+            }, Util.getMainWorkerExecutor());
         } else {
             // Texture already exists, we assume it hasn't changed
             fetched = true;
