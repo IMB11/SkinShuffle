@@ -103,7 +103,7 @@ public class GuiEntityRenderer {
                 0,
                 OverlayTexture.DEFAULT_UV,
                 0xFFFFFFFF);
-        if (skin.getSkinTextures().capeTexture() != null) {
+        if (skin.getSkinTextures().capeTexture() != null && SkinShuffleConfig.get().showCapeInPreview) {
             matrices.push();
             matrices.translate(0.0F, 0.0F, 0.2F);
 //            matrices.multiply(new Quaternionf().rotateY(180F));

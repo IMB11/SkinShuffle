@@ -116,11 +116,11 @@ public class CompactPresetWidget extends PresetWidget<CompactCarouselScreen> {
 
     @Override
     protected int getPreviewY() {
-        return getY() + height - getPreviewMargin();
+        return getY() + height - getPreviewMargin() + 14;
     }
 
     @Override
     protected int getPreviewSize() {
-        return (height - getPreviewMargin() * 2) * 10 / 22;
+        return ((height - getPreviewMargin() * 2) * 10 / 22) - 2;
     }
 }
