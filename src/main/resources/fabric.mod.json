@@ -13,7 +13,7 @@
   },
   "license": "MIT",
   "icon": "assets/skinshuffle/icon.png",
-  "accessWidener": "skinshuffle.accesswidener",
+  "accessWidener": "aw/${minecraft_version}.accesswidener",
   "environment": "*",
   "entrypoints": {
     "client": [

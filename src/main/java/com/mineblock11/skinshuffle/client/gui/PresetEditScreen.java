@@ -15,7 +15,7 @@
 package com.mineblock11.skinshuffle.client.gui;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
-import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
+import com.mineblock11.skinshuffle.client.SkinShuffleClient;import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
 import com.mineblock11.skinshuffle.client.gui.widgets.IconButtonWidget;
@@ -281,13 +281,23 @@ public class PresetEditScreen extends SpruceScreen {
                 rotation = getEntityRotation() * SkinShuffleConfig.get().rotationMultiplier;
             }
 
-            if (!this.preset.getSkin().isLoading()) {
+            if (!this.preset.getSkin().isLoading() && !this.skinSourceTab.loading) {
                 graphics.getMatrices().push();
                 GuiEntityRenderer.drawEntity(
                         graphics.getMatrices(), entityX, entityY, previewSpanY / 10 * 8,
                         rotation, followX, followY, this.preset.getSkin(), renderStyle
                 );
                 graphics.getMatrices().pop();
+            } else {
+                var txt = Text.translatable("skinshuffle.edit.loading");
+                int textWidth = this.textRenderer.getWidth(txt);
+                float totalDeltaTick = SkinShuffleClient.TOTAL_TICK_DELTA * 5f;
+                float hue = (totalDeltaTick % 360) / 360;
+                float saturation = 0.75f;
+                float lightness = 1f;
+                int color = java.awt.Color.HSBtoRGB(hue, saturation, lightness);
+                color = (color & 0x00FFFFFF) | 0xFF000000;
+                graphics.drawTextWithShadow(this.textRenderer, txt, previewCenterX - (textWidth / 2), previewCenterY - (this.textRenderer.fontHeight), color);
             }
         } else {
             // We call getTexture() anyway to make sure the texture is being loaded in the background.
@@ -336,6 +346,7 @@ public class PresetEditScreen extends SpruceScreen {
         public PresetEditScreen.SourceType currentSourceType;
         private final CyclingButtonWidget<String> skinModelButton;
         private final ButtonWidget loadButton;
+        private boolean loading = false;
 
         private SkinSourceTab() {
             super(Text.translatable("skinshuffle.edit.source.title"));
@@ -434,6 +445,7 @@ public class PresetEditScreen extends SpruceScreen {
         }
 
         private void loadSkin() {
+            this.loading = true;
             String skinSource = textFieldWidget.getText();
             String model = skinModelButton.getValue();
 
@@ -447,15 +459,15 @@ public class PresetEditScreen extends SpruceScreen {
                     default -> Skin.randomDefaultSkin();
                 };
 
-                preset.setSkin(skin);
-                skin.getTexture();
+                CompletableFuture.runAsync(() -> {
+                    preset.setSkin(skin.saveToConfig());
+                    skin.getTexture();
+                    while (preset.getSkin().isLoading()) {
+                        Thread.onSpinWait();
+                    }
+                    this.loading = false;
+                }, Util.getIoWorkerExecutor());
             }
-
-            CompletableFuture.runAsync(() -> {
-                while (preset.getSkin().isLoading()) {
-                    Thread.onSpinWait();
-                }
-            }, Util.getIoWorkerExecutor());
         }
     }
 

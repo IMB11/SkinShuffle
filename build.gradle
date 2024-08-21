@@ -50,7 +50,7 @@ if (stonecutter.current.active) { // run configs for non-active version would be
 }
 
 loom {
-    accessWidenerPath = getRootProject().file("src/main/resources/skinshuffle.accesswidener")
+    accessWidenerPath = getRootProject().file("src/main/resources/aw/" + stonecutter.current.version + ".accesswidener")
 }
 
 dependencies {
@@ -65,7 +65,7 @@ dependencies {
     include implementation('com.konghq:unirest-java:3.11.09:standalone')
 
     include modImplementation("dev.lambdaurora:spruceui:${property('deps.spruceui')}")
-    include modImplementation("dev.isxander:yet-another-config-lib:${property('deps.yacl')}")
+    modImplementation(include("dev.isxander:yet-another-config-lib:3.5.0+${stonecutter.current.version}-fabric"))
 
     include implementation("org.jsoup:jsoup:1.16.1")
     include implementation("org.mineskin:java-client:1.2.4-SNAPSHOT")

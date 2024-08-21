@@ -18,6 +18,7 @@ import com.mineblock11.skinshuffle.client.SkinShuffleClient;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.skin.Skin;
 import com.mineblock11.skinshuffle.compat.ETFCompat;
+import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
@@ -61,17 +62,17 @@ public class GuiEntityRenderer {
     }
 
     private static void setupModelViewStack() {
-        /*? if >=1.20.5 {*/
+        //? if >=1.20.5 {
         Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
         modelViewStack.pushMatrix();
         modelViewStack.translate(0.0f, 0.0f, 1000.0f);
         RenderSystem.applyModelViewMatrix();
-        /*?} else {*/
+        //?} else {
         /*MatrixStack modelViewStack = RenderSystem.getModelViewStack();
         modelViewStack.push();
         modelViewStack.translate(0.0, 0.0, 1000.0);
-        RenderSystem.applyModelViewMatrix();*/
-        /*?}*/
+        RenderSystem.applyModelViewMatrix();
+        *///?}
     }
 
     private static void setupMatrices(MatrixStack matrices, int x, int y, int size, Quaternionf entityRotation) {
@@ -85,8 +86,8 @@ public class GuiEntityRenderer {
     }
 
     private static void renderEntity(MatrixStack matrices, float yaw, float pitch, Skin skin, float totalTickDelta) {
-        var modelData = PlayerEntityModel.getTexturedModelData(Dilation.NONE, false);
-        NoEntityPlayerModel model = new NoEntityPlayerModel(TexturedModelData.of(modelData, 64, 64).createModel(), false);
+        var modelData = PlayerEntityModel.getTexturedModelData(Dilation.NONE, skin.getModel().equals("slim"));
+        NoEntityPlayerModel model = new NoEntityPlayerModel(TexturedModelData.of(modelData, 64, 64).createModel(), skin.getModel().equals("slim"));
 
         model.swingArmsGently(totalTickDelta);
         model.setHeadPos(yaw, pitch);
@@ -102,14 +103,29 @@ public class GuiEntityRenderer {
                 vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(skin.getTexture())),
                 0,
                 OverlayTexture.DEFAULT_UV,
-                0xFFFFFFFF);
+                //? if >=1.21 {
+                0xFFFFFFFF
+                //?} else {
+                /*1f, 1f, 1f, 1f
+                *///?}
+        );
+
+        //? if =1.20.1 {
+        /*MinecraftClient client = MinecraftClient.getInstance();
+        var hasCape = client.getSkinProvider().getTextures(client.getSession().getProfile()).containsKey(MinecraftProfileTexture.Type.CAPE);
+        if (hasCape && SkinShuffleConfig.get().showCapeInPreview) {
+        *///?} else {
         if (skin.getSkinTextures().capeTexture() != null && SkinShuffleConfig.get().showCapeInPreview) {
+        //?}
             matrices.push();
             matrices.translate(0.0F, 0.0F, 0.2F);
-//            matrices.multiply(new Quaternionf().rotateY(180F));
             model.renderCape(
                     matrices,
+                    //? if !=1.20.1 {
                     vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(skin.getSkinTextures().capeTexture())),
+                    //?} else {
+                    /*vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentCull(client.getSkinProvider().loadSkin(client.getSkinProvider().getTextures(client.getSession().getProfile()).get(MinecraftProfileTexture.Type.CAPE), MinecraftProfileTexture.Type.CAPE))),
+                    *///?}
                     0,
                     OverlayTexture.DEFAULT_UV
             );
@@ -124,9 +140,15 @@ public class GuiEntityRenderer {
     }
 
     private static void cleanupModelViewStack() {
+        //? if >=1.20.5 {
         Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
         modelViewStack.popMatrix();
         RenderSystem.applyModelViewMatrix();
+        //?} else {
+        /*MatrixStack modelViewStack = RenderSystem.getModelViewStack();
+        modelViewStack.pop();
+        RenderSystem.applyModelViewMatrix();
+        *///?}
     }
 
     public static class NoEntityPlayerModel extends PlayerEntityModel {

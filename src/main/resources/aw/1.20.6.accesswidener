@@ -1,0 +1,15 @@
+accessWidener   v1  named
+
+accessible method net/minecraft/client/render/entity/model/BipedEntityModel getPreferredArm (Lnet/minecraft/entity/LivingEntity;)Lnet/minecraft/util/Arm;
+accessible class net/minecraft/client/texture/ResourceTexture$TextureData
+accessible method net/minecraft/client/QuickPlay startSingleplayer (Lnet/minecraft/client/MinecraftClient;Ljava/lang/String;)V
+accessible method net/minecraft/client/QuickPlay startMultiplayer (Lnet/minecraft/client/MinecraftClient;Ljava/lang/String;)V
+accessible method net/minecraft/client/QuickPlay startRealms (Lnet/minecraft/client/MinecraftClient;Lnet/minecraft/client/realms/RealmsClient;Ljava/lang/String;)V
+accessible class net/minecraft/client/toast/ToastManager$Entry
+accessible class net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTracker
+accessible field net/minecraft/server/world/ThreadedAnvilChunkStorage entityTrackers Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;
+accessible field net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTracker entry Lnet/minecraft/server/network/EntityTrackerEntry;
+accessible field net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTracker listeners Ljava/util/Set;
+accessible method net/minecraft/client/gui/widget/ClickableWidget drawScrollableText (Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/Text;IIIII)V
+accessible method net/minecraft/client/gui/widget/CyclingButtonWidget <init> (IIIILnet/minecraft/text/Text;Lnet/minecraft/text/Text;ILjava/lang/Object;Lnet/minecraft/client/gui/widget/CyclingButtonWidget$Values;Ljava/util/function/Function;Ljava/util/function/Function;Lnet/minecraft/client/gui/widget/CyclingButtonWidget$UpdateCallback;Lnet/minecraft/client/option/SimpleOption$TooltipFactory;Z)V
+accessible field net/minecraft/client/render/entity/model/PlayerEntityModel cloak Lnet/minecraft/client/model/ModelPart;

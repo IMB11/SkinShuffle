@@ -99,5 +99,6 @@
   "skinshuffle.edit.source.cycle_prefix": "Source",
   "skinshuffle.edit.source.title": "Skin Source",
   "skinshuffle.edit.source.skin_model": "Skin Model",
-  "skinshuffle.edit.source.load_skin": "Load Skin"
+  "skinshuffle.edit.source.load_skin": "Load Skin",
+  "skinshuffle.edit.loading": "Loading..."
 }
