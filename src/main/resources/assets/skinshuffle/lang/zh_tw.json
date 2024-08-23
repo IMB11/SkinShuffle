@@ -58,6 +58,8 @@
   "skinshuffle.config.rendering.widget_rendering_style.description": "標題畫面和暫停畫面上的小工具應如何繪製？\n",
   "skinshuffle.config.rendering.rotation_speed.name": "旋轉速度倍率",
   "skinshuffle.config.rendering.rotation_speed.description": "若啟用外觀旋轉，它應套用多少旋轉速度倍率？",
+  "skinshuffle.config.rendering.show_cape_in_preview.name": "在預覽中顯示披風",
+  "skinshuffle.config.rendering.show_cape_in_preview.description": "是否應在預設編輯畫面的外觀預覽中顯示目前選擇的披風（透過 minecraft.net 或 Minecraft 啟動器選擇）？",
   "skinshuffle.button": "外觀預設",
   "skinshuffle.carousel.title": "外觀預設",
   "skinshuffle.carousel.config_button.tooltip": "開啟設定畫面。",
@@ -97,5 +99,6 @@
   "skinshuffle.edit.source.cycle_prefix": "來源",
   "skinshuffle.edit.source.title": "外觀來源",
   "skinshuffle.edit.source.skin_model": "外觀模型",
-  "skinshuffle.edit.source.load_skin": "載入外觀"
+  "skinshuffle.edit.source.load_skin": "載入外觀",
+  "skinshuffle.edit.loading": "載入中..."
 }
