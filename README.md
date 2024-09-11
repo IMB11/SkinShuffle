@@ -20,6 +20,7 @@ Skins are stored in Skin Presets, these presets can be created from the followin
   - [Carousel Screen](#carousel-screen)
   - [Edit Screen](#edit-screen)
   - [Configuration](#configuration)
+  - [Known Compatibility Issues](#compat-issues)
 - [Server-Side Support](#server-side-support)
 
 <h2 id="client-side-support">Client-Side Support</h2>
@@ -59,6 +60,10 @@ You can customize the speed that skins rotate in the carousel, to where they sho
 <center>
 <img width="50%" src="https://cdn.modrinth.com/data/3s19I5jr/images/eed48c8290e725b61e4c9864295e798681390779.png" />
 </center>
+
+<h3 id="compat-issues">Known Compatibility Issues</h3>
+SkinShuffle is known to be incompatible with these mods:
+- ViaFabricPlus
 
 <h2 id="server-side-support">Server-Side Support</h2>
 
