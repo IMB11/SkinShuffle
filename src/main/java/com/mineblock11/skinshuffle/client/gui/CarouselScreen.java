@@ -1,17 +1,3 @@
-/*
- * ALL RIGHTS RESERVED
- *
- * Copyright (c) 2024 Calum H. (IMB11) and enjarai
- *
- * THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 package com.mineblock11.skinshuffle.client.gui;
 
 import com.mineblock11.skinshuffle.SkinShuffle;
@@ -88,35 +74,18 @@ public abstract class CarouselScreen extends SpruceScreen {
         });
         this.carouselWidgets.add(addPresetWidget);
 
-        // We don't want to switch back to the selected preset when we return from a subscreen.
-        if (this.cardIndex < 0) {
-            //noinspection IntegerDivisionInFloatingPointContext
-            this.cardIndex = loadedPresets.indexOf(SkinPresetManager.getChosenPreset()) / getRows() * getRows();
+        // Only set cardIndex if there are presets
+        if (!loadedPresets.isEmpty()) {
+            if (this.cardIndex < 0) {
+                //noinspection IntegerDivisionInFloatingPointContext
+                this.cardIndex = loadedPresets.indexOf(SkinPresetManager.getChosenPreset()) / getRows() * getRows();
+            }
+            this.lastCardIndex = this.cardIndex;
+        } else {
+            // Set default values when no presets exist
+            this.cardIndex = 0;
+            this.lastCardIndex = 0;
         }
-        this.lastCardIndex = this.cardIndex;
-
-//        new Thread(() -> {
-            // TODO: requires more accurate equality check, maybe comparing the texture directly somehow?
-//            for (var widget : carouselWidgets) {
-//                if (widget instanceof PresetWidget skinWidget) {
-//                    var preset = skinWidget.getPreset();
-//
-//                    if (preset.getSkin().equals(apiPreset.getSkin())) {
-//                        SkinPresetManager.setApiPreset(preset);
-//                        return;
-//                    }
-//                }
-//            }
-//
-//            if (SkinPresetManager.getLoadedPresets().size() == 0) {
-//                var apiPreset = SkinPreset.generateDefaultPreset();
-//
-//                SkinPresetManager.addPreset(apiPreset);
-//                SkinPresetManager.setApiPreset(apiPreset);
-//                var apiPresetWidget = this.loadPreset(apiPreset);
-//                this.addDrawableChild(apiPresetWidget);
-//            }
-//        }).start();
 
         for (SpruceWidget presetCards : this.carouselWidgets) {
             this.addDrawableChild(presetCards);
@@ -139,18 +108,20 @@ public abstract class CarouselScreen extends SpruceScreen {
         this.viewTypeButton.setTooltip(viewType.tooltip);
 
         this.selectButton = this.addDrawableChild(new SpruceButtonWidget(Position.of(this.width / 2 + 5, this.height - 23), 128, 20, Text.translatable("skinshuffle.carousel.save_button"), button -> {
-            SpruceWidget chosenPresetWidget = this.carouselWidgets.get((int) Math.round(cardIndex));
+            if (Math.round(cardIndex) >= 0 && Math.round(cardIndex) < this.carouselWidgets.size()) {
+                SpruceWidget chosenPresetWidget = this.carouselWidgets.get((int) Math.round(cardIndex));
 
-            if(chosenPresetWidget instanceof AddCardWidget) {
-                this.close();
-                return;
+                if (chosenPresetWidget instanceof AddCardWidget) {
+                    this.close();
+                    return;
+                }
+
+                if (chosenPresetWidget instanceof PresetWidget) {
+                    PresetWidget presetWidget = (PresetWidget) chosenPresetWidget;
+                    SkinPresetManager.setChosenPreset(presetWidget.getPreset(), this.hasEditedPreset);
+                    SkinPresetManager.savePresets();
+                }
             }
-
-            assert chosenPresetWidget instanceof PresetWidget;
-            PresetWidget presetWidget = (PresetWidget) chosenPresetWidget;
-
-            SkinPresetManager.setChosenPreset(presetWidget.getPreset(), this.hasEditedPreset);
-            SkinPresetManager.savePresets();
 
             this.handleCloseBehaviour();
         }));
@@ -159,7 +130,7 @@ public abstract class CarouselScreen extends SpruceScreen {
     }
 
     public void handleCloseBehaviour() {
-        if(this.client.world != null && !ClientSkinHandling.isInstalledOnServer()) {
+        if (this.client.world != null && !ClientSkinHandling.isInstalledOnServer()) {
             this.client.setScreen(GeneratedScreens.getReconnectScreen(this.parent));
         } else {
             this.close();
@@ -175,7 +146,8 @@ public abstract class CarouselScreen extends SpruceScreen {
             try {
                 var configSkin = preset.getSkin().saveToConfig();
                 preset.setSkin(configSkin);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
 
         SkinPresetManager.savePresets();
@@ -186,12 +158,7 @@ public abstract class CarouselScreen extends SpruceScreen {
         var cardAreaWidth = getCardWidth() + getCardGap();
 
         // BG stuff
-        /*? if <1.20.4 {*/
-        /*this.renderBackground(graphics);
-        *//*?} else {*/
         this.renderBackground(graphics, mouseX, mouseY, delta);
-        /*?}*/
-
         graphics.fill(0, this.textRenderer.fontHeight * 3, this.width, this.height - (this.textRenderer.fontHeight * 3), 0x7F000000);
         graphics.fillGradient(0, (int) (this.textRenderer.fontHeight * 2.75), this.width, this.textRenderer.fontHeight * 3, 0x00000000, 0x7F000000);
         graphics.fillGradient(0, (int) (this.height - (this.textRenderer.fontHeight * 3)), this.width, (int) (this.height - (this.textRenderer.fontHeight * 2.75)), 0x7F000000, 0x00000000);
@@ -212,13 +179,7 @@ public abstract class CarouselScreen extends SpruceScreen {
         int leftI = this.width / 2 - cardAreaWidth - getCardWidth() / 2;
         int rowI = 0;
         for (AbstractCardWidget<?> widget : this.carouselWidgets) {
-//            var widgetDeltaIndex = widget.getDeltaIndex() - i++;
-//            var widgetXOffset = (int) (widgetDeltaIndex * cardAreaWidth);
             var topI = top + (getCardHeight() + getCardGap()) * rowI;
-//            var position = Position.of(
-//                    widget.isDragging() ? mouseX - widget.getWidth() / 2 : leftI + scrollOffset,
-//                    this.height / 2 - getCardHeight() / 2
-//            );
             var position = Position.of(
                     scrollOffsetPosition, widget.getDeltaX(leftI),
                     widget.getDeltaY(topI)
@@ -238,8 +199,7 @@ public abstract class CarouselScreen extends SpruceScreen {
                 }
             }
 
-//            graphics.drawTextWithShadow(this.textRenderer, String.valueOf(loadedPresets.indexOf(loadedPreset)), leftI + scrollOffset, this.height/2 - this.textRenderer.fontHeight /2 , 0xFFFFFFFF);
-            if(widget instanceof PresetWidget<?> loadedPreset) {
+            if (widget instanceof PresetWidget<?> loadedPreset) {
                 loadedPreset.overridePosition(position);
                 loadedPreset.setScaleFactor(this.scaleFactor);
             } else if (widget instanceof AddCardWidget addCardWidget) {
@@ -294,13 +254,8 @@ public abstract class CarouselScreen extends SpruceScreen {
         setCardIndex(cardIndex);
     }
 
-    /*? if <1.20.4 {*/
-    /*@Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double verticalAmount) {
-    *//*?} else {*/
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double hozAmount, double verticalAmount) {
-    /*?}*/
         var sign = SkinShuffleConfig.get().invertCarouselScroll ? -1 : 1;
         scrollCarousel(-verticalAmount / 4 * SkinShuffleConfig.get().carouselScrollSensitivity * sign, false);
         return true;
@@ -309,7 +264,6 @@ public abstract class CarouselScreen extends SpruceScreen {
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         carouselWidgets.forEach(widget -> widget.setDragging(false));
-
         return super.mouseReleased(mouseX, mouseY, button);
     }
 
