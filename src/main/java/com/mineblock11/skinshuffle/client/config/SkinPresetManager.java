@@ -34,6 +34,7 @@ public class SkinPresetManager {
     private static final List<SkinPreset> loadedPresets = new ArrayList<>();
     private static SkinPreset chosenPreset = null;
     private static SkinPreset apiPreset = null;
+    private static boolean LOADING_LOCK = false;
 
     public static List<SkinPreset> getLoadedPresets() {
         return Collections.unmodifiableList(loadedPresets);
@@ -67,30 +68,25 @@ public class SkinPresetManager {
     }
 
     public static void savePresets() {
-        JsonObject presetFile = new JsonObject();
-        presetFile.addProperty("chosenPreset", loadedPresets.indexOf(chosenPreset));
-        presetFile.addProperty("apiPreset", apiPreset == null ? -1 : loadedPresets.indexOf(apiPreset));
-
-        JsonArray array = new JsonArray();
-        for (SkinPreset loadedPreset : loadedPresets) {
-            DataResult<JsonElement> dataResult = SkinPreset.CODEC.encodeStart(JsonOps.INSTANCE, loadedPreset);
-            /*? <1.20.5 {*/
-            /*array.add(dataResult.getOrThrow(false, SkinShuffle.LOGGER::error));
-            *//*?} else {*/
-            array.add(dataResult.result().orElseThrow(() -> new RuntimeException("Failed to encode skin preset.")));
-            /*?}*/
-        }
-        presetFile.add("loadedPresets", array);
-
-        String jsonString = GSON.toJson(presetFile);
         try {
+            JsonObject presetFile = new JsonObject();
+            presetFile.addProperty("chosenPreset", loadedPresets.indexOf(chosenPreset));
+            presetFile.addProperty("apiPreset", apiPreset == null ? -1 : loadedPresets.indexOf(apiPreset));
+
+            JsonArray array = new JsonArray();
+            for (SkinPreset loadedPreset : loadedPresets) {
+                DataResult<JsonElement> dataResult = SkinPreset.CODEC.encodeStart(JsonOps.INSTANCE, loadedPreset);
+                array.add(dataResult.result().orElseThrow(() -> 
+                    new RuntimeException("Failed to encode skin preset.")));
+            }
+            presetFile.add("loadedPresets", array);
+
+            String jsonString = GSON.toJson(presetFile);
             Files.writeString(PRESETS, jsonString, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            SkinShuffle.LOGGER.error("Failed to save presets", e);
         }
     }
-
-    public static boolean LOADING_LOCK = false;
 
     public static boolean hasLoadedPresets() {
         return chosenPreset != null;
@@ -100,19 +96,17 @@ public class SkinPresetManager {
         if (LOADING_LOCK) return;
         LOADING_LOCK = true;
 
-        if (!Files.exists(PRESETS)) {
-            if (chosenPreset == null) {
-                chosenPreset = SkinPreset.generateDefaultPreset();
-                apiPreset = chosenPreset;
-                loadedPresets.add(chosenPreset);
-            }
-            savePresets();
-        }
-
-        loadedPresets.clear();
-        chosenPreset = null;
-
         try {
+            if (!Files.exists(PRESETS)) {
+                generateDefaultPreset();
+                savePresets();
+                LOADING_LOCK = false;
+                return;
+            }
+
+            loadedPresets.clear();
+            chosenPreset = null;
+
             String jsonString = Files.readString(PRESETS);
             JsonObject presetFile = GSON.fromJson(jsonString, JsonObject.class);
             int chosenPresetIndex = presetFile.get("chosenPreset").getAsInt();
@@ -121,21 +115,32 @@ public class SkinPresetManager {
             JsonArray array = presetFile.get("loadedPresets").getAsJsonArray();
             for (JsonElement jsonElement : array) {
                 DataResult<Pair<SkinPreset, JsonElement>> dataResult = SkinPreset.CODEC.decode(JsonOps.INSTANCE, jsonElement);
-                /*? <1.20.5 {*/
-                /*Pair<SkinPreset, JsonElement> pair = dataResult.getOrThrow(false, SkinShuffle.LOGGER::error);
-                *//*?} else {*/
-                Pair<SkinPreset, JsonElement> pair = dataResult.result().orElseThrow(() -> new RuntimeException("Failed to decode skin preset."));
-                /*?}*/
+                Pair<SkinPreset, JsonElement> pair = dataResult.result().orElseThrow(() -> 
+                    new RuntimeException("Failed to decode skin preset."));
                 SkinPreset preset = pair.getFirst();
                 loadedPresets.add(preset);
             }
-            chosenPreset = loadedPresets.get(chosenPresetIndex);
-            apiPreset = apiPresetIndex < 0 ? null : loadedPresets.get(apiPresetIndex);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+
+            if (!loadedPresets.isEmpty()) {
+                chosenPreset = loadedPresets.get(chosenPresetIndex);
+                apiPreset = apiPresetIndex < 0 ? null : loadedPresets.get(apiPresetIndex);
+            } else {
+                generateDefaultPreset();
+            }
+        } catch (Exception e) {
+            SkinShuffle.LOGGER.error("Failed to load presets, generating default", e);
+            generateDefaultPreset();
         } finally {
             LOADING_LOCK = false;
         }
+    }
+
+    private static void generateDefaultPreset() {
+        loadedPresets.clear();
+        chosenPreset = SkinPreset.generateDefaultPreset();
+        apiPreset = chosenPreset;
+        loadedPresets.add(chosenPreset);
+        savePresets();
     }
 
     public static void setup() {
