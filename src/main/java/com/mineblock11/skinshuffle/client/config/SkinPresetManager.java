@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.api.SkinAPIs;
 import com.mineblock11.skinshuffle.api.SkinQueryResult;
+import com.mineblock11.skinshuffle.client.SkinShuffleClient;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mineblock11.skinshuffle.client.skin.ConfigSkin;
 import com.mineblock11.skinshuffle.client.skin.UrlSkin;
@@ -139,8 +140,14 @@ public class SkinPresetManager {
             }
             chosenPreset = loadedPresets.get(chosenPresetIndex);
             apiPreset = apiPresetIndex < 0 ? null : loadedPresets.get(apiPresetIndex);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            SkinShuffle.LOGGER.error("Failed to load presets, resetting!");
+            if (chosenPreset == null) {
+                chosenPreset = SkinPreset.generateDefaultPreset();
+                apiPreset = chosenPreset;
+                loadedPresets.add(chosenPreset);
+            }
+            savePresets();
         } finally {
             LOADING_LOCK = false;
         }

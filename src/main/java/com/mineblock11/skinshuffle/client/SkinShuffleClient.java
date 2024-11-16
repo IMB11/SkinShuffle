@@ -25,8 +25,11 @@ public class SkinShuffleClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        SkinPresetManager.setup();
-        ClientSkinHandling.init();
         SkinShuffleConfig.load();
+
+        SkinPresetManager.setup();
+        SkinPresetManager.loadPresets();
+
+        ClientSkinHandling.init();
     }
 }

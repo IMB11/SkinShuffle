@@ -14,6 +14,7 @@
 
 package com.mineblock11.skinshuffle.client.gui.widgets;
 
+import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.GeneratedScreens;
 import com.mineblock11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
@@ -27,7 +28,7 @@ import net.minecraft.text.Text;
 import java.util.UUID;
 
 public class OpenCarouselButton extends ButtonWidget {
-    private SkinPreset selectedPreset;
+    private final SkinPreset selectedPreset;
     private final double currentTime;
 
     public OpenCarouselButton(int x, int y, int width, int height) {
@@ -36,16 +37,17 @@ public class OpenCarouselButton extends ButtonWidget {
             client.setScreen(GeneratedScreens.getCarouselScreen(client.currentScreen));
         }, textSupplier -> Text.empty());
 
-        currentTime = GlfwUtil.getTime();
+        this.currentTime = GlfwUtil.getTime();
+        this.selectedPreset = SkinPresetManager.getChosenPreset();
     }
 
-    public void setSelectedPreset(SkinPreset preset) {
-        this.selectedPreset = preset;
-
-        if (selectedPreset != null) {
-            this.selectedPreset.getSkin().getTexture();
-        }
-    }
+//    public void setSelectedPreset(SkinPreset preset) {
+//        this.selectedPreset = preset;
+//
+//        if (selectedPreset != null) {
+//            this.selectedPreset.getSkin().getTexture();
+//        }
+//    }
 
     private float getEntityRotation() {
         return (float) ((GlfwUtil.getTime() - currentTime) * 35.0f);

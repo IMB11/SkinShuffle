@@ -14,6 +14,7 @@
 
 package com.mineblock11.skinshuffle.mixin.screen;
 
+import com.mineblock11.skinshuffle.MixinStatics;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
 import com.mineblock11.skinshuffle.client.gui.GeneratedScreens;
@@ -39,8 +40,6 @@ import java.util.concurrent.CompletableFuture;
 
 @Mixin(TitleScreen.class)
 public class TitleScreenMixin extends Screen {
-    @Unique
-    private static boolean appliedConfiguration = false;
     @Shadow
     @Final
     private boolean doBackgroundFade;
@@ -53,20 +52,13 @@ public class TitleScreenMixin extends Screen {
 
     @Inject(method = "render", at = @At("HEAD"))
     public void refreshConfig(CallbackInfo ci) {
-        if (!appliedConfiguration && this.doBackgroundFade) {
-            appliedConfiguration = true;
-            SkinPresetManager.loadPresets();
+        if (!MixinStatics.APPLIED_SKIN_MANAGER_CONFIGURATION && this.doBackgroundFade) {
+            MixinStatics.APPLIED_SKIN_MANAGER_CONFIGURATION = true;
             SkinPresetManager.apply();
 
             if(!NetworkingUtil.isLoggedIn()) {
                 ToastHelper.showOfflineModeToast();
             }
-
-            openCarouselWidgets.forEach(clickableWidget -> {
-                if(clickableWidget instanceof OpenCarouselButton button) {
-                    button.setSelectedPreset(SkinPresetManager.getChosenPreset());
-                }
-            });
         }
     }
 
@@ -97,12 +89,6 @@ public class TitleScreenMixin extends Screen {
 
         for (ClickableWidget carouselWidget : this.openCarouselWidgets) {
             this.addDrawableChild(carouselWidget);
-
-            if (appliedConfiguration) {
-                if (carouselWidget instanceof OpenCarouselButton button) {
-                    button.setSelectedPreset(SkinPresetManager.getChosenPreset());
-                }
-            }
         }
     }
 }

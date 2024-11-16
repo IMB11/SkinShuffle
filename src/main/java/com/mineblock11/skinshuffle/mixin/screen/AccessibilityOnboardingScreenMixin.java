@@ -1,5 +1,6 @@
 package com.mineblock11.skinshuffle.mixin.screen;
 
+import com.mineblock11.skinshuffle.MixinStatics;
 import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.util.NetworkingUtil;
 import com.mineblock11.skinshuffle.util.ToastHelper;
@@ -12,14 +13,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(AccessibilityOnboardingScreen.class)
 public class AccessibilityOnboardingScreenMixin {
-    @Unique
-    private static boolean appliedConfiguration = false;
-
     @Inject(method = "render", at = @At("HEAD"))
     public void refreshConfig(CallbackInfo ci) {
-        if (!appliedConfiguration) {
-            appliedConfiguration = true;
-            SkinPresetManager.loadPresets();
+        if (!MixinStatics.APPLIED_SKIN_MANAGER_CONFIGURATION) {
+            MixinStatics.APPLIED_SKIN_MANAGER_CONFIGURATION = true;
             SkinPresetManager.apply();
 
             if(!NetworkingUtil.isLoggedIn()) {

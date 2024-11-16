@@ -75,10 +75,6 @@ public abstract class GameMenuScreenMixin extends ScreenMixin {
 
         for (ClickableWidget carouselWidget : this.openCarouselWidgets) {
             this.addDrawableChild(carouselWidget);
-            if(carouselWidget instanceof OpenCarouselButton button) {
-                SkinPresetManager.loadPresets();
-                button.setSelectedPreset(SkinPresetManager.getChosenPreset());
-            }
             if(carouselWidget instanceof WarningIndicatorButton warningIndicatorButton) {
                 this.warningIndicator = warningIndicatorButton;
             }
