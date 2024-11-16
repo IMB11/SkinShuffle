@@ -32,6 +32,7 @@ public class SkinPresetManager {
     private static final Path PRESETS = SkinShuffle.DATA_DIR.resolve("presets.json");
 
     private static final List<SkinPreset> loadedPresets = new ArrayList<>();
+    public static boolean LOADING_LOCK = false;
     private static SkinPreset chosenPreset = null;
     private static SkinPreset apiPreset = null;
 
@@ -40,11 +41,24 @@ public class SkinPresetManager {
     }
 
     public static SkinPreset getChosenPreset() {
+        if (chosenPreset == null) {
+            if (!loadedPresets.isEmpty()) {
+                chosenPreset = loadedPresets.get(0);
+            } else {
+                chosenPreset = SkinPreset.generateDefaultPreset();
+                loadedPresets.add(chosenPreset);
+            }
+            savePresets();
+        }
         return chosenPreset;
     }
 
     public static SkinPreset getApiPreset() {
         return apiPreset;
+    }
+
+    public static void setApiPreset(SkinPreset preset) {
+        apiPreset = preset;
     }
 
     public static void swapPresets(int index1, int index2) {
@@ -62,10 +76,6 @@ public class SkinPresetManager {
         apply();
     }
 
-    public static void setApiPreset(SkinPreset preset) {
-        apiPreset = preset;
-    }
-
     public static void savePresets() {
         JsonObject presetFile = new JsonObject();
         presetFile.addProperty("chosenPreset", loadedPresets.indexOf(chosenPreset));
@@ -76,7 +86,7 @@ public class SkinPresetManager {
             DataResult<JsonElement> dataResult = SkinPreset.CODEC.encodeStart(JsonOps.INSTANCE, loadedPreset);
             /*? <1.20.5 {*/
             /*array.add(dataResult.getOrThrow(false, SkinShuffle.LOGGER::error));
-            *//*?} else {*/
+             *//*?} else {*/
             array.add(dataResult.result().orElseThrow(() -> new RuntimeException("Failed to encode skin preset.")));
             /*?}*/
         }
@@ -89,8 +99,6 @@ public class SkinPresetManager {
             throw new RuntimeException(e);
         }
     }
-
-    public static boolean LOADING_LOCK = false;
 
     public static boolean hasLoadedPresets() {
         return chosenPreset != null;
@@ -123,7 +131,7 @@ public class SkinPresetManager {
                 DataResult<Pair<SkinPreset, JsonElement>> dataResult = SkinPreset.CODEC.decode(JsonOps.INSTANCE, jsonElement);
                 /*? <1.20.5 {*/
                 /*Pair<SkinPreset, JsonElement> pair = dataResult.getOrThrow(false, SkinShuffle.LOGGER::error);
-                *//*?} else {*/
+                 *//*?} else {*/
                 Pair<SkinPreset, JsonElement> pair = dataResult.result().orElseThrow(() -> new RuntimeException("Failed to decode skin preset."));
                 /*?}*/
                 SkinPreset preset = pair.getFirst();
