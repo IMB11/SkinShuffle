@@ -89,34 +89,17 @@ public abstract class CarouselScreen extends SpruceScreen {
         this.carouselWidgets.add(addPresetWidget);
 
         // We don't want to switch back to the selected preset when we return from a subscreen.
-        if (this.cardIndex < 0) {
-            //noinspection IntegerDivisionInFloatingPointContext
-            this.cardIndex = loadedPresets.indexOf(SkinPresetManager.getChosenPreset()) / getRows() * getRows();
+        if (!loadedPresets.isEmpty()) {
+            if (this.cardIndex < 0) {
+                //noinspection IntegerDivisionInFloatingPointContext
+                this.cardIndex = loadedPresets.indexOf(SkinPresetManager.getChosenPreset()) / getRows() * getRows();
+            }
+            this.lastCardIndex = this.cardIndex;
+        } else {
+            // Set default values when no presets exist
+            this.cardIndex = 0;
+            this.lastCardIndex = 0;
         }
-        this.lastCardIndex = this.cardIndex;
-
-//        new Thread(() -> {
-            // TODO: requires more accurate equality check, maybe comparing the texture directly somehow?
-//            for (var widget : carouselWidgets) {
-//                if (widget instanceof PresetWidget skinWidget) {
-//                    var preset = skinWidget.getPreset();
-//
-//                    if (preset.getSkin().equals(apiPreset.getSkin())) {
-//                        SkinPresetManager.setApiPreset(preset);
-//                        return;
-//                    }
-//                }
-//            }
-//
-//            if (SkinPresetManager.getLoadedPresets().size() == 0) {
-//                var apiPreset = SkinPreset.generateDefaultPreset();
-//
-//                SkinPresetManager.addPreset(apiPreset);
-//                SkinPresetManager.setApiPreset(apiPreset);
-//                var apiPresetWidget = this.loadPreset(apiPreset);
-//                this.addDrawableChild(apiPresetWidget);
-//            }
-//        }).start();
 
         for (SpruceWidget presetCards : this.carouselWidgets) {
             this.addDrawableChild(presetCards);
@@ -139,18 +122,20 @@ public abstract class CarouselScreen extends SpruceScreen {
         this.viewTypeButton.setTooltip(viewType.tooltip);
 
         this.selectButton = this.addDrawableChild(new SpruceButtonWidget(Position.of(this.width / 2 + 5, this.height - 23), 128, 20, Text.translatable("skinshuffle.carousel.save_button"), button -> {
-            SpruceWidget chosenPresetWidget = this.carouselWidgets.get((int) Math.round(cardIndex));
+            if (Math.round(cardIndex) >= 0 && Math.round(cardIndex) < this.carouselWidgets.size()) {
+                SpruceWidget chosenPresetWidget = this.carouselWidgets.get((int) Math.round(cardIndex));
 
-            if(chosenPresetWidget instanceof AddCardWidget) {
-                this.close();
-                return;
+                if (chosenPresetWidget instanceof AddCardWidget) {
+                    this.close();
+                    return;
+                }
+
+                if (chosenPresetWidget instanceof PresetWidget) {
+                    PresetWidget presetWidget = (PresetWidget) chosenPresetWidget;
+                    SkinPresetManager.setChosenPreset(presetWidget.getPreset(), this.hasEditedPreset);
+                    SkinPresetManager.savePresets();
+                }
             }
-
-            assert chosenPresetWidget instanceof PresetWidget;
-            PresetWidget presetWidget = (PresetWidget) chosenPresetWidget;
-
-            SkinPresetManager.setChosenPreset(presetWidget.getPreset(), this.hasEditedPreset);
-            SkinPresetManager.savePresets();
 
             this.handleCloseBehaviour();
         }));
