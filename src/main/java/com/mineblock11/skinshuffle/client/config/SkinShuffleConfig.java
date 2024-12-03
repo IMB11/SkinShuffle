@@ -21,8 +21,11 @@ import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
 import dev.isxander.yacl3.config.GsonConfigInstance;
+import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
+import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -31,36 +34,31 @@ import static net.minecraft.text.Text.translatable;
 
 public class SkinShuffleConfig {
     private static final Path CONFIG_FILE_PATH = SkinShuffle.DATA_DIR.resolve("config.json");
-    private static final GsonConfigInstance<SkinShuffleConfig> GSON = GsonConfigInstance.createBuilder(SkinShuffleConfig.class)
-            .overrideGsonBuilder(new GsonBuilder()
-                    .setPrettyPrinting()
-                    .disableHtmlEscaping()
-                    .create())
-            .setPath(CONFIG_FILE_PATH)
+    private static final ConfigClassHandler<SkinShuffleConfig> HANDLER = ConfigClassHandler.<SkinShuffleConfig>
+                    createBuilder(SkinShuffleConfig.class)
+            .id(Identifier.of("skinshuffle:skinshuffle"))
+            .serializer(config -> GsonConfigSerializerBuilder.create(config)
+                    .setPath(CONFIG_FILE_PATH)
+                    .appendGsonBuilder(GsonBuilder::setPrettyPrinting)
+                    .build())
             .build();
 
     public static SkinShuffleConfig get() {
-        return GSON.getConfig();
+        return HANDLER.instance();
     }
 
     public static void load() {
-        GSON.load();
-        get().postLoad();
+        HANDLER.load();
     }
 
     public static void save() {
-        GSON.save();
-    }
-
-    public void postLoad() {
-        save();
+        HANDLER.save();
     }
 
     public static YetAnotherConfigLib getInstance() {
-        return YetAnotherConfigLib.create(GSON,
+        return YetAnotherConfigLib.create(HANDLER,
                 (defaults, config, builder) -> {
                     // Rendering Options
-
                     var carouselRenderStyle = Option.<SkinRenderStyle>createBuilder()
                             .name(translatable("skinshuffle.config.rendering.carousel_rendering_style.name"))
                             .description(OptionDescription.createBuilder()

@@ -151,7 +151,7 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
             rotation = getEntityRotation() * SkinShuffleConfig.get().rotationMultiplier;
         }
 
-        if(!isActive()) {
+        if(!this.active) {
             followX = 0;
             followY = 0;
             rotation = 0;
@@ -184,7 +184,7 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
     }
 
     private float getEntityRotation() {
-        return isActive() && SkinShuffleConfig.get().carouselSkinRenderStyle.equals(SkinShuffleConfig.SkinRenderStyle.ROTATION) ? (float) (GlfwUtil.getTime() - (parent != null && !(parent instanceof CompactCarouselScreen) ? parent.getLastCardSwitchTime() : 0)) * 35.0f : 0.0f;
+        return active && SkinShuffleConfig.get().carouselSkinRenderStyle.equals(SkinShuffleConfig.SkinRenderStyle.ROTATION) ? (float) (GlfwUtil.getTime() - (parent != null && !(parent instanceof CompactCarouselScreen) ? parent.getLastCardSwitchTime() : 0)) * 35.0f : 0.0f;
     }
 
     public SkinPreset getPreset() {

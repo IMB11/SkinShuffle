@@ -27,6 +27,7 @@ import net.minecraft.client.model.Dilation;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.render.*;
+import net.minecraft.client.render.entity.model.PlayerCapeModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
@@ -63,7 +64,10 @@ public class GuiEntityRenderer {
         Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
         modelViewStack.pushMatrix();
         modelViewStack.translate(0.0f, 0.0f, 1000.0f);
-        RenderSystem.applyModelViewMatrix();
+        //? if <1.21.2 {
+        /*RenderSystem.applyModelViewMatrix();
+        *///?}
+
         //?} else {
         /*MatrixStack modelViewStack = RenderSystem.getModelViewStack();
         modelViewStack.push();
@@ -116,16 +120,22 @@ public class GuiEntityRenderer {
         //?}
             matrices.push();
             matrices.translate(0.0F, 0.0F, 0.2F);
-            model.renderCape(
+
+            // Get model for cape.
+            //? >=1.21.2 {
+            //?} else {
+            /*model.renderCape(
                     matrices,
                     //? if !=1.20.1 {
                     vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(skin.getSkinTextures().capeTexture())),
                     //?} else {
-                    /*vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentCull(client.getSkinProvider().loadSkin(client.getSkinProvider().getTextures(client.getSession().getProfile()).get(MinecraftProfileTexture.Type.CAPE), MinecraftProfileTexture.Type.CAPE))),
-                    *///?}
+                    /^vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentCull(client.getSkinProvider().loadSkin(client.getSkinProvider().getTextures(client.getSession().getProfile()).get(MinecraftProfileTexture.Type.CAPE), MinecraftProfileTexture.Type.CAPE))),
+                    ^///?}
                     0,
                     OverlayTexture.DEFAULT_UV
             );
+            *///?}
+
             matrices.pop();
         }
         vertexConsumers.draw();
@@ -140,7 +150,11 @@ public class GuiEntityRenderer {
         //? if >=1.20.5 {
         Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
         modelViewStack.popMatrix();
-        RenderSystem.applyModelViewMatrix();
+
+        //? if <1.21.2 {
+        /*RenderSystem.applyModelViewMatrix();
+        *///?}
+
         //?} else {
         /*MatrixStack modelViewStack = RenderSystem.getModelViewStack();
         modelViewStack.pop();
@@ -151,7 +165,10 @@ public class GuiEntityRenderer {
     public static class NoEntityPlayerModel extends PlayerEntityModel {
         public NoEntityPlayerModel(ModelPart root, boolean thinArms) {
             super(root, thinArms);
-            this.child = false;
+
+            //? <1.21.2 {
+            /*this.child = false;
+            *///?}
         }
 
         public void swingArmsGently(float totalDeltaTick) {
@@ -171,7 +188,23 @@ public class GuiEntityRenderer {
 
         public void waveCapeGently(float totalDeltaTick) {
             float f = MathHelper.sin(totalDeltaTick * 0.067F) * 0.05F;
-            this.cloak.pitch = f;
+
+            //? <1.21.2 {
+            /*this.cloak.pitch = f;
+            *///?}
         }
     }
+
+    //? >=1.21.2 {
+    public static class NoEntityCapeModel extends PlayerCapeModel {
+        public NoEntityCapeModel(ModelPart modelPart) {
+            super(modelPart);
+        }
+
+        public void waveCapeGently(float totalDeltaTick) {
+            float f = MathHelper.sin(totalDeltaTick * 0.067F) * 0.05F;
+            this.cape.pitch = f;
+        }
+    }
+    //?}
 }

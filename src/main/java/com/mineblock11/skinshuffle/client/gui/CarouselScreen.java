@@ -29,7 +29,6 @@ import com.mineblock11.skinshuffle.util.NetworkingUtil;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.Tooltip;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
-import dev.lambdaurora.spruceui.util.ScissorManager;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
 import dev.lambdaurora.spruceui.widget.SpruceIconButtonWidget;
 import dev.lambdaurora.spruceui.widget.SpruceWidget;
@@ -45,6 +44,10 @@ import java.util.Collections;
 import java.util.Optional;
 
 public abstract class CarouselScreen extends SpruceScreen {
+    //? if >=1.21.2 {
+    public static final double scaleFactor = 1.0D;
+    //?}
+
     public final Screen parent;
     public final CarouselView viewType;
     public final CarouselView nextViewType;
@@ -180,7 +183,10 @@ public abstract class CarouselScreen extends SpruceScreen {
         graphics.fill(0, this.textRenderer.fontHeight * 3, this.width, this.height - (this.textRenderer.fontHeight * 3), 0x7F000000);
         graphics.fillGradient(0, (int) (this.textRenderer.fontHeight * 2.75), this.width, this.textRenderer.fontHeight * 3, 0x00000000, 0x7F000000);
         graphics.fillGradient(0, (int) (this.height - (this.textRenderer.fontHeight * 3)), this.width, (int) (this.height - (this.textRenderer.fontHeight * 2.75)), 0x7F000000, 0x00000000);
-        ScissorManager.pushScaleFactor(this.scaleFactor);
+
+        //? if <1.21.2 {
+        /*dev.lambdaurora.spruceui.util.ScissorManager.pushScaleFactor(this.scaleFactor);
+        *///?}
 
         // Carousel Widgets
         int rows = getRows();
@@ -249,7 +255,10 @@ public abstract class CarouselScreen extends SpruceScreen {
         this.renderWidgets(graphics, mouseX, mouseY, delta);
         this.renderTitle(graphics, mouseX, mouseY, delta);
         Tooltip.renderAll(graphics);
-        ScissorManager.popScaleFactor();
+
+        //? if <1.21.2 {
+        /*ScissorManager.popScaleFactor();
+        *///?}
     }
 
     @Override

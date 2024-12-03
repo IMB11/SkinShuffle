@@ -18,6 +18,7 @@ import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.Tooltip;
 import dev.lambdaurora.spruceui.widget.SpruceIconButtonWidget;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -34,7 +35,29 @@ public class ActualSpruceIconButtonWidget extends SpruceIconButtonWidget {
 
     @Override
     protected int renderIcon(DrawContext graphics, int mouseX, int mouseY, float delta) {
-        graphics.drawTexture(iconTexture.apply(this), this.getX() + this.getWidth() / 2 - (16 / 2), this.getY() + this.getHeight() / 2 - (16 / 2), 16, 16, 0, isMouseHovered() ? 16 : 0, 16, 16, 16, 32);
+        graphics.drawTexture(
+                //? >=1.21.2 {
+                RenderLayer::getGuiTextured,
+                //?}
+                iconTexture.apply(this),
+                this.getX() + this.getWidth() / 2 - (16 / 2),
+                this.getY() + this.getHeight() / 2 - (16 / 2),
+                //? <1.21.2 {
+                /*16,
+                16,
+                0,
+                isMouseHovered() ? 16 : 0,
+                *///?} else {
+                0,
+                isMouseHovered() ? 16 : 0,
+                16,
+                16,
+                //?}
+                16,
+                16,
+                16,
+                32
+                );
         return 16;
     }
 

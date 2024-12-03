@@ -132,7 +132,6 @@ public class PresetEditScreen extends SpruceScreen {
         this.initTabNavigation();
     }
 
-    @Override
     protected void initTabNavigation() {
         this.sideMargins = Math.max(this.width - MAX_WIDTH, 0) / 2;
 

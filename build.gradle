@@ -65,7 +65,7 @@ dependencies {
     include implementation('com.konghq:unirest-java:3.11.09:standalone')
 
     include modImplementation("dev.lambdaurora:spruceui:${property('deps.spruceui')}")
-    modImplementation(include("dev.isxander:yet-another-config-lib:3.6.1+${stonecutter.current.version}-fabric"))
+    modImplementation(include("dev.isxander:yet-another-config-lib:${property('deps.yacl')}"))
 
     include implementation("org.jsoup:jsoup:1.16.1")
     include implementation("org.mineskin:java-client:1.2.4-SNAPSHOT")

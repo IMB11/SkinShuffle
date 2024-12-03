@@ -75,9 +75,7 @@ public class SkinPreset {
         }
         *//*?} else {*/
         if(!NetworkingUtil.isLoggedIn()) {
-            SkinTextures skinTexture = client.getSkinProvider().getSkinTextures(client.getGameProfile());
-            Skin skin = new ResourceSkin(skinTexture.texture(), skinTexture.texture().getPath().contains("/slim/") ? "slim" : "default");
-
+            Skin skin = new ResourceSkin(Identifier.of("minecraft:textures/entity/player/wide/steve.png"), "default");
             return new SkinPreset(skin, name);
         } else {
             var skinQueryResult = SkinAPIs.getPlayerSkinTexture(String.valueOf(client.getGameProfile().getId()));

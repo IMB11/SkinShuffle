@@ -18,6 +18,7 @@ import com.mineblock11.skinshuffle.SkinShuffle;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.widget.AbstractSpruceWidget;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
@@ -70,6 +71,9 @@ public class CarouselMoveButton extends AbstractSpruceWidget {
         // Translate the matrix forward so its above rendered playermodels
         matrices.translate(0, 0, 10000);
         guiGraphics.drawTexture(
+                //? >=1.21.2 {
+                RenderLayer::getGuiTextured,
+                //?}
                 ARROW_TEXTURES, getX(), getY(), width, height, this.type.u,
                 (this.active ? (this.hovered || this.focused ? this.type.height : 0) : this.type.height),
                 this.type.width, this.type.height, 64, 64

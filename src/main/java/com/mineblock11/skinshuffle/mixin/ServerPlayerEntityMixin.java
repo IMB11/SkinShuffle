@@ -21,6 +21,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerPosition;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.*;
 import net.minecraft.server.PlayerManager;
@@ -100,6 +101,18 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
 
             /*? if >=1.20.4 {*/
             this.networkHandler.sendPacket(new PlayerRespawnS2CPacket(
+
+                    // RegistryEntry<DimensionType> registryEntry,
+                    // RegistryKey<World> registryKey,
+                    // long l,
+                    // GameMode gameMode,
+                    // @Nullable GameMode gameMode2,
+                    // boolean bl,
+                    // boolean bl2,
+                    // Optional<GlobalPos> optional,
+                    // int i,
+                    // int j
+
                     new CommonPlayerSpawnInfo(
                             //? if >=1.20.6 {
                             level.getDimensionEntry(),
@@ -112,13 +125,22 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
                             level.isDebugWorld(),
                             level.isFlat(),
                             this.getLastDeathPos(),
-                            this.getPortalCooldown()), (byte) 3)
+                            this.getPortalCooldown()
+                            //? if >=1.21.2 {
+                            , level.getSeaLevel()
+                            //?}
+                    ), (byte) 3)
             );
             /*?} else {*/
             /*this.networkHandler.sendPacket(new PlayerRespawnS2CPacket(level.getDimensionKey(), level.getRegistryKey(), BiomeAccess.hashSeed(level.getSeed()), this.interactionManager.getGameMode(), this.interactionManager.getPreviousGameMode(), level.isDebugWorld(), level.isFlat(), (byte) 3, this.getLastDeathPos(),this.getPortalCooldown()));
             *//*?}*/
 
-            this.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(this.getX(), this.getY(), this.getZ(), this.getYaw(), this.getPitch(), Collections.emptySet(), 0));
+            //? if <1.21.2 {
+            /*this.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(this.getX(), this.getY(), this.getZ(), this.getYaw(), this.getPitch(), Collections.emptySet(), 0));
+            *///?} else {
+            this.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(0, PlayerPosition.fromEntity(this), Collections.emptySet()));
+            //?}
+
             this.networkHandler.sendPacket(new UpdateSelectedSlotS2CPacket(this.getInventory().selectedSlot));
 
             this.networkHandler.sendPacket(new DifficultyS2CPacket(level.getDifficulty(), level.getLevelProperties().isDifficultyLocked()));
