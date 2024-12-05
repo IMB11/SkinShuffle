@@ -13,3 +13,5 @@ accessible field net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTrac
 accessible method net/minecraft/client/gui/widget/ClickableWidget drawScrollableText (Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/Text;IIIII)V
 accessible method net/minecraft/client/gui/widget/CyclingButtonWidget <init> (IIIILnet/minecraft/text/Text;Lnet/minecraft/text/Text;ILjava/lang/Object;Lnet/minecraft/client/gui/widget/CyclingButtonWidget$Values;Ljava/util/function/Function;Ljava/util/function/Function;Lnet/minecraft/client/gui/widget/CyclingButtonWidget$UpdateCallback;Lnet/minecraft/client/option/SimpleOption$TooltipFactory;Z)V
 accessible field net/minecraft/client/render/entity/model/PlayerEntityModel cloak Lnet/minecraft/client/model/ModelPart;
+
+accessible field net/minecraft/client/gui/screen/GameMenuScreen showMenu Z
