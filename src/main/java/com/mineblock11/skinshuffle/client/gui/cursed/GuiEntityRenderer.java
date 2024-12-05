@@ -78,7 +78,7 @@ public class GuiEntityRenderer {
 
     private static void setupMatrices(MatrixStack matrices, int x, int y, int size, Quaternionf entityRotation) {
         matrices.push();
-        matrices.translate(x, y, -950.0);
+        matrices.translate(x, y, 100.0);
         matrices.multiplyPositionMatrix(new Matrix4f().scaling(size, size, -size));
         matrices.translate(0, -1, 0);
         matrices.multiply(entityRotation);
