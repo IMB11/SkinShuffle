@@ -27,7 +27,6 @@ import net.minecraft.client.model.Dilation;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.render.*;
-import net.minecraft.client.render.entity.model.PlayerCapeModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
@@ -196,7 +195,7 @@ public class GuiEntityRenderer {
     }
 
     //? >=1.21.2 {
-    public static class NoEntityCapeModel extends PlayerCapeModel {
+    public static class NoEntityCapeModel extends net.minecraft.client.render.entity.model.PlayerCapeModel {
         public NoEntityCapeModel(ModelPart modelPart) {
             super(modelPart);
         }

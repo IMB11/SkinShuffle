@@ -68,8 +68,8 @@ public class IconButtonWidget extends ButtonWidget {
                 this.iconU,
                 this.iconV + (active ? (hovered ? 16 : 0) : this.iconDisabledVOffset),
                 //? <1.21.2 {
-                //0,
-                //?}
+                /*0,
+                *///?}
                 this.iconWidth,
                 this.iconHeight,
                 this.iconTextureWidth,

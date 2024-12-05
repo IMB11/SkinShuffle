@@ -21,7 +21,6 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerPosition;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.*;
 import net.minecraft.server.PlayerManager;
@@ -138,7 +137,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
             //? if <1.21.2 {
             /*this.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(this.getX(), this.getY(), this.getZ(), this.getYaw(), this.getPitch(), Collections.emptySet(), 0));
             *///?} else {
-            this.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(0, PlayerPosition.fromEntity(this), Collections.emptySet()));
+            this.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(0, net.minecraft.entity.player.PlayerPosition.fromEntity(this), Collections.emptySet()));
             //?}
 
             this.networkHandler.sendPacket(new UpdateSelectedSlotS2CPacket(this.getInventory().selectedSlot));

@@ -20,7 +20,6 @@ import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
-import dev.isxander.yacl3.config.GsonConfigInstance;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
@@ -34,9 +33,9 @@ import static net.minecraft.text.Text.translatable;
 
 public class SkinShuffleConfig {
     private static final Path CONFIG_FILE_PATH = SkinShuffle.DATA_DIR.resolve("config.json");
-    private static final ConfigClassHandler<SkinShuffleConfig> HANDLER = ConfigClassHandler.<SkinShuffleConfig>
-                    createBuilder(SkinShuffleConfig.class)
-            .id(Identifier.of("skinshuffle:skinshuffle"))
+    private static final ConfigClassHandler<SkinShuffleConfig> HANDLER = ConfigClassHandler.
+            createBuilder(SkinShuffleConfig.class)
+            .id(Identifier.of("skinshuffle", "skinshuffle"))
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
                     .setPath(CONFIG_FILE_PATH)
                     .appendGsonBuilder(GsonBuilder::setPrettyPrinting)
@@ -47,12 +46,12 @@ public class SkinShuffleConfig {
         return HANDLER.instance();
     }
 
-    public static void load() {
-        HANDLER.load();
-    }
-
     public static void save() {
         HANDLER.save();
+    }
+
+    public static void load() {
+        HANDLER.load();
     }
 
     public static YetAnotherConfigLib getInstance() {

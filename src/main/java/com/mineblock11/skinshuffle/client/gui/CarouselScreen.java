@@ -257,7 +257,7 @@ public abstract class CarouselScreen extends SpruceScreen {
         Tooltip.renderAll(graphics);
 
         //? if <1.21.2 {
-        /*ScissorManager.popScaleFactor();
+        /*dev.lambdaurora.spruceui.util.ScissorManager.popScaleFactor();
         *///?}
     }
 
