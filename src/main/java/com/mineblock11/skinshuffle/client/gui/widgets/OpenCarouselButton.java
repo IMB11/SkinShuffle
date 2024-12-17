@@ -53,15 +53,10 @@ public class OpenCarouselButton extends ButtonWidget {
         return (float) ((GlfwUtil.getTime() - currentTime) * 35.0f);
     }
 
-    /*? if <1.20.4 {*/
-    /*@Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
-    *//*?} else {*/
+
     @Override
     public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
         super.renderWidget(context, mouseX, mouseY, delta);
-    /*?}*/
 
         if (selectedPreset != null) {
             // Don't want to render the entity if the skin is still loading

@@ -28,11 +28,8 @@ import java.util.Objects;
 
 public final class ResourceSkin implements Skin {
     public static final Identifier SERIALIZATION_ID = SkinShuffle.id("resource");
-    /*? if >=1.20.5 {*/
+
     public static final MapCodec<ResourceSkin> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-    /*?} else {*/
-    /*public static final Codec<ResourceSkin> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            *//*?}*/
             Identifier.CODEC.fieldOf("texture").forGetter(ResourceSkin::getTexture),
             Codec.STRING.fieldOf("model").forGetter(ResourceSkin::getModel)
     ).apply(instance, ResourceSkin::new));

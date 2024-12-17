@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
-public abstract class BackedSkin implements Skin {
+public abstract class BackedSkin implements Skin, AutoCloseable {
     // Keep track of how many instances exist for each texture id, so we can clean them up when they're no longer used
     // It should be fine to use the same map for all subclasses, since the texture ids will be unique anyway
     public static final Object2IntMap<Identifier> INSTANCE_COUNTS = new Object2IntOpenHashMap<>();
@@ -100,15 +100,10 @@ public abstract class BackedSkin implements Skin {
 
     protected abstract @Nullable AbstractTexture loadTexture(Runnable completionCallback);
 
-    @SuppressWarnings("deprecation")
     @Override
-    protected void finalize() throws Throwable {
-        try {
-            if (textureId != null) {
-                decrementInstanceCountAndCleanup(textureId);
-            }
-        } finally {
-            super.finalize();
+    public void close() {
+        if (textureId != null) {
+            decrementInstanceCountAndCleanup(textureId);
         }
     }
 

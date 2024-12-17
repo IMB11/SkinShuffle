@@ -52,45 +52,22 @@ public class ServerSkinHandling {
      * @return Whether the refresh was successful.
      */
     public static boolean attemptPlayerListEntryRefresh(ServerPlayerEntity player, int entityID) {
-        /*? if <1.20.5 {*/
-        /*if (ServerPlayNetworking.canSend(player, SkinShuffle.id("refresh_player_list_entry"))) {
-            ServerPlayNetworking.send(player, SkinShuffle.id("refresh_player_list_entry"), net.fabricmc.fabric.api.networking.v1.PacketByteBufs.create().writeVarInt(entityID));
-            return true;
-        }
-        *//*?} else {*/
         if (ServerPlayNetworking.canSend(player, RefreshPlayerListEntryPayload.PACKET_ID)) {
             ServerPlayNetworking.send(player, new RefreshPlayerListEntryPayload(entityID));
             return true;
         }
-        /*?}*/
         return false;
     }
 
     public static void init() {
         // Send handshake packet to client.
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-
-            /*? if <1.20.5 {*/
-            /*if (ServerPlayNetworking.canSend(handler.getPlayer(), SkinShuffle.id("handshake"))) {
-                ServerPlayNetworking.send(handler.getPlayer(), SkinShuffle.id("handshake"), net.fabricmc.fabric.api.networking.v1.PacketByteBufs.empty());
-            }
-            *//*?} else {*/
             if (ServerPlayNetworking.canSend(handler.getPlayer(), HandshakePayload.PACKET_ID)) {
                 ServerPlayNetworking.send(handler.getPlayer(), new HandshakePayload());
             }
-            /*?}*/
 
         });
 
-        /*? if <1.20.5 {*/
-        /*ServerPlayNetworking.registerGlobalReceiver(SkinShuffle.id("refresh"), (server, player, handler, buf, responseSender) -> {
-            try {
-                handleSkinRefresh(server, player, buf.readProperty());
-            } catch (Exception e) {
-                SkinShuffle.LOGGER.error("Failed to handle skin refresh packet from " + player.getName().getString() + "\n" + e.getMessage());
-            }
-        });
-        *//*?} else {*/
         ServerPlayNetworking.registerGlobalReceiver(SkinRefreshPayload.PACKET_ID, (payload, context) -> {
             try {
                 ServerSkinHandling.handleSkinRefresh(context.server(), context.player(), payload.textureProperty());
@@ -98,6 +75,5 @@ public class ServerSkinHandling {
                 SkinShuffle.LOGGER.error("Failed to handle skin refresh packet from " + context.player().getName().getString() + "\n" + e.getMessage());
             }
         });
-        /*?}*/
     }
 }

@@ -42,17 +42,6 @@ public abstract class PlayerEntityMixin extends PlayerEntity implements SkinShuf
         super(world, pos, yaw, gameProfile);
     }
 
-    /*? if <1.20.4 {*/
-    /*@Inject(method = "getSkinTexture", at = @At("HEAD"), cancellable = true)
-    private void modifySkinTexture(CallbackInfoReturnable<net.minecraft.util.Identifier> cir) {
-        if(MinecraftClient.getInstance().world != null) {
-            if(this.getUuid().equals(MinecraftClient.getInstance().player.getUuid()) && (!NetworkingUtil.isLoggedIn() || SkinShuffleConfig.get().disableAPIUpload || ClientSkinHandling.isReconnectRequired())) {
-                SkinPreset currentPreset = SkinPresetManager.getChosenPreset();
-                cir.setReturnValue(java.util.Objects.requireNonNullElse(currentPreset.getSkin().getTexture(), new net.minecraft.util.Identifier("textures/skins/default/steve.png")));
-            }
-        }
-    }
-    *//*?} else {*/
     @Inject(method = "getSkinTextures", at = @At("HEAD"), cancellable = true)
     private void modifySkinModel(CallbackInfoReturnable<net.minecraft.client.util.SkinTextures> cir) {
         if(MinecraftClient.getInstance().world != null) {
@@ -62,7 +51,6 @@ public abstract class PlayerEntityMixin extends PlayerEntity implements SkinShuf
             }
         }
     }
-    /*?}*/
 
     @Override
     public void skinShuffle$refreshPlayerListEntry() {

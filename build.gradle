@@ -71,6 +71,8 @@ dependencies {
     include implementation("org.mineskin:java-client:1.2.4-SNAPSHOT")
     include implementation("commons-validator:commons-validator:1.7")
 
+    include implementation("com.drewnoakes:metadata-extractor:2.19.0")
+
     modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:1.2.0")
 }
 

@@ -14,6 +14,9 @@
 
 package com.mineblock11.skinshuffle.client.gui;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.png.PngMetadataReader;
+import com.drew.metadata.Metadata;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.client.SkinShuffleClient;import com.mineblock11.skinshuffle.client.config.SkinPresetManager;
 import com.mineblock11.skinshuffle.client.config.SkinShuffleConfig;
@@ -34,6 +37,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.PngMetadata;
 import net.minecraft.util.Util;
 import org.apache.commons.validator.routines.UrlValidator;
 
@@ -170,9 +174,23 @@ public class PresetEditScreen extends SpruceScreen {
 
         // Check if the file exists, follows symlinks, and is a regular file
         if (Files.exists(path) && Files.isRegularFile(path)) {
-            // Check if the file has a .png extension (case insensitive)
+            // Check if the file has a .png extension (case-insensitive)
             String fileName = path.getFileName().toString().toLowerCase();
-            return fileName.endsWith(".png");
+
+            if (!fileName.endsWith(".png")) {
+                return false;
+            }
+
+            // Validate the png file's metadata.
+            try {
+                PngMetadata metadata = PngMetadata.fromStream(Files.newInputStream(path));
+
+                // Width must be 64x64 or 64x32, and must be a png file.
+                int width = metadata.width(), height = metadata.height();
+                return (width == 64 && (height == 64 || height == 32));
+            } catch (Exception ignored) {
+                return false;
+            }
         }
 
         return false;
@@ -208,15 +226,9 @@ public class PresetEditScreen extends SpruceScreen {
                     }
                 }
                 case RESOURCE_LOCATION -> {
-                    /*? if <1.21 {*/
-                    /*if (Identifier.isValid(widget.getText())) {
-                        return client.getResourceManager().getResource(new Identifier(widget.getText())).isPresent();
-                    } else return false;
-                    *//*?} else {*/
                     if (Identifier.validate(widget.getText()).isSuccess()) {
                         return client.getResourceManager().getResource(Identifier.tryParse(widget.getText())).isPresent();
                     } else return false;
-                    /*?}*/
                 }
                 case USERNAME -> {
                     return isValidUsername(widget.getText());
@@ -305,13 +317,6 @@ public class PresetEditScreen extends SpruceScreen {
 
         this.exitButton.active = !this.preset.equals(this.originalPreset);
     }
-
-    /*? if <1.20.6 {*/
-    /*public void renderBackgroundTexture(DrawContext context) {
-        // If we don't explicitly have this, the background color will be slightly off from the tab color.
-        context.drawTexture(net.minecraft.client.gui.screen.world.CreateWorldScreen.LIGHT_DIRT_BACKGROUND_TEXTURE, 0, 0, 0, 0.0F, 0.0F, this.width, this.height, 32, 32);
-    }
-    *//*?}*/
 
     private float getEntityRotation() {
         return (float) GlfwUtil.getTime() * 35f;

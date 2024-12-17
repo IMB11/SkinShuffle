@@ -46,11 +46,7 @@ public class GeneratedScreens {
         int x = screen.width / 2 + 104 + 25;
 
         if(screen instanceof GameMenuScreen gameMenuScreen) {
-            //? <1.21 {
-            /*if(!gameMenuScreen.showMenu)
-            *///?} else {
             if(!gameMenuScreen.shouldShowMenu())
-            //?}
                 return new ArrayList<>();
 
             if(!SkinShuffleConfig.get().displayInPauseMenu) return widgets;

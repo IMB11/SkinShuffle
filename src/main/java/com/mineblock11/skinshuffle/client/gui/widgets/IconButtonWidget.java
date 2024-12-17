@@ -47,15 +47,9 @@ public class IconButtonWidget extends ButtonWidget {
         this.iconHeight = iconHeight;
     }
 
-    /*? if <1.20.4 {*/
-    /*@Override
-    public void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.renderButton(context, mouseX, mouseY, delta);
-    *//*?} else {*/
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
         super.renderWidget(context, mouseX, mouseY, delta);
-    /*?}*/
 
         // Function<Identifier, RenderLayer> renderLayers, Identifier sprite, int x, int y, float u, float v, int width, int height, int textureWidth, int textureHeight, int color
         context.drawTexture(

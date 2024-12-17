@@ -24,12 +24,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
 
-/*? if <1.20.4 {*/
-/*import net.minecraft.client.util.Session;
-*//*?} else {*/
 import net.minecraft.client.util.SkinTextures;
 import net.minecraft.client.session.Session;
-/*?}*/
 
 public class SkinPreset {
     public static final Codec<SkinPreset> CODEC = RecordCodecBuilder.create(instance ->
@@ -55,25 +51,6 @@ public class SkinPreset {
         Session session = client.getSession();
         String name = session.getUsername();
 
-        /*? if <1.20.4 {*/
-        /*if(!NetworkingUtil.isLoggedIn()) {
-            Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
-            Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "classic");
-
-            return new SkinPreset(skin, name);
-        } else {
-            var skinQueryResult = SkinAPIs.getPlayerSkinTexture(session.getUuid());
-
-            if(skinQueryResult.usesDefaultSkin()) {
-                Identifier skinTexture = client.getSkinProvider().loadSkin(session.getProfile());
-                Skin skin = new ResourceSkin(skinTexture, skinTexture.getPath().contains("/slim/") ? "slim" : "classic");
-
-                return new SkinPreset(skin, name);
-            }
-
-            return new SkinPreset(new UrlSkin(skinQueryResult.skinURL(), skinQueryResult.modelType()), name);
-        }
-        *//*?} else {*/
         if(!NetworkingUtil.isLoggedIn()) {
             Skin skin = new ResourceSkin(Identifier.of("minecraft:textures/entity/player/wide/steve.png"), "default");
             return new SkinPreset(skin, name);
@@ -89,7 +66,6 @@ public class SkinPreset {
 
             return new SkinPreset(new UrlSkin(skinQueryResult.skinURL(), skinQueryResult.modelType()), name);
         }
-        /*?}*/
     }
 
     public Skin getSkin() {

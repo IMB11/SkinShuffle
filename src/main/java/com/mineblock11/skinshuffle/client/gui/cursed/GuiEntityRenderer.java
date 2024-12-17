@@ -59,19 +59,12 @@ public class GuiEntityRenderer {
     }
 
     private static void setupModelViewStack() {
-        //? if >=1.20.5 {
         Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
         modelViewStack.pushMatrix();
         modelViewStack.translate(0.0f, 0.0f, 1000.0f);
+
         //? if <1.21.2 {
         /*RenderSystem.applyModelViewMatrix();
-        *///?}
-
-        //?} else {
-        /*MatrixStack modelViewStack = RenderSystem.getModelViewStack();
-        modelViewStack.push();
-        modelViewStack.translate(0.0, 0.0, 1000.0);
-        RenderSystem.applyModelViewMatrix();
         *///?}
     }
 
@@ -103,20 +96,10 @@ public class GuiEntityRenderer {
                 vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(skin.getTexture())),
                 LightmapTextureManager.MAX_LIGHT_COORDINATE,
                 OverlayTexture.DEFAULT_UV,
-                //? if >=1.21 {
                 0xFFFFFFFF
-                //?} else {
-                /*1f, 1f, 1f, 1f
-                *///?}
         );
 
-        //? if =1.20.1 {
-        /*MinecraftClient client = MinecraftClient.getInstance();
-        var hasCape = client.getSkinProvider().getTextures(client.getSession().getProfile()).containsKey(MinecraftProfileTexture.Type.CAPE);
-        if (hasCape && SkinShuffleConfig.get().showCapeInPreview) {
-        *///?} else {
         if (skin.getSkinTextures().capeTexture() != null && SkinShuffleConfig.get().showCapeInPreview) {
-        //?}
             matrices.push();
             matrices.translate(0.0F, 0.0F, 0.2F);
 
@@ -146,18 +129,11 @@ public class GuiEntityRenderer {
     }
 
     private static void cleanupModelViewStack() {
-        //? if >=1.20.5 {
         Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
         modelViewStack.popMatrix();
 
         //? if <1.21.2 {
         /*RenderSystem.applyModelViewMatrix();
-        *///?}
-
-        //?} else {
-        /*MatrixStack modelViewStack = RenderSystem.getModelViewStack();
-        modelViewStack.pop();
-        RenderSystem.applyModelViewMatrix();
         *///?}
     }
 

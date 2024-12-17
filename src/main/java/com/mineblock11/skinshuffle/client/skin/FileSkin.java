@@ -26,11 +26,8 @@ import java.util.Objects;
 
 public class FileSkin extends FileBackedSkin {
     public static final Identifier SERIALIZATION_ID = SkinShuffle.id("file");
-    /*? if >=1.20.5 {*/
+
     public static final MapCodec<FileSkin> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-    /*?} else {*/
-    /*public static final Codec<FileSkin> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            *//*?}*/
             Codec.STRING.comapFlatMap(string -> {
                 try {
                     return DataResult.success(Path.of(string));
