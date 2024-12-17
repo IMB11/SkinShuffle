@@ -64,7 +64,9 @@ public class SkinPreset {
                 return new SkinPreset(skin, name);
             }
 
-            return new SkinPreset(new UrlSkin(skinQueryResult.skinURL(), skinQueryResult.modelType()), name);
+            try (var urlSkin = new UrlSkin(skinQueryResult.skinURL(), skinQueryResult.modelType())) {
+                return new SkinPreset(urlSkin.saveToConfig(), name);
+            }
         }
     }
 

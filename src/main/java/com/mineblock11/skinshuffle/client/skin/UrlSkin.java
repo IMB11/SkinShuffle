@@ -23,7 +23,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import kong.unirest.Unirest;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.texture.AbstractTexture;
-import net.minecraft.client.texture.PlayerSkinTexture;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -113,7 +112,8 @@ public class UrlSkin extends BackedSkin {
 
             Path temporaryFilePath = cacheFolder.resolve(Math.abs(url.hashCode()) + ".png");
 
-            return new PlayerSkinTexture(temporaryFilePath.toFile(), url, Identifier.of("minecraft", "textures/entity/player/wide/steve.png"), true, () -> {
+            //? if <1.21.4 {
+            /*return new net.minecraft.client.texture.PlayerSkinTexture(temporaryFilePath.toFile(), url, Identifier.of("minecraft", "textures/entity/player/wide/steve.png"), true, () -> {
                 completionCallback.run();
 
                 try {
@@ -124,6 +124,16 @@ public class UrlSkin extends BackedSkin {
                     throw new RuntimeException(e);
                 }
             });
+            *///?} else {
+            // Download URL to temporary file path.
+            // Create a new NativeImageBackedTexture from the temporary file path.
+            // Return the NativeImageBackedTexture.
+            try (net.minecraft.client.texture.NativeImage image = net.minecraft.client.texture.PlayerSkinTextureDownloader.download(temporaryFilePath.toFile().toPath(), url)) {
+                var texture = new net.minecraft.client.texture.NativeImageBackedTexture(image);
+                completionCallback.run();
+                return texture;
+            }
+            //?}
         } catch (Exception e) {
             SkinShuffle.LOGGER.warn("Failed to load skin from URL: " + url, e);
             return null;

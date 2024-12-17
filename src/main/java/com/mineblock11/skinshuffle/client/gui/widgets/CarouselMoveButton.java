@@ -69,13 +69,24 @@ public class CarouselMoveButton extends AbstractSpruceWidget {
         var matrices = guiGraphics.getMatrices();
         matrices.push();
         // Translate the matrix forward so its above rendered playermodels
-        matrices.translate(0, 0, 10000);
+//        matrices.translate(0, 0, 500);
         guiGraphics.drawTexture(
                 //? >=1.21.2 {
                 RenderLayer::getGuiTextured,
                 //?}
-                ARROW_TEXTURES, getX(), getY(), width, height, this.type.u,
+                ARROW_TEXTURES,
+                getX(),
+                getY(),
+                //? >=1.21.2 {
+                this.type.u,
                 (this.active ? (this.hovered || this.focused ? this.type.height : 0) : this.type.height),
+                //?}
+                width,
+                height,
+                //? <1.21.2 {
+                /*this.type.u,
+                (this.active ? (this.hovered || this.focused ? this.type.height : 0) : this.type.height),
+                *///?}
                 this.type.width, this.type.height, 64, 64
         );
         matrices.pop();

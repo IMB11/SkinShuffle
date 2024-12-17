@@ -156,9 +156,12 @@ public class GuiEntityRenderer {
 
         public void setHeadPos(float headYaw, float headPitch) {
             this.head.yaw = headYaw;
-            this.hat.yaw = headYaw;
             this.head.pitch = headPitch;
+
+            //? if =1.21 {
+            /*this.hat.yaw = headYaw;
             this.hat.pitch = headPitch;
+            *///?}
         }
 
         public void waveCapeGently(float totalDeltaTick) {
@@ -169,17 +172,4 @@ public class GuiEntityRenderer {
             *///?}
         }
     }
-
-    //? >=1.21.2 {
-    public static class NoEntityCapeModel extends net.minecraft.client.render.entity.model.PlayerCapeModel {
-        public NoEntityCapeModel(ModelPart modelPart) {
-            super(modelPart);
-        }
-
-        public void waveCapeGently(float totalDeltaTick) {
-            float f = MathHelper.sin(totalDeltaTick * 0.067F) * 0.05F;
-            this.cape.pitch = f;
-        }
-    }
-    //?}
 }
