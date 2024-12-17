@@ -88,7 +88,7 @@
   "skinshuffle.edit.source.username": "Username",
   "skinshuffle.edit.source.invalid_username": "§4§nInvalid Username§r\n\nUsername must only contain a-Z 0-9.\nUsername may contain underscores.\nUsername must be between 3-16 characters long.\nUsername must exist.",
   "skinshuffle.edit.source.file": "File",
-  "skinshuffle.edit.source.invalid_file": "§4§nInvalid File§r\n\nFile must exist and must be in \nthe §l.png§r format.",
+  "skinshuffle.edit.source.invalid_file": "§4§nInvalid File§r\n\nFile must exist and must be in a VALID \n§l.png§r format.",
   "skinshuffle.edit.source.url": "URL",
   "skinshuffle.edit.source.invalid_url": "§4§nInvalid URL§r\n\nURL is invalid. Must be either a \nvalid §lhttp§r or §lhttps§r URL.",
   "skinshuffle.edit.source.uuid": "UUID",
