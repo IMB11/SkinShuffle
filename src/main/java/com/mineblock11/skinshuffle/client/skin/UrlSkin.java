@@ -125,14 +125,9 @@ public class UrlSkin extends BackedSkin {
                 }
             });
             *///?} else {
-            // Download URL to temporary file path.
-            // Create a new NativeImageBackedTexture from the temporary file path.
-            // Return the NativeImageBackedTexture.
-            try (net.minecraft.client.texture.NativeImage image = net.minecraft.client.texture.PlayerSkinTextureDownloader.download(temporaryFilePath.toFile().toPath(), url)) {
-                var texture = new net.minecraft.client.texture.NativeImageBackedTexture(image);
-                completionCallback.run();
-                return texture;
-            }
+            var id = SkinShuffle.id("skin/" + getSerializationId().getPath() + "/" + Math.abs(getTextureUniqueness().hashCode()));
+            var texID = net.minecraft.client.texture.PlayerSkinTextureDownloader.downloadAndRegisterTexture(id, temporaryFilePath, url, true);
+            return net.minecraft.client.MinecraftClient.getInstance().getTextureManager().getTexture(texID.join());
             //?}
         } catch (Exception e) {
             SkinShuffle.LOGGER.warn("Failed to load skin from URL: " + url, e);

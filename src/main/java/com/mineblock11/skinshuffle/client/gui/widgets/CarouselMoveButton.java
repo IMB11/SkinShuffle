@@ -52,6 +52,11 @@ public class CarouselMoveButton extends AbstractSpruceWidget {
     }
 
     @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        return this.isMouseOver(mouseX, mouseY) ? this.onMouseClick(mouseX, mouseY, button) : false;
+    }
+
+    @Override
     protected boolean onMouseClick(double mouseX, double mouseY, int button) {
         if(this.action != null) {
             try {

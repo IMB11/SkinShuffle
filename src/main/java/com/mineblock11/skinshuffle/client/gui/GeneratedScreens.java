@@ -83,6 +83,14 @@ public class GeneratedScreens {
     }
 
     public static Screen getCarouselScreen(Screen parent) {
-        return SkinShuffleConfig.get().carouselView.factory.apply(parent);
+        var factoryValue = SkinShuffleConfig.get().carouselView.factory.apply(parent);
+
+        if (!SkinShuffleConfig.get().welcomeGuideShown) {
+            SkinShuffleConfig.get().welcomeGuideShown = true;
+            SkinShuffleConfig.save();
+            return new WelcomeGuideScreen(factoryValue);
+        }
+
+        return factoryValue;
     }
 }

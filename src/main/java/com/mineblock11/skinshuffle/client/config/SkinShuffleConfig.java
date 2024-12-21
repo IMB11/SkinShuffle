@@ -26,6 +26,7 @@ import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+import java.io.Serial;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -181,7 +182,8 @@ public class SkinShuffleConfig {
     @SerialEntry public float rotationMultiplier = 1.0f;
     @SerialEntry public boolean showCapeInPreview = false;
 
-    @SerialEntry public CarouselView carouselView = CarouselView.LARGE;
+    @SerialEntry public CarouselView carouselView = CarouselView.COMPACT;
+    @SerialEntry public boolean welcomeGuideShown = false;
 
     public enum SkinRenderStyle {
         ROTATION,
