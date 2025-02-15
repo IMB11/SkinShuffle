@@ -29,6 +29,7 @@ import com.mineblock11.skinshuffle.util.ToastHelper;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.ScreenRect;
+import net.minecraft.client.gui.screen.pack.PackScreen;
 import net.minecraft.client.gui.tab.GridScreenTab;
 import net.minecraft.client.gui.tab.TabManager;
 import net.minecraft.client.gui.widget.*;
@@ -261,6 +262,23 @@ public class PresetEditScreen extends SpruceScreen {
     }
 
     @Override
+    public void onFilesDropped(List<Path> paths) {
+        Path firstPath = paths.getFirst();
+
+        if(isValidPngFilePath(firstPath.toString())) {
+            this.tabNavigation.selectTab(0, false);
+            this.skinSourceTab.currentSourceType = SourceType.FILE;
+            this.skinSourceTab.errorLabel.setMessage(Text.empty());
+            updateValidity();
+
+            this.skinSourceTab.textFieldWidget.setText(firstPath.toString());
+            this.skinSourceTab.loadSkin();
+        } else {
+            ToastHelper.showToast("invalid_dropped_file");
+        }
+    }
+
+    @Override
     public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
         super.render(graphics, mouseX, mouseY, delta);
 
@@ -316,6 +334,12 @@ public class PresetEditScreen extends SpruceScreen {
         }
 
         this.exitButton.active = !this.preset.equals(this.originalPreset);
+
+        // Render grey text just above the exit button
+        Text text = Text.translatable("skinshuffle.edit.drag_and_drop");
+        int x = this.exitButton.getX() - (this.textRenderer.getWidth(text) / 2);
+        int y = this.exitButton.getY() - this.textRenderer.fontHeight - 5;
+        graphics.drawTextWithShadow(this.textRenderer, text, x, y, 0xCFFFFFFF);
     }
 
     private float getEntityRotation() {
