@@ -24,6 +24,7 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.client.util.SkinTextures;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -38,6 +39,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class PlayerEntityMixin extends PlayerEntity implements SkinShuffleClientPlayer {
     @Shadow @Nullable private PlayerListEntry playerListEntry;
 
+    @Shadow public abstract SkinTextures getSkinTextures();
+
     protected PlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
         super(world, pos, yaw, gameProfile);
     }
@@ -48,6 +51,10 @@ public abstract class PlayerEntityMixin extends PlayerEntity implements SkinShuf
             if(this.getUuid().equals(MinecraftClient.getInstance().player.getUuid()) && (!NetworkingUtil.isLoggedIn() || SkinShuffleConfig.get().disableAPIUpload || ClientSkinHandling.isReconnectRequired())) {
                 SkinPreset currentPreset = SkinPresetManager.getChosenPreset();
                 cir.setReturnValue(currentPreset.getSkin().getSkinTextures());
+            }
+
+            if (ClientSkinHandling.shouldOverrideCape()) {
+
             }
         }
     }

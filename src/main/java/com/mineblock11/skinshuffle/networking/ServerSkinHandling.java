@@ -65,7 +65,6 @@ public class ServerSkinHandling {
             if (ServerPlayNetworking.canSend(handler.getPlayer(), HandshakePayload.PACKET_ID)) {
                 ServerPlayNetworking.send(handler.getPlayer(), new HandshakePayload());
             }
-
         });
 
         ServerPlayNetworking.registerGlobalReceiver(SkinRefreshPayload.PACKET_ID, (payload, context) -> {

@@ -26,11 +26,12 @@ import com.mineblock11.skinshuffle.util.NetworkingUtil;
 import com.mineblock11.skinshuffle.util.SkinCacheRegistry;
 import com.mojang.authlib.minecraft.UserApiService;
 import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
+import dev.imb11.mineskin.Java11RequestHandler;
+import dev.imb11.mineskin.MineSkinClient;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import net.minecraft.client.MinecraftClient;
 import org.jetbrains.annotations.Nullable;
-import org.mineskin.MineskinClient;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +42,7 @@ import java.util.UUID;
 
 public class SkinAPIs {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    public static final MineskinClient MINESKIN_CLIENT = new MineskinClient("SkinShuffle", "5283d2b781514355b22b8a18b39c6a289f5e9148a70f0072ae650785b2fb3e26");
+    public static final MineSkinClient MINESKIN_CLIENT = MineSkinClient.builder().apiKey("5283d2b781514355b22b8a18b39c6a289f5e9148a70f0072ae650785b2fb3e26").requestHandler(Java11RequestHandler::new).userAgent("SkinShuffle").build();
 
     /**
      * Set the player's skin texture from a URL.

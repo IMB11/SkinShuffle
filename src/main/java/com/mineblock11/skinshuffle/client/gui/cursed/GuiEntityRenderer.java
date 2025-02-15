@@ -52,7 +52,7 @@ public class GuiEntityRenderer {
         setupModelViewStack();
         setupMatrices(matrices, x, y, size, entityRotation);
 
-        renderEntity(matrices, yaw, pitch, skin, SkinShuffleClient.TOTAL_TICK_DELTA);
+        renderEntity(matrices, yaw, pitch, skin, (long) SkinShuffleClient.TOTAL_TICK_DELTA);
 
         cleanupMatrices(matrices);
         cleanupModelViewStack();
@@ -78,7 +78,7 @@ public class GuiEntityRenderer {
         DiffuseLighting.method_34742();
     }
 
-    private static void renderEntity(MatrixStack matrices, float yaw, float pitch, Skin skin, float totalTickDelta) {
+    private static void renderEntity(MatrixStack matrices, float yaw, float pitch, Skin skin, long totalTickDelta) {
         var modelData = PlayerEntityModel.getTexturedModelData(Dilation.NONE, skin.getModel().equals("slim"));
         NoEntityPlayerModel model = new NoEntityPlayerModel(TexturedModelData.of(modelData, 64, 64).createModel(), skin.getModel().equals("slim"));
 
@@ -146,7 +146,7 @@ public class GuiEntityRenderer {
             *///?}
         }
 
-        public void swingArmsGently(float totalDeltaTick) {
+        public void swingArmsGently(long totalDeltaTick) {
             float f = MathHelper.sin(totalDeltaTick * 0.067F) * 0.05F;
             this.rightArm.roll = f + 0.06F;
             this.rightSleeve.roll = f + 0.06F;
@@ -164,7 +164,7 @@ public class GuiEntityRenderer {
             *///?}
         }
 
-        public void waveCapeGently(float totalDeltaTick) {
+        public void waveCapeGently(long totalDeltaTick) {
             float f = MathHelper.sin(totalDeltaTick * 0.067F) * 0.05F;
 
             //? <1.21.2 {

@@ -14,7 +14,6 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven { url 'https://maven.gegy.dev' }
-    maven { url 'https://jitpack.io' }
     maven { url 'https://maven.terraformersmc.com/releases' }
     maven { url 'https://maven.shedaniel.me/' }
     maven { url 'https://maven.isxander.dev/releases' }
@@ -68,7 +67,7 @@ dependencies {
     modImplementation(include("dev.isxander:yet-another-config-lib:${property('deps.yacl')}"))
 
     include implementation("org.jsoup:jsoup:1.16.1")
-    include implementation("org.mineskin:java-client:1.2.4-SNAPSHOT")
+
     include implementation("commons-validator:commons-validator:1.7")
 
     include implementation("com.drewnoakes:metadata-extractor:2.19.0")
