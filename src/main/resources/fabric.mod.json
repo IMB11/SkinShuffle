@@ -17,13 +17,13 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "com.mineblock11.skinshuffle.client.SkinShuffleClient"
+      "dev.imb11.skinshuffle.client.SkinShuffleClient"
     ],
     "main": [
-      "com.mineblock11.skinshuffle.SkinShuffle"
+      "dev.imb11.skinshuffle.SkinShuffle"
     ],
     "modmenu": [
-      "com.mineblock11.skinshuffle.compat.ModMenuCompat"
+      "dev.imb11.skinshuffle.compat.ModMenuCompat"
     ]
   },
   "mixins": [

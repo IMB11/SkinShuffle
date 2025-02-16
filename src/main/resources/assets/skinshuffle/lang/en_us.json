@@ -121,5 +121,7 @@
   "screen.skinshuffle.config_desc": "§7You can access detailed configuration through the button at the top left of the carousel screen.",
   "screen.skinshuffle.hotswapping_heading": "§n§l§6Skin Hotswapping§r",
   "screen.skinshuffle.hotswapping_desc1": "§7Skin Hotswapping only works on servers with a SkinShuffle compatible mod or plugin.",
-  "screen.skinshuffle.hotswapping_desc2": "§7If the server is not compatible, you will receive a notification and must reconnect if you change skins."
+  "screen.skinshuffle.hotswapping_desc2": "§7If the server is not compatible, you will receive a notification and must reconnect if you change skins.",
+  "skinshuffle.config.general.enableMultiAccount.title": "Enable Multi Account Support",
+  "skinshuffle.config.general.enableMultiAccount.description": "Should SkinShuffle use preset files per-account instead of one shared between all accounts used by this instance?"
 }

@@ -1,23 +1,23 @@
 {
     "required": true,
     "minVersion": "0.8",
-    "package": "com.mineblock11.skinshuffle.mixin",
+    "package": "dev.imb11.skinshuffle.mixin",
     "compatibilityLevel": "JAVA_17",
     "mixins": [
-        "ServerPlayerEntityMixin",
-        "accessor.MinecraftClientAuthAccessor",
-        "accessor.YggdrasilUserApiServiceAccessor"
+      "ServerPlayerEntityMixin",
+      "accessor.MinecraftClientAuthAccessor",
+      "accessor.YggdrasilUserApiServiceAccessor"
     ],
     "client": [
-        "MinecraftClientMixin",
-        "PlayerEntityMixin",
-        "accessor.GameMenuScreenAccessor",
-        "accessor.MinecraftClientAccessor",
-        "accessor.ToastManagerAccessor",
-        "screen.AccessibilityOnboardingScreenMixin",
-        "screen.GameMenuScreenMixin",
-        "screen.ScreenMixin",
-        "screen.TitleScreenMixin"
+      "MinecraftClientMixin",
+      "PlayerEntityMixin",
+      "accessor.GameMenuScreenAccessor",
+      "accessor.MinecraftClientAccessor",
+      "accessor.ToastManagerAccessor",
+      "screen.AccessibilityOnboardingScreenMixin",
+      "screen.GameMenuScreenMixin",
+      "screen.ScreenMixin",
+      "screen.TitleScreenMixin"
     ],
     "injectors": {
         "defaultRequire": 1
