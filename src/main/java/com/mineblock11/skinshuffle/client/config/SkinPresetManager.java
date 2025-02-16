@@ -4,7 +4,6 @@ import com.google.gson.*;
 import com.mineblock11.skinshuffle.SkinShuffle;
 import com.mineblock11.skinshuffle.api.SkinAPIs;
 import com.mineblock11.skinshuffle.api.SkinQueryResult;
-import com.mineblock11.skinshuffle.client.SkinShuffleClient;
 import com.mineblock11.skinshuffle.client.preset.SkinPreset;
 import com.mineblock11.skinshuffle.client.skin.ConfigSkin;
 import com.mineblock11.skinshuffle.client.skin.UrlSkin;
@@ -19,7 +18,6 @@ import dev.imb11.mineskin.data.Visibility;
 import dev.imb11.mineskin.request.GenerateRequest;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Util;
-import dev.imb11.mineskin.data.Skin;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -194,43 +192,43 @@ public class SkinPresetManager {
                     successful = SkinAPIs.setSkinTexture(configSkin.getFile().toFile(), configSkin.getModel());
                 }
                 if (successful) setApiPreset(preset);
+                CompletableFuture.runAsync(() -> client.executeTask(() -> {
+                    try {
+                        String cachedURL = SkinCacheRegistry.getCachedUploadedSkin(configSkin.getFile().toFile());
 
-                if (client.world != null && ClientSkinHandling.isInstalledOnServer()) {
-                    CompletableFuture.runAsync(() -> client.executeTask(() -> {
-                        try {
-                            String cachedURL = SkinCacheRegistry.getCachedUploadedSkin(configSkin.getFile().toFile());
-
-                            GenerateRequest request = null;
-                            if (cachedURL != null) {
-                                request = GenerateRequest.url(cachedURL)
-                                        .name(preset.getName())
-                                        .visibility(Visibility.UNLISTED);
-                            } else {
-                                request = GenerateRequest.upload(configSkin.getFile().toFile())
-                                        .name(preset.getName())
-                                        .visibility(Visibility.UNLISTED);
-                            }
-
-                            SkinAPIs.MINESKIN_CLIENT.queue().submit(request).thenCompose(queueResponse -> {
-                                        JobInfo job = queueResponse.getJob();
-                                        // wait for job completion
-                                        return job.waitForCompletion(SkinAPIs.MINESKIN_CLIENT);
-                                    })
-                                    .thenCompose(jobResponse -> {
-                                        // get skin from job or load it from the API
-                                        return jobResponse.getOrLoadSkin(SkinAPIs.MINESKIN_CLIENT);
-                                    })
-                                    .thenAccept(skinInfo -> {
-                                        SkinQueryResult queryResult = new SkinQueryResult(false, null, preset.getSkin().getModel(), skinInfo.texture().data().signature(), skinInfo.texture().data().value());
-                                        ClientSkinHandling.sendRefresh(queryResult);
-                                    });
-
-
-                        } catch (Exception e) {
-                            SkinShuffle.LOGGER.error(e.getMessage());
+                        GenerateRequest request = null;
+                        if (cachedURL != null) {
+                            request = GenerateRequest.url(cachedURL)
+                                    .name(preset.getName())
+                                    .visibility(Visibility.UNLISTED);
+                        } else {
+                            request = GenerateRequest.upload(configSkin.getFile().toFile())
+                                    .name(preset.getName())
+                                    .visibility(Visibility.UNLISTED);
                         }
-                    }), Util.getMainWorkerExecutor());
-                }
+
+                        SkinAPIs.MINESKIN_CLIENT.queue().submit(request).thenCompose(queueResponse -> {
+                                    JobInfo job = queueResponse.getJob();
+                                    // wait for job completion
+                                    return job.waitForCompletion(SkinAPIs.MINESKIN_CLIENT);
+                                })
+                                .thenCompose(jobResponse -> {
+                                    // get skin from job or load it from the API
+                                    return jobResponse.getOrLoadSkin(SkinAPIs.MINESKIN_CLIENT);
+                                })
+                                .thenAccept(skinInfo -> {
+                                    SkinQueryResult queryResult = new SkinQueryResult(false, null, preset.getSkin().getModel(), skinInfo.texture().data().signature(), skinInfo.texture().data().value());
+                                    if (client.world != null && ClientSkinHandling.isInstalledOnServer()) {
+                                        ClientSkinHandling.sendRefresh(queryResult);
+                                    }
+
+                                    client.getGameProfile().getProperties().removeAll("textures");
+                                    client.getGameProfile().getProperties().put("textures", queryResult.toProperty());
+                                });
+                    } catch (Exception e) {
+                        SkinShuffle.LOGGER.error(e.getMessage());
+                    }
+                }), Util.getMainWorkerExecutor());
             } catch (Exception e) {
                 SkinShuffle.LOGGER.error("Failed to apply skin preset.", e);
             }

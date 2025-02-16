@@ -27,16 +27,6 @@ import net.minecraft.entity.Entity;
 public class ClientSkinHandling {
     private static boolean handshakeTakenPlace = false;
 
-    public static boolean shouldOverrideCape() {
-        return shouldOverrideCape;
-    }
-
-    public static void setShouldOverrideCape(boolean shouldOverrideCape) {
-        ClientSkinHandling.shouldOverrideCape = shouldOverrideCape;
-    }
-
-    private static boolean shouldOverrideCape = false;
-
     private static boolean reconnectRequired = false;
 
     public static boolean isReconnectRequired() {
@@ -52,7 +42,6 @@ public class ClientSkinHandling {
     }
 
     public static void sendRefresh(SkinQueryResult result) {
-        shouldOverrideCape = true;
         ClientPlayNetworking.send(new SkinRefreshPayload(result.toProperty()));
     }
 

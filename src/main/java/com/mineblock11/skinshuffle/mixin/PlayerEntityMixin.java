@@ -48,13 +48,11 @@ public abstract class PlayerEntityMixin extends PlayerEntity implements SkinShuf
     @Inject(method = "getSkinTextures", at = @At("HEAD"), cancellable = true)
     private void modifySkinModel(CallbackInfoReturnable<net.minecraft.client.util.SkinTextures> cir) {
         if(MinecraftClient.getInstance().world != null) {
-            if(this.getUuid().equals(MinecraftClient.getInstance().player.getUuid()) && (!NetworkingUtil.isLoggedIn() || SkinShuffleConfig.get().disableAPIUpload || ClientSkinHandling.isReconnectRequired())) {
-                SkinPreset currentPreset = SkinPresetManager.getChosenPreset();
-                cir.setReturnValue(currentPreset.getSkin().getSkinTextures());
-            }
-
-            if (ClientSkinHandling.shouldOverrideCape()) {
-
+            if (!MinecraftClient.getInstance().isIntegratedServerRunning()) {
+                if(this.getUuid().equals(MinecraftClient.getInstance().player.getUuid()) && (!NetworkingUtil.isLoggedIn() || SkinShuffleConfig.get().disableAPIUpload || ClientSkinHandling.isReconnectRequired())) {
+                    SkinPreset currentPreset = SkinPresetManager.getChosenPreset();
+                    cir.setReturnValue(currentPreset.getSkin().getSkinTextures());
+                }
             }
         }
     }
