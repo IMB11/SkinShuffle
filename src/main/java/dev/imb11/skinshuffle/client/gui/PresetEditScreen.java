@@ -27,6 +27,7 @@ import dev.imb11.skinshuffle.util.ToastHelper;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.ScreenRect;
+import net.minecraft.client.gui.screen.pack.PackScreen;
 import net.minecraft.client.gui.tab.GridScreenTab;
 import net.minecraft.client.gui.tab.TabManager;
 import net.minecraft.client.gui.widget.*;
@@ -257,7 +258,6 @@ public class PresetEditScreen extends SpruceScreen {
         this.skinSourceTab.skinModelButton.visible = skinSourceTab.currentSourceType != SourceType.UNCHANGED;
     }
 
-    @Override
     public void onFilesDropped(List<Path> paths) {
         Path firstPath = paths.getFirst();
 
