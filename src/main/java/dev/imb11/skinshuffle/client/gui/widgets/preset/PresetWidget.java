@@ -153,6 +153,14 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
         }
 
         if(!this.skinPreset.getSkin().isLoading()) {
+            if (renderStyle.equals(SkinShuffleConfig.SkinRenderStyle.CURSOR)) {
+                if (this.isMouseOver(mouseX, mouseY)) {
+                    rotation = (float) (GlfwUtil.getTime() - (parent != null && !(parent instanceof CompactCarouselScreen) ? parent.getLastCardSwitchTime() : 0)) * 35.0f * SkinShuffleConfig.get().rotationMultiplier;
+                    followX = 0;
+                    followY = 0;
+                }
+            }
+
             graphics.getMatrices().push();
             GuiEntityRenderer.drawEntity(
                     graphics.getMatrices(), previewX, previewY,
