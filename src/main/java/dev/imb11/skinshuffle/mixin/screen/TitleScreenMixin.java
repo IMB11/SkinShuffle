@@ -1,20 +1,10 @@
-/*
- * ALL RIGHTS RESERVED
- *
- * Copyright (c) 2024 Calum H. (IMB11) and enjarai
- *
- * THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+
 
 package dev.imb11.skinshuffle.mixin.screen;
 
+import com.mojang.authlib.GameProfile;
 import dev.imb11.skinshuffle.MixinStatics;
+import dev.imb11.skinshuffle.api.MojangSkinAPI;
 import dev.imb11.skinshuffle.client.config.SkinPresetManager;
 import dev.imb11.skinshuffle.client.config.SkinShuffleConfig;
 import dev.imb11.skinshuffle.client.gui.GeneratedScreens;
@@ -33,6 +23,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Mixin(TitleScreen.class)
 public class TitleScreenMixin extends Screen {
@@ -50,9 +43,19 @@ public class TitleScreenMixin extends Screen {
     public void refreshConfig(CallbackInfo ci) {
         if (!MixinStatics.APPLIED_SKIN_MANAGER_CONFIGURATION && this.doBackgroundFade) {
             MixinStatics.APPLIED_SKIN_MANAGER_CONFIGURATION = true;
+            try {
+                assert client != null;
+                var tex = MojangSkinAPI.getPlayerSkinTexture(String.valueOf(client.getGameProfile().getId()));
+                var texProperty = tex.toProperty();
+                var dummyProfile = new GameProfile(UUID.randomUUID(), "dummyname");
+                dummyProfile.getProperties().put("textures", texProperty);
+                MixinStatics.INITIAL_SKIN_TEXTURES = client.getSkinProvider().fetchSkinTextures(dummyProfile);
+            } catch (Exception ignored) {
+                MixinStatics.INITIAL_SKIN_TEXTURES = CompletableFuture.completedFuture(Optional.of(client.getSkinProvider().getSkinTextures(client.getGameProfile())));
+            }
             SkinPresetManager.apply();
 
-            if(!NetworkingUtil.isLoggedIn()) {
+            if (!NetworkingUtil.isLoggedIn()) {
                 ToastHelper.showOfflineModeToast();
             }
         }

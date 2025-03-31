@@ -9,9 +9,9 @@ import net.minecraft.util.Identifier;
 public record RefreshPlayerListEntryPayload(int entityID) implements CustomPayload {
     public static final CustomPayload.Id<RefreshPlayerListEntryPayload> PACKET_ID = new CustomPayload.Id<>(Identifier.of("skinshuffle", "refresh_player_list_entry"));
     public static final PacketCodec<RegistryByteBuf, RefreshPlayerListEntryPayload> PACKET_CODEC = PacketCodec.tuple(
-        PacketCodecs.VAR_INT,
-        RefreshPlayerListEntryPayload::entityID,
-        RefreshPlayerListEntryPayload::new
+            PacketCodecs.VAR_INT,
+            RefreshPlayerListEntryPayload::entityID,
+            RefreshPlayerListEntryPayload::new
     );
 
     @Override

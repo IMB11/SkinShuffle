@@ -1,16 +1,4 @@
-/*
- * ALL RIGHTS RESERVED
- *
- * Copyright (c) 2024 Calum H. (IMB11) and enjarai
- *
- * THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+
 
 package dev.imb11.skinshuffle.util;
 
@@ -32,9 +20,9 @@ import java.util.Map;
 
 public class SkinCacheRegistry {
     private static final Path CACHE_FILE = SkinShuffle.DATA_DIR.resolve("skin-caches.json");
-    private static HashMap<String, Path> DOWNLOADED_SKIN_CACHES = new HashMap<>();
-    private static HashMap<String, String> UPLOADED_SKIN_CACHES = new HashMap<>();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final HashMap<String, Path> DOWNLOADED_SKIN_CACHES = new HashMap<>();
+    private static final HashMap<String, String> UPLOADED_SKIN_CACHES = new HashMap<>();
 
     private static void saveCache() {
         try {
@@ -63,7 +51,7 @@ public class SkinCacheRegistry {
 
     public static void initialize() {
         try {
-            if(!CACHE_FILE.toFile().exists()) saveCache();
+            if (!CACHE_FILE.toFile().exists()) saveCache();
 
             String jsonString = java.nio.file.Files.readString(CACHE_FILE);
             JsonObject jsonObject = GSON.fromJson(jsonString, JsonObject.class);
@@ -102,6 +90,7 @@ public class SkinCacheRegistry {
 
     /**
      * Gets a sha256 hashcode in string format from texture bytes.
+     *
      * @param skinTexture The texture bytes.
      * @return A sha256 hashcode in string format.
      */
@@ -118,7 +107,7 @@ public class SkinCacheRegistry {
         for (Map.Entry<String, Path> entry : DOWNLOADED_SKIN_CACHES.entrySet()) {
             String hash = entry.getKey();
             Path path = entry.getValue();
-            if(!path.toFile().exists()) hashesToInvalidate.add(hash);
+            if (!path.toFile().exists()) hashesToInvalidate.add(hash);
         }
 
         hashesToInvalidate.forEach(DOWNLOADED_SKIN_CACHES::remove);

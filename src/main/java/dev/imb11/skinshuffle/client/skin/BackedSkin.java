@@ -1,16 +1,4 @@
-/*
- * ALL RIGHTS RESERVED
- *
- * Copyright (c) 2024 Calum H. (IMB11) and enjarai
- *
- * THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+
 
 package dev.imb11.skinshuffle.client.skin;
 
@@ -35,15 +23,27 @@ public abstract class BackedSkin implements Skin, AutoCloseable {
     @Nullable
     private Identifier textureId;
 
+    private static void incrementInstanceCount(Identifier id) {
+        INSTANCE_COUNTS.compute(id, (k, v) -> v == null ? 1 : v + 1);
+    }
+
+    public static void decrementInstanceCountAndCleanup(Identifier id) {
+        INSTANCE_COUNTS.compute(id, (k, v) -> v == null ? 0 : v - 1);
+        if (INSTANCE_COUNTS.getInt(id) == 0) {
+            MinecraftClient.getInstance().getTextureManager().destroyTexture(id);
+            INSTANCE_COUNTS.removeInt(id);
+        }
+    }
+
     public void fetchSkin() {
         var id = SkinShuffle.id("skin/" + getSerializationId().getPath() + "/" + Math.abs(getTextureUniqueness().hashCode()));
         var textureManager = MinecraftClient.getInstance().getTextureManager();
 
         //? if <1.21.4 {
         /*if (textureManager.getOrDefault(id, null) == null) {
-        *///?} else {
+         *///?} else {
         if (textureManager.textures.get(id) == null) {
-        //?}
+            //?}
             // Texture doesn't exist, we need to fetch it.
             fetching = true;
 
@@ -86,11 +86,6 @@ public abstract class BackedSkin implements Skin, AutoCloseable {
         return textureId;
     }
 
-    @Override
-    public boolean isLoading() {
-        return !fetched || fetching;
-    }
-
     protected void setTexture(Identifier textureId) {
         // Manages instance counts when the texture id changes
         if (this.textureId != null) {
@@ -98,6 +93,11 @@ public abstract class BackedSkin implements Skin, AutoCloseable {
         }
         this.textureId = textureId;
         incrementInstanceCount(textureId);
+    }
+
+    @Override
+    public boolean isLoading() {
+        return !fetched || fetching;
     }
 
     protected abstract Object getTextureUniqueness();
@@ -108,18 +108,6 @@ public abstract class BackedSkin implements Skin, AutoCloseable {
     public void close() {
         if (textureId != null) {
             decrementInstanceCountAndCleanup(textureId);
-        }
-    }
-
-    private static void incrementInstanceCount(Identifier id) {
-        INSTANCE_COUNTS.compute(id, (k, v) -> v == null ? 1 : v + 1);
-    }
-
-    public static void decrementInstanceCountAndCleanup(Identifier id) {
-        INSTANCE_COUNTS.compute(id, (k, v) -> v == null ? 0 : v - 1);
-        if (INSTANCE_COUNTS.getInt(id) == 0) {
-            MinecraftClient.getInstance().getTextureManager().destroyTexture(id);
-            INSTANCE_COUNTS.removeInt(id);
         }
     }
 }

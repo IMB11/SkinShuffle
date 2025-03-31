@@ -1,16 +1,4 @@
-/*
- * ALL RIGHTS RESERVED
- *
- * Copyright (c) 2024 Calum H. (IMB11) and enjarai
- *
- * THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+
 
 package dev.imb11.skinshuffle.client.gui;
 
@@ -42,11 +30,11 @@ public class GeneratedScreens {
         int y = (screen.height / 4 + 48) + 84;
         int x = screen.width / 2 + 104 + 25;
 
-        if(screen instanceof GameMenuScreen gameMenuScreen) {
-            if(!gameMenuScreen.shouldShowMenu())
+        if (screen instanceof GameMenuScreen gameMenuScreen) {
+            if (!gameMenuScreen.shouldShowMenu())
                 return new ArrayList<>();
 
-            if(!SkinShuffleConfig.get().displayInPauseMenu) return widgets;
+            if (!SkinShuffleConfig.get().displayInPauseMenu) return widgets;
             y = ((GameMenuScreenAccessor) gameMenuScreen).getExitButton().getY();
             x -= 25 / 2;
 
@@ -61,7 +49,7 @@ public class GeneratedScreens {
     public static Screen getReconnectScreen(Screen target) {
         MinecraftClient client = MinecraftClient.getInstance();
         return new ConfirmScreen((boolean result) -> {
-            if(result) {
+            if (result) {
                 NetworkingUtil.handleReconnect(client);
             } else {
                 if (!ClientSkinHandling.isInstalledOnServer()) {

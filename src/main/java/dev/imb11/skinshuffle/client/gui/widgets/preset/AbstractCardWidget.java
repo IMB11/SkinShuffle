@@ -1,16 +1,4 @@
-/*
- * ALL RIGHTS RESERVED
- *
- * Copyright (c) 2024 Calum H. (IMB11) and enjarai
- *
- * THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+
 
 package dev.imb11.skinshuffle.client.gui.widgets.preset;
 
@@ -84,11 +72,6 @@ public abstract class AbstractCardWidget<S extends CarouselScreen> extends Spruc
         return this.position.getY();
     }
 
-    @Override
-    public void setDragging(boolean dragging) {
-        this.dragging = dragging;
-    }
-
     public void setDragStart(double x, double y) {
         this.dragStartX = x;
         this.dragStartY = y;
@@ -97,6 +80,11 @@ public abstract class AbstractCardWidget<S extends CarouselScreen> extends Spruc
     @Override
     public boolean isDragging() {
         return dragging;
+    }
+
+    @Override
+    public void setDragging(boolean dragging) {
+        this.dragging = dragging;
     }
 
     public double getDragStartX() {

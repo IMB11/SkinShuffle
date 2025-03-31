@@ -1,16 +1,4 @@
-/*
- * ALL RIGHTS RESERVED
- *
- * Copyright (c) 2024 Calum H. (IMB11) and enjarai
- *
- * THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+
 
 package dev.imb11.skinshuffle.client.gui.widgets;
 
@@ -26,11 +14,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class WarningIndicatorButton extends IconButtonWidget {
-    @Override
-    public Text getMessage() {
-        return Text.translatable("skinshuffle.indicator");
-    }
-
     public WarningIndicatorButton(int x, int y, Screen parent) {
         super(x, y, 20, 20,
                 0, 0, 0, 2,
@@ -46,6 +29,11 @@ public class WarningIndicatorButton extends IconButtonWidget {
 
         this.setTooltip(Tooltip.of(Text.literal(I18n.translate("skinshuffle.reconnect.warning",
                 client.isInSingleplayer() ? I18n.translate("skinshuffle.reconnect.rejoin") : I18n.translate("skinshuffle.reconnect.reconnect"))).formatted(Formatting.RED, Formatting.BOLD)));
+    }
+
+    @Override
+    public Text getMessage() {
+        return Text.translatable("skinshuffle.indicator");
     }
 
     @Override

@@ -1,19 +1,8 @@
-/*
- * ALL RIGHTS RESERVED
- *
- * Copyright (c) 2024 Calum H. (IMB11) and enjarai
- *
- * THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+
 
 package dev.imb11.skinshuffle.mixin;
 
+import dev.imb11.skinshuffle.MixinStatics;
 import dev.imb11.skinshuffle.client.config.SkinPresetManager;
 import dev.imb11.skinshuffle.client.config.SkinShuffleConfig;
 import dev.imb11.skinshuffle.client.preset.SkinPreset;
@@ -35,26 +24,43 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Optional;
+
 @Mixin(AbstractClientPlayerEntity.class)
 public abstract class PlayerEntityMixin extends PlayerEntity implements SkinShuffleClientPlayer {
-    @Shadow @Nullable private PlayerListEntry playerListEntry;
-
-    @Shadow public abstract SkinTextures getSkinTextures();
+    @Shadow
+    @Nullable
+    private PlayerListEntry playerListEntry;
 
     protected PlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
         super(world, pos, yaw, gameProfile);
     }
 
-    @Inject(method = "getSkinTextures", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getSkinTextures", at = @At("TAIL"), cancellable = true)
     private void modifySkinModel(CallbackInfoReturnable<net.minecraft.client.util.SkinTextures> cir) {
-        if(MinecraftClient.getInstance().world != null) {
-            if (!MinecraftClient.getInstance().isIntegratedServerRunning()) {
-                if(this.getUuid().equals(MinecraftClient.getInstance().player.getUuid()) && (!NetworkingUtil.isLoggedIn() || SkinShuffleConfig.get().disableAPIUpload || ClientSkinHandling.isReconnectRequired())) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if(client.world != null) {
+            if (!client.isIntegratedServerRunning()) {
+                if(this.getUuid().equals(client.player.getUuid()) &&
+                        (!NetworkingUtil.isLoggedIn() ||
+                                SkinShuffleConfig.get().disableAPIUpload ||
+                                ClientSkinHandling.isReconnectRequired())) {
                     SkinPreset currentPreset = SkinPresetManager.getChosenPreset();
                     cir.setReturnValue(currentPreset.getSkin().getSkinTextures());
+                    return;
                 }
             }
         }
+        
+        SkinTextures existing = cir.getReturnValue();
+        SkinTextures initialTextures;
+        if (MixinStatics.INITIAL_SKIN_TEXTURES.isDone()) {
+            Optional<SkinTextures> optionalSkinTextures = MixinStatics.INITIAL_SKIN_TEXTURES.join();
+            initialTextures = optionalSkinTextures.orElse(client.getSkinProvider().getSkinTextures(client.getGameProfile()));
+        } else {
+            initialTextures = client.getSkinProvider().getSkinTextures(client.getGameProfile());
+        }
+        cir.setReturnValue(new SkinTextures(existing.texture(), existing.textureUrl(), initialTextures.capeTexture(), initialTextures.elytraTexture(), existing.model(), existing.secure()));
     }
 
     @Override

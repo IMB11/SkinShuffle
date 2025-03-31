@@ -1,23 +1,11 @@
-/*
- * ALL RIGHTS RESERVED
- *
- * Copyright (c) 2024 Calum H. (IMB11) and enjarai
- *
- * THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+
 
 package dev.imb11.skinshuffle.util;
 
+import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
 import dev.imb11.skinshuffle.client.config.SkinPresetManager;
 import dev.imb11.skinshuffle.mixin.accessor.MinecraftClientAccessor;
 import dev.imb11.skinshuffle.networking.ClientSkinHandling;
-import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.QuickPlay;
 import net.minecraft.client.gui.screen.MessageScreen;
@@ -44,7 +32,7 @@ public class NetworkingUtil {
             client.disconnect(new MessageScreen(Text.translatable("skinshuffle.reconnect.rejoining")));
         } else {
             folderName = null;
-            if(!client.getNetworkHandler().getConnection().isLocal()) {
+            if (!client.getNetworkHandler().getConnection().isLocal()) {
                 serverAddress = client.getNetworkHandler().getServerInfo().address;
             } else {
                 serverAddress = null;
@@ -54,7 +42,7 @@ public class NetworkingUtil {
         }
 
 
-        if(client.isInSingleplayer()) {
+        if (client.isInSingleplayer()) {
             client.executeTask(() -> {
                 try {
                     Thread.sleep(250);

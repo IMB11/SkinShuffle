@@ -2,8 +2,9 @@ package dev.imb11.skinshuffle.client.config;
 
 import com.google.gson.*;
 import dev.imb11.skinshuffle.SkinShuffle;
-import dev.imb11.skinshuffle.api.SkinAPIs;
-import dev.imb11.skinshuffle.api.SkinQueryResult;
+import dev.imb11.skinshuffle.api.MojangSkinAPI;
+import dev.imb11.skinshuffle.api.SkinShuffleAPI;
+import dev.imb11.skinshuffle.api.data.SkinQueryResult;
 import dev.imb11.skinshuffle.client.preset.SkinPreset;
 import dev.imb11.skinshuffle.client.skin.ConfigSkin;
 import dev.imb11.skinshuffle.client.skin.UrlSkin;
@@ -13,9 +14,6 @@ import dev.imb11.skinshuffle.util.SkinCacheRegistry;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
-import dev.imb11.mineskin.data.JobInfo;
-import dev.imb11.mineskin.data.Visibility;
-import dev.imb11.mineskin.request.GenerateRequest;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Util;
 
@@ -31,12 +29,12 @@ import java.util.concurrent.CompletableFuture;
 public class SkinPresetManager {
     public static final Path PERSISTENT_SKINS_DIR = SkinShuffle.DATA_DIR.resolve("skins");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static Path PRESETS = SkinShuffle.DATA_DIR.resolve("presets.json");
-
     private static final List<SkinPreset> loadedPresets = new ArrayList<>();
     public static boolean LOADING_LOCK = false;
+    private static Path PRESETS = SkinShuffle.DATA_DIR.resolve("presets.json");
     private static SkinPreset chosenPreset = null;
     private static SkinPreset apiPreset = null;
+    private static SkinShuffleAPI SKIN_SHUFFLE_API;
 
     public static List<SkinPreset> getLoadedPresets() {
         return Collections.unmodifiableList(loadedPresets);
@@ -113,6 +111,8 @@ public class SkinPresetManager {
     public static void loadPresets() {
         if (LOADING_LOCK) return;
         LOADING_LOCK = true;
+
+        SKIN_SHUFFLE_API = new SkinShuffleAPI(SkinShuffleConfig.get().mineskinProxyDomain, SkinShuffleConfig.get().mineskinProxyPort);
 
         if (SkinShuffleConfig.get().enableMultiAccountSupport) {
             var username = MinecraftClient.getInstance().getGameProfile().getName();
@@ -202,44 +202,29 @@ public class SkinPresetManager {
             try {
                 boolean successful;
                 if (preset.getSkin() instanceof UrlSkin urlSkin) {
-                    successful = SkinAPIs.setSkinTexture(urlSkin.getUrl(), urlSkin.getModel());
+                    successful = MojangSkinAPI.setSkinTexture(urlSkin.getUrl(), urlSkin.getModel());
                 } else {
-                    successful = SkinAPIs.setSkinTexture(configSkin.getFile().toFile(), configSkin.getModel());
+                    successful = MojangSkinAPI.setSkinTexture(configSkin.getFile().toFile(), configSkin.getModel());
                 }
                 if (successful) setApiPreset(preset);
                 CompletableFuture.runAsync(() -> client.executeTask(() -> {
                     try {
                         String cachedURL = SkinCacheRegistry.getCachedUploadedSkin(configSkin.getFile().toFile());
 
-                        GenerateRequest request = null;
+                        SkinQueryResult result;
                         if (cachedURL != null) {
-                            request = GenerateRequest.url(cachedURL)
-                                    .name(preset.getName())
-                                    .visibility(Visibility.UNLISTED);
+                            result = SKIN_SHUFFLE_API.uploadUrlSkin(cachedURL, preset.getSkin().getModel());
                         } else {
-                            request = GenerateRequest.upload(configSkin.getFile().toFile())
-                                    .name(preset.getName())
-                                    .visibility(Visibility.UNLISTED);
+                            result = SKIN_SHUFFLE_API.uploadFileSkin(configSkin.getFile(), preset.getSkin().getModel());
                         }
 
-                        SkinAPIs.MINESKIN_CLIENT.queue().submit(request).thenCompose(queueResponse -> {
-                                    JobInfo job = queueResponse.getJob();
-                                    // wait for job completion
-                                    return job.waitForCompletion(SkinAPIs.MINESKIN_CLIENT);
-                                })
-                                .thenCompose(jobResponse -> {
-                                    // get skin from job or load it from the API
-                                    return jobResponse.getOrLoadSkin(SkinAPIs.MINESKIN_CLIENT);
-                                })
-                                .thenAccept(skinInfo -> {
-                                    SkinQueryResult queryResult = new SkinQueryResult(false, null, preset.getSkin().getModel(), skinInfo.texture().data().signature(), skinInfo.texture().data().value());
-                                    if (client.world != null && ClientSkinHandling.isInstalledOnServer()) {
-                                        ClientSkinHandling.sendRefresh(queryResult);
-                                    }
+                        if (result == null) {
+                            throw new Exception("Failed to upload skin to MineSkin proxy.");
+                        }
 
-                                    client.getGameProfile().getProperties().removeAll("textures");
-                                    client.getGameProfile().getProperties().put("textures", queryResult.toProperty());
-                                });
+                        if (client.world != null && ClientSkinHandling.isInstalledOnServer()) {
+                            ClientSkinHandling.sendRefresh(result);
+                        }
                     } catch (Exception e) {
                         SkinShuffle.LOGGER.error(e.getMessage());
                     }

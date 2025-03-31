@@ -1,21 +1,8 @@
-/*
- * ALL RIGHTS RESERVED
- *
- * Copyright (c) 2024 Calum H. (IMB11) and enjarai
- *
- * THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 package dev.imb11.skinshuffle.client.skin;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
+import dev.imb11.skinshuffle.MixinStatics;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.client.util.SkinTextures;
@@ -36,17 +23,30 @@ public interface Skin {
     );
     Codec<Skin> CODEC = Identifier.CODEC.dispatch("type", Skin::getSerializationId, TYPES::get);
 
+    static ResourceSkin randomDefaultSkin() {
+        var uuid = UUID.randomUUID();
+        var txt = DefaultSkinHelper.getSkinTextures(uuid);
+        return new ResourceSkin(txt.texture(), txt.model().getName());
+    }
+
     @Nullable Identifier getTexture();
 
     default SkinTextures getSkinTextures() {
-            MinecraftClient client = MinecraftClient.getInstance();
-            SkinTextures clientTexture = client.getSkinProvider().getSkinTextures(client.getGameProfile());
-            return new SkinTextures(this.getTexture(), null, clientTexture.capeTexture(), clientTexture.elytraTexture(), SkinTextures.Model.fromName(this.getModel()), false);
+        MinecraftClient client = MinecraftClient.getInstance();
+        SkinTextures clientTexture;
+        if (MixinStatics.INITIAL_SKIN_TEXTURES.isDone()) {
+            clientTexture = MixinStatics.INITIAL_SKIN_TEXTURES.join().get();
+        } else {
+            clientTexture = client.getSkinProvider().getSkinTextures(client.getGameProfile());
+        }
+        return new SkinTextures(this.getTexture(), null, clientTexture.capeTexture(), clientTexture.elytraTexture(), SkinTextures.Model.fromName(this.getModel()), false);
     }
 
     boolean isLoading();
 
     String getModel();
+
+    void setModel(String value);
 
     Identifier getSerializationId();
 
@@ -54,16 +54,8 @@ public interface Skin {
      * Saves this skin to the config and returns a new reference to it.
      * THIS METHOD CAN AND WILL THROW, MAKE SURE TO CATCH IT!
      *
-     * @throws RuntimeException If the skin could not be saved for whatever reason.
      * @return A new reference to this skin.
+     * @throws RuntimeException If the skin could not be saved for whatever reason.
      */
     ConfigSkin saveToConfig();
-
-    void setModel(String value);
-
-    static ResourceSkin randomDefaultSkin() {
-        var uuid = UUID.randomUUID();
-        var txt = DefaultSkinHelper.getSkinTextures(uuid);
-        return new ResourceSkin(txt.texture(), txt.model().getName());
-    }
 }

@@ -18,7 +18,7 @@ public class AccessibilityOnboardingScreenMixin {
             MixinStatics.APPLIED_SKIN_MANAGER_CONFIGURATION = true;
             SkinPresetManager.apply();
 
-            if(!NetworkingUtil.isLoggedIn()) {
+            if (!NetworkingUtil.isLoggedIn()) {
                 ToastHelper.showOfflineModeToast();
             }
         }

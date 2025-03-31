@@ -1,16 +1,4 @@
-/*
- * ALL RIGHTS RESERVED
- *
- * Copyright (c) 2024 Calum H. (IMB11) and enjarai
- *
- * THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+
 
 package dev.imb11.skinshuffle.client.gui;
 
@@ -261,7 +249,7 @@ public class PresetEditScreen extends SpruceScreen {
     public void onFilesDropped(List<Path> paths) {
         Path firstPath = paths.getFirst();
 
-        if(isValidPngFilePath(firstPath.toString())) {
+        if (isValidPngFilePath(firstPath.toString())) {
             this.tabNavigation.selectTab(0, false);
             this.skinSourceTab.currentSourceType = SourceType.FILE;
             this.skinSourceTab.errorLabel.setMessage(Text.empty());
@@ -367,9 +355,9 @@ public class PresetEditScreen extends SpruceScreen {
     private class SkinSourceTab extends GridScreenTab {
         private final TextFieldWidget textFieldWidget;
         private final MultilineTextWidget errorLabel;
-        public PresetEditScreen.SourceType currentSourceType;
         private final CyclingButtonWidget<String> skinModelButton;
         private final ButtonWidget loadButton;
+        public PresetEditScreen.SourceType currentSourceType;
         private boolean loading = false;
 
         private SkinSourceTab() {

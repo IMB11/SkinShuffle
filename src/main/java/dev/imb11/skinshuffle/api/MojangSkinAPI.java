@@ -1,16 +1,4 @@
-/*
- * ALL RIGHTS RESERVED
- *
- * Copyright (c) 2024 Calum H. (IMB11) and enjarai
- *
- * THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+
 
 package dev.imb11.skinshuffle.api;
 
@@ -18,16 +6,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.authlib.minecraft.UserApiService;
+import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
 import dev.imb11.skinshuffle.SkinShuffle;
+import dev.imb11.skinshuffle.api.data.SkinQueryResult;
 import dev.imb11.skinshuffle.mixin.accessor.MinecraftClientAccessor;
 import dev.imb11.skinshuffle.mixin.accessor.MinecraftClientAuthAccessor;
 import dev.imb11.skinshuffle.mixin.accessor.YggdrasilUserApiServiceAccessor;
 import dev.imb11.skinshuffle.util.NetworkingUtil;
 import dev.imb11.skinshuffle.util.SkinCacheRegistry;
-import com.mojang.authlib.minecraft.UserApiService;
-import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;
-import dev.imb11.mineskin.Java11RequestHandler;
-import dev.imb11.mineskin.MineSkinClient;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import net.minecraft.client.MinecraftClient;
@@ -40,14 +27,14 @@ import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
 
-public class SkinAPIs {
+public class MojangSkinAPI {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    public static final MineSkinClient MINESKIN_CLIENT = MineSkinClient.builder().apiKey("5283d2b781514355b22b8a18b39c6a289f5e9148a70f0072ae650785b2fb3e26").requestHandler(Java11RequestHandler::new).userAgent("SkinShuffle").build();
 
     /**
      * Set the player's skin texture from a URL.
+     *
      * @param skinURL The URL of the skin texture.
-     * @param model The skin model type.
+     * @param model   The skin model type.
      */
     public static boolean setSkinTexture(String skinURL, String model) {
         UserApiService service = ((MinecraftClientAccessor) MinecraftClient.getInstance()).getUserApiService();
@@ -79,8 +66,9 @@ public class SkinAPIs {
 
     /**
      * Get the player's skin texture.
-     * @return Is a default skin? Skin URL, Model Type
+     *
      * @param uuid
+     * @return Is a default skin? Skin URL, Model Type
      */
     public static SkinQueryResult getPlayerSkinTexture(String uuid) {
         try {
@@ -139,6 +127,14 @@ public class SkinAPIs {
             } catch (Exception ignored) {
             }
 
+            String capeURL = null;
+
+            try {
+                var cape = textureJSON
+                        .get("textures").getAsJsonObject().get("CAPE").getAsJsonObject();
+                capeURL = cape.get("url").getAsString();
+            } catch (Exception ignored) {}
+
             return new SkinQueryResult(false, skinURL, modelType, textureSignature, textureValue);
         } catch (Exception e) {
             SkinShuffle.LOGGER.error(e.getMessage());
@@ -148,8 +144,9 @@ public class SkinAPIs {
 
     /**
      * Get the player's uuid using their username.
-     * @return An Optional containing the UUID of the provided username, or an empty Optional if the username is invalid.
+     *
      * @param username
+     * @return An Optional containing the UUID of the provided username, or an empty Optional if the username is invalid.
      */
     public static Optional<UUID> getUUIDFromUsername(String username) {
         try {
@@ -176,8 +173,9 @@ public class SkinAPIs {
 
     /**
      * Set a skin texture from a file - will use URL if file has not been modified since previous upload.
+     *
      * @param skinFile The file to upload.
-     * @param model The type of skin model.
+     * @param model    The type of skin model.
      */
     public static boolean setSkinTexture(File skinFile, String model) {
         UserApiService service = ((MinecraftClientAccessor) MinecraftClient.getInstance()).getUserApiService();

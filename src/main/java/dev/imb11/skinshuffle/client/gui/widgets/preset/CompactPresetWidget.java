@@ -1,16 +1,4 @@
-/*
- * ALL RIGHTS RESERVED
- *
- * Copyright (c) 2024 Calum H. (IMB11) and enjarai
- *
- * THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+
 
 package dev.imb11.skinshuffle.client.gui.widgets.preset;
 
@@ -30,10 +18,9 @@ import org.lwjgl.glfw.GLFW;
 
 public class CompactPresetWidget extends PresetWidget<CompactCarouselScreen> {
     private static final Random WIGGLE_RANDOM = Random.create();
-
-    protected VariableSpruceButtonWidget selectButton;
     private final float wiggleAmount = WIGGLE_RANDOM.nextFloat() + 1f;
     private final float wiggleSpeed = WIGGLE_RANDOM.nextFloat() * 4f + 16f;
+    protected VariableSpruceButtonWidget selectButton;
 
     public CompactPresetWidget(CompactCarouselScreen parent, SkinPreset skinPreset) {
         super(parent, skinPreset);

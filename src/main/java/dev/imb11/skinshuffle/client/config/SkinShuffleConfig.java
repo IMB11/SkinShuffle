@@ -1,26 +1,11 @@
-/*
- * ALL RIGHTS RESERVED
- *
- * Copyright (c) 2024 Calum H. (IMB11) and enjarai
- *
- * THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+
 
 package dev.imb11.skinshuffle.client.config;
 
 import com.google.gson.GsonBuilder;
-import com.sun.nio.file.ExtendedCopyOption;
 import dev.imb11.skinshuffle.SkinShuffle;
 import dev.isxander.yacl3.api.*;
-import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
-import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
-import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
+import dev.isxander.yacl3.api.controller.*;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
@@ -31,7 +16,6 @@ import net.minecraft.util.Identifier;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import static net.minecraft.text.Text.translatable;
@@ -46,6 +30,38 @@ public class SkinShuffleConfig {
                     .appendGsonBuilder(GsonBuilder::setPrettyPrinting)
                     .build())
             .build();
+    @SerialEntry
+    public boolean enableMultiAccountSupport = false;
+    @SerialEntry
+    public boolean disableReconnectToast = false;
+    @SerialEntry
+    public boolean disableAPIUpload = false;
+    @SerialEntry
+    public boolean displayInPauseMenu = true;
+    @SerialEntry
+    public boolean displayInTitleScreen = true;
+    @SerialEntry
+    public float carouselScrollSensitivity = 1.0f;
+    @SerialEntry
+    public boolean invertCarouselScroll = false;
+    @SerialEntry
+    public SkinRenderStyle widgetSkinRenderStyle = SkinRenderStyle.CURSOR;
+    @SerialEntry
+    public SkinRenderStyle carouselSkinRenderStyle = SkinRenderStyle.ROTATION;
+    @SerialEntry
+    public SkinRenderStyle presetEditScreenRenderStyle = SkinRenderStyle.ROTATION;
+    @SerialEntry
+    public float rotationMultiplier = 1.0f;
+    @SerialEntry
+    public boolean showCapeInPreview = false;
+    @SerialEntry
+    public CarouselView carouselView = CarouselView.COMPACT;
+    @SerialEntry
+    public boolean welcomeGuideShown = false;
+    @SerialEntry
+    public String mineskinProxyDomain = "localhost";
+    @SerialEntry
+    public int mineskinProxyPort = 28433;
 
     public static SkinShuffleConfig get() {
         return HANDLER.instance();
@@ -191,27 +207,6 @@ public class SkinShuffleConfig {
                 }
         );
     }
-
-    @SerialEntry public boolean enableMultiAccountSupport = false;
-
-    @SerialEntry public boolean disableReconnectToast = false;
-
-    @SerialEntry public boolean disableAPIUpload = false;
-
-    @SerialEntry public boolean displayInPauseMenu = true;
-    @SerialEntry public boolean displayInTitleScreen = true;
-
-    @SerialEntry public float carouselScrollSensitivity = 1.0f;
-    @SerialEntry public boolean invertCarouselScroll = false;
-
-    @SerialEntry public SkinRenderStyle widgetSkinRenderStyle = SkinRenderStyle.CURSOR;
-    @SerialEntry public SkinRenderStyle carouselSkinRenderStyle = SkinRenderStyle.ROTATION;
-    @SerialEntry public SkinRenderStyle presetEditScreenRenderStyle = SkinRenderStyle.ROTATION;
-    @SerialEntry public float rotationMultiplier = 1.0f;
-    @SerialEntry public boolean showCapeInPreview = false;
-
-    @SerialEntry public CarouselView carouselView = CarouselView.COMPACT;
-    @SerialEntry public boolean welcomeGuideShown = false;
 
     public enum SkinRenderStyle {
         ROTATION,

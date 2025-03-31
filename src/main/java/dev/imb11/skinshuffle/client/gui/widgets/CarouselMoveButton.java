@@ -1,16 +1,4 @@
-/*
- * ALL RIGHTS RESERVED
- *
- * Copyright (c) 2024 Calum H. (IMB11) and enjarai
- *
- * THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+
 
 package dev.imb11.skinshuffle.client.gui.widgets;
 
@@ -24,7 +12,7 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 public class CarouselMoveButton extends AbstractSpruceWidget {
-    private static Identifier ARROW_TEXTURES = SkinShuffle.id("textures/gui/carousel_arrows.png");
+    private static final Identifier ARROW_TEXTURES = SkinShuffle.id("textures/gui/carousel_arrows.png");
     private final Type type;
     private @Nullable Runnable action;
 
@@ -53,17 +41,17 @@ public class CarouselMoveButton extends AbstractSpruceWidget {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        return this.isMouseOver(mouseX, mouseY) ? this.onMouseClick(mouseX, mouseY, button) : false;
+        return this.isMouseOver(mouseX, mouseY) && this.onMouseClick(mouseX, mouseY, button);
     }
 
     @Override
     protected boolean onMouseClick(double mouseX, double mouseY, int button) {
-        if(this.action != null) {
+        if (this.action != null) {
             try {
                 this.action.run();
                 this.playDownSound();
             } catch (Exception e) {
-                throw new RuntimeException("Failed to trigger callback for CarouselMoveButton{x=" + getX() + ", y=" + getY() +"}\n" + e);
+                throw new RuntimeException("Failed to trigger callback for CarouselMoveButton{x=" + getX() + ", y=" + getY() + "}\n" + e);
             }
         }
         return false;

@@ -123,5 +123,7 @@
   "screen.skinshuffle.hotswapping_desc1": "§7Skin Hotswapping only works on servers with a SkinShuffle compatible mod or plugin.",
   "screen.skinshuffle.hotswapping_desc2": "§7If the server is not compatible, you will receive a notification and must reconnect if you change skins.",
   "skinshuffle.config.general.enableMultiAccount.title": "Enable Multi Account Support",
-  "skinshuffle.config.general.enableMultiAccount.description": "Should SkinShuffle use preset files per-account instead of one shared between all accounts used by this instance?"
+  "skinshuffle.config.general.enableMultiAccount.description": "Should SkinShuffle use preset files per-account instead of one shared between all accounts used by this instance?",
+  "skinshuffle.config.mineskin_proxy_port.name": "Mineskin Proxy Port",
+  "skinshuffle.config.mineskin_proxy_port.description": "The port number to connect to when uploading skins to the MineSkin proxy. Please do not modify this unless you know what you're doing or the mod will break."
 }

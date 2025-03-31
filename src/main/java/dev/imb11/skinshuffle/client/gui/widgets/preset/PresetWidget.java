@@ -1,16 +1,4 @@
-/*
- * ALL RIGHTS RESERVED
- *
- * Copyright (c) 2024 Calum H. (IMB11) and enjarai
- *
- * THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+
 
 package dev.imb11.skinshuffle.client.gui.widgets.preset;
 
@@ -33,10 +21,10 @@ import net.minecraft.text.Text;
 
 public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCardWidget<S> {
     protected final SkinPreset skinPreset;
+    private final boolean showButtons;
     protected VariableSpruceButtonWidget editButton;
     protected VariableSpruceButtonWidget copyButton;
     protected VariableSpruceButtonWidget deleteButton;
-    private final boolean showButtons;
     protected double scaleFactor;
 
     public PresetWidget(S parent, SkinPreset skinPreset) {
@@ -70,7 +58,7 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
                     Text.translatable("skinshuffle.carousel.preset_widget.delete"),
                     button -> {
                         ConfirmScreen confirmScreen = new ConfirmScreen(result -> {
-                            if(result) {
+                            if (result) {
                                 SkinPresetManager.deletePreset(this.skinPreset);
                             }
                             this.parent.refresh();
@@ -80,7 +68,7 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
                     }
             );
 
-            if(SkinPresetManager.getLoadedPresets().size() < 2) this.deleteButton.setActive(false);
+            if (SkinPresetManager.getLoadedPresets().size() < 2) this.deleteButton.setActive(false);
 
             addChild(deleteButton);
             addChild(editButton);
@@ -93,7 +81,7 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
         super.setActive(active);
 
         for (SpruceWidget child : this.children()) {
-            if(child.equals(this.deleteButton) && SkinPresetManager.getLoadedPresets().size() < 2) continue;
+            if (child.equals(this.deleteButton) && SkinPresetManager.getLoadedPresets().size() < 2) continue;
             child.setActive(active);
         }
     }
@@ -140,19 +128,19 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
 
         SkinShuffleConfig.SkinRenderStyle renderStyle = SkinShuffleConfig.get().carouselSkinRenderStyle;
 
-        if(renderStyle.equals(SkinShuffleConfig.SkinRenderStyle.ROTATION)) {
+        if (renderStyle.equals(SkinShuffleConfig.SkinRenderStyle.ROTATION)) {
             followX = 0;
             followY = 0;
             rotation = getEntityRotation() * SkinShuffleConfig.get().rotationMultiplier;
         }
 
-        if(!this.active) {
+        if (!this.active) {
             followX = 0;
             followY = 0;
             rotation = 0;
         }
 
-        if(!this.skinPreset.getSkin().isLoading()) {
+        if (!this.skinPreset.getSkin().isLoading()) {
             if (renderStyle.equals(SkinShuffleConfig.SkinRenderStyle.CURSOR)) {
                 if (this.isMouseOver(mouseX, mouseY)) {
                     rotation = (float) (GlfwUtil.getTime() - (parent != null && !(parent instanceof CompactCarouselScreen) ? parent.getLastCardSwitchTime() : 0)) * 35.0f * SkinShuffleConfig.get().rotationMultiplier;
@@ -164,7 +152,7 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
             graphics.getMatrices().push();
             GuiEntityRenderer.drawEntity(
                     graphics.getMatrices(), previewX, previewY,
-                    getPreviewSize(), rotation, followX, followY,  this.skinPreset.getSkin(), renderStyle
+                    getPreviewSize(), rotation, followX, followY, this.skinPreset.getSkin(), renderStyle
             );
             graphics.getMatrices().pop();
         }

@@ -1,20 +1,8 @@
-/*
- * ALL RIGHTS RESERVED
- *
- * Copyright (c) 2024 Calum H. (IMB11) and enjarai
- *
- * THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+
 
 package dev.imb11.skinshuffle.client.preset;
 
-import dev.imb11.skinshuffle.api.SkinAPIs;
+import dev.imb11.skinshuffle.api.MojangSkinAPI;
 import dev.imb11.skinshuffle.client.skin.ResourceSkin;
 import dev.imb11.skinshuffle.client.skin.Skin;
 import dev.imb11.skinshuffle.client.skin.UrlSkin;
@@ -29,10 +17,10 @@ import net.minecraft.client.session.Session;
 
 public class SkinPreset {
     public static final Codec<SkinPreset> CODEC = RecordCodecBuilder.create(instance ->
-        instance.group(
-                Skin.CODEC.fieldOf("skin").forGetter(SkinPreset::getSkin),
-                Codec.STRING.fieldOf("name").forGetter(SkinPreset::getName)
-        ).apply(instance, SkinPreset::new));
+            instance.group(
+                    Skin.CODEC.fieldOf("skin").forGetter(SkinPreset::getSkin),
+                    Codec.STRING.fieldOf("name").forGetter(SkinPreset::getName)
+            ).apply(instance, SkinPreset::new));
 
     private String name;
     private Skin skin;
@@ -51,13 +39,13 @@ public class SkinPreset {
         Session session = client.getSession();
         String name = session.getUsername();
 
-        if(!NetworkingUtil.isLoggedIn()) {
+        if (!NetworkingUtil.isLoggedIn()) {
             Skin skin = new ResourceSkin(Identifier.of("minecraft:textures/entity/player/wide/steve.png"), "default");
             return new SkinPreset(skin, name);
         } else {
-            var skinQueryResult = SkinAPIs.getPlayerSkinTexture(String.valueOf(client.getGameProfile().getId()));
+            var skinQueryResult = MojangSkinAPI.getPlayerSkinTexture(String.valueOf(client.getGameProfile().getId()));
 
-            if(skinQueryResult.usesDefaultSkin()) {
+            if (skinQueryResult.usesDefaultSkin()) {
                 SkinTextures skinTexture = client.getSkinProvider().getSkinTextures(client.getGameProfile());
                 Skin skin = new ResourceSkin(skinTexture.texture(), skinTexture.texture().getPath().contains("/slim/") ? "slim" : "default");
 

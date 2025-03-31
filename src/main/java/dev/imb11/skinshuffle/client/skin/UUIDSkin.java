@@ -1,21 +1,9 @@
-/*
- * ALL RIGHTS RESERVED
- *
- * Copyright (c) 2024 Calum H. (IMB11) and enjarai
- *
- * THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+
 
 package dev.imb11.skinshuffle.client.skin;
 
 import dev.imb11.skinshuffle.SkinShuffle;
-import dev.imb11.skinshuffle.api.SkinAPIs;
+import dev.imb11.skinshuffle.api.MojangSkinAPI;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -53,7 +41,7 @@ public class UUIDSkin extends UrlSkin {
 
     @Override
     protected @Nullable AbstractTexture loadTexture(Runnable completionCallback) {
-        var profile = SkinAPIs.getPlayerSkinTexture(uuid.toString());
+        var profile = MojangSkinAPI.getPlayerSkinTexture(uuid.toString());
 
         if (profile.skinURL() == null) {
             return null;

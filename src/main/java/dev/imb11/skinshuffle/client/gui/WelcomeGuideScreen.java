@@ -79,14 +79,14 @@ public class WelcomeGuideScreen extends SpruceScreen {
     }
 
     private static class ScrollableTextContainer extends SpruceContainerWidget {
+        private final Text[] lines;
         private double scrollOffset = 0;
         private double maxScrollOffset = 0;
-        private final Text[] lines;
 
         public ScrollableTextContainer(Position position, int width, int height) {
             super(position, width, height);
 
-            this.lines = new Text[] {
+            this.lines = new Text[]{
                     Text.translatable("screen.skinshuffle.thankyou"),
                     Text.translatable("screen.skinshuffle.read_info"),
                     Text.translatable("screen.skinshuffle.blank"),

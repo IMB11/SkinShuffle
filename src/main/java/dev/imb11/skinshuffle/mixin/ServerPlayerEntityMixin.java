@@ -1,16 +1,4 @@
-/*
- * ALL RIGHTS RESERVED
- *
- * Copyright (c) 2024 Calum H. (IMB11) and enjarai
- *
- * THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+
 
 package dev.imb11.skinshuffle.mixin;
 
@@ -45,19 +33,24 @@ import java.util.Collections;
  */
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin extends PlayerEntity implements SkinShufflePlayer {
-    @Shadow public abstract ServerWorld getServerWorld();
-
-    @Shadow public ServerPlayNetworkHandler networkHandler;
-
-    @Shadow @Final public ServerPlayerInteractionManager interactionManager;
-
-    @Shadow public abstract void sendAbilitiesUpdate();
-
-    @Shadow public abstract boolean isDisconnected();
+    @Shadow
+    public ServerPlayNetworkHandler networkHandler;
+    @Shadow
+    @Final
+    public ServerPlayerInteractionManager interactionManager;
 
     protected ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
         super(world, pos, yaw, gameProfile);
     }
+
+    @Shadow
+    public abstract ServerWorld getServerWorld();
+
+    @Shadow
+    public abstract void sendAbilitiesUpdate();
+
+    @Shadow
+    public abstract boolean isDisconnected();
 
     /**
      * @author Pyrofab
@@ -70,7 +63,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
      */
     @Override
     public void skinShuffle$refreshSkin() {
-        if(this.isDisconnected()) return;
+        if (this.isDisconnected()) return;
 
         // Refreshing in tablist for each player
         PlayerManager playerManager = this.getServer().getPlayerManager();
@@ -129,7 +122,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
 
             //? if <1.21.2 {
             /*this.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(this.getX(), this.getY(), this.getZ(), this.getYaw(), this.getPitch(), Collections.emptySet(), 0));
-            *///?} else {
+             *///?} else {
             this.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(0, net.minecraft.entity.player.PlayerPosition.fromEntity(this), Collections.emptySet()));
             //?}
 

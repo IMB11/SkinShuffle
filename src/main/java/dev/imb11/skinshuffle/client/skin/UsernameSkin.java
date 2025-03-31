@@ -1,22 +1,10 @@
-/*
- * ALL RIGHTS RESERVED
- *
- * Copyright (c) 2024 Calum H. (IMB11) and enjarai
- *
- * THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+
 
 package dev.imb11.skinshuffle.client.skin;
 
 import dev.imb11.skinshuffle.SkinShuffle;
-import dev.imb11.skinshuffle.api.SkinAPIs;
-import dev.imb11.skinshuffle.api.SkinQueryResult;
+import dev.imb11.skinshuffle.api.MojangSkinAPI;
+import dev.imb11.skinshuffle.api.data.SkinQueryResult;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -49,9 +37,9 @@ public class UsernameSkin extends UUIDSkin {
 
     @Override
     public ConfigSkin saveToConfig() {
-        Optional<UUID> uuid = SkinAPIs.getUUIDFromUsername(this.username);
-        if(uuid.isEmpty()) throw new RuntimeException("UUID is not a valid player UUID.");
-        SkinQueryResult queryResult = SkinAPIs.getPlayerSkinTexture(uuid.get().toString());
+        Optional<UUID> uuid = MojangSkinAPI.getUUIDFromUsername(this.username);
+        if (uuid.isEmpty()) throw new RuntimeException("UUID is not a valid player UUID.");
+        SkinQueryResult queryResult = MojangSkinAPI.getPlayerSkinTexture(uuid.get().toString());
         this.url = queryResult.skinURL();
         return super.saveToConfig();
     }
@@ -63,7 +51,7 @@ public class UsernameSkin extends UUIDSkin {
 
     @Override
     protected @Nullable AbstractTexture loadTexture(Runnable completionCallback) {
-        var uuid = SkinAPIs.getUUIDFromUsername(username);
+        var uuid = MojangSkinAPI.getUUIDFromUsername(username);
 
         if (uuid.isPresent()) {
             this.uuid = uuid.get();

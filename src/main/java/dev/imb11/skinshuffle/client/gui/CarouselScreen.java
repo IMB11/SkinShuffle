@@ -1,16 +1,4 @@
-/*
- * ALL RIGHTS RESERVED
- *
- * Copyright (c) 2024 Calum H. (IMB11) and enjarai
- *
- * THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+
 
 package dev.imb11.skinshuffle.client.gui;
 
@@ -48,23 +36,20 @@ public abstract class CarouselScreen extends SpruceScreen {
     public final CarouselView viewType;
     public final CarouselView nextViewType;
     public boolean hasEditedPreset = false;
+    public ArrayList<AbstractCardWidget<?>> carouselWidgets = new ArrayList<>();
     protected SpruceIconButtonWidget configButton;
     protected SpruceIconButtonWidget viewTypeButton;
-
+    protected SpruceButtonWidget cancelButton;
+    protected SpruceButtonWidget selectButton;
+    private double cardIndex = -1;
+    private double lastCardIndex = 0;
+    private double lastCardSwitchTime = 0;
     public CarouselScreen(Screen parent, CarouselView viewType, CarouselView nextViewType) {
         super(Text.translatable("skinshuffle.carousel.title"));
         this.parent = parent;
         this.viewType = viewType;
         this.nextViewType = nextViewType;
     }
-
-    private double cardIndex = -1;
-    private double lastCardIndex = 0;
-    private double lastCardSwitchTime = 0;
-    public ArrayList<AbstractCardWidget<?>> carouselWidgets = new ArrayList<>();
-
-    protected SpruceButtonWidget cancelButton;
-    protected SpruceButtonWidget selectButton;
 
     @Override
     protected void init() {
@@ -129,8 +114,7 @@ public abstract class CarouselScreen extends SpruceScreen {
                     return;
                 }
 
-                if (chosenPresetWidget instanceof PresetWidget) {
-                    PresetWidget presetWidget = (PresetWidget) chosenPresetWidget;
+                if (chosenPresetWidget instanceof PresetWidget presetWidget) {
                     SkinPresetManager.setChosenPreset(presetWidget.getPreset(), this.hasEditedPreset);
                     SkinPresetManager.savePresets();
                 }
@@ -143,7 +127,7 @@ public abstract class CarouselScreen extends SpruceScreen {
     }
 
     public void handleCloseBehaviour() {
-        if(this.client.world != null && !ClientSkinHandling.isInstalledOnServer()) {
+        if (this.client.world != null && !ClientSkinHandling.isInstalledOnServer()) {
             this.client.setScreen(GeneratedScreens.getReconnectScreen(this.parent));
         } else {
             this.close();
@@ -159,7 +143,8 @@ public abstract class CarouselScreen extends SpruceScreen {
             try {
                 var configSkin = preset.getSkin().saveToConfig();
                 preset.setSkin(configSkin);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
 
         SkinPresetManager.savePresets();
@@ -174,11 +159,11 @@ public abstract class CarouselScreen extends SpruceScreen {
 
         graphics.fill(0, this.textRenderer.fontHeight * 3, this.width, this.height - (this.textRenderer.fontHeight * 3), 0x7F000000);
         graphics.fillGradient(0, (int) (this.textRenderer.fontHeight * 2.75), this.width, this.textRenderer.fontHeight * 3, 0x00000000, 0x7F000000);
-        graphics.fillGradient(0, (int) (this.height - (this.textRenderer.fontHeight * 3)), this.width, (int) (this.height - (this.textRenderer.fontHeight * 2.75)), 0x7F000000, 0x00000000);
+        graphics.fillGradient(0, this.height - (this.textRenderer.fontHeight * 3), this.width, (int) (this.height - (this.textRenderer.fontHeight * 2.75)), 0x7F000000, 0x00000000);
 
         //? if <1.21.2 {
         /*dev.lambdaurora.spruceui.util.ScissorManager.pushScaleFactor(this.scaleFactor);
-        *///?}
+         *///?}
 
         // Carousel Widgets
         int rows = getRows();
@@ -222,9 +207,9 @@ public abstract class CarouselScreen extends SpruceScreen {
             }
 
 //            graphics.drawTextWithShadow(this.textRenderer, String.valueOf(loadedPresets.indexOf(loadedPreset)), leftI + scrollOffset, this.height/2 - this.textRenderer.fontHeight /2 , 0xFFFFFFFF);
-            if(widget instanceof PresetWidget<?> loadedPreset) {
+            if (widget instanceof PresetWidget<?> loadedPreset) {
                 loadedPreset.overridePosition(position);
-                loadedPreset.setScaleFactor(this.scaleFactor);
+                loadedPreset.setScaleFactor(scaleFactor);
             } else if (widget instanceof AddCardWidget addCardWidget) {
                 addCardWidget.overridePosition(position);
             }
@@ -250,7 +235,7 @@ public abstract class CarouselScreen extends SpruceScreen {
 
         //? if <1.21.2 {
         /*dev.lambdaurora.spruceui.util.ScissorManager.popScaleFactor();
-        *///?}
+         *///?}
     }
 
     @Override
@@ -305,7 +290,7 @@ public abstract class CarouselScreen extends SpruceScreen {
     }
 
     public int getCardGap() {
-        return (int) (10 * this.scaleFactor) / getRows();
+        return (int) (10 * scaleFactor) / getRows();
     }
 
     protected boolean supportsDragging() {
