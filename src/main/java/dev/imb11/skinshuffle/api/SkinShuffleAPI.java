@@ -17,30 +17,28 @@ import java.util.concurrent.TimeUnit;
 
 public class SkinShuffleAPI {
     private final String websocketHost;
-    private final int port;
     private final Gson gson = new Gson();
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
     /**
      * Constructs a SkinShuffleClient.
      *
-     * @param websocketHost the host of the websocket server (e.g., "localhost" or "skinshuffle.imb11.dev")
-     * @param port the port on which the server is running
+     * @param websocketHost the host of the websocket server (e.g., "localhost:58372" or "skinshuffle.imb11.dev")
      */
-    public SkinShuffleAPI(String websocketHost, int port) {
+    public SkinShuffleAPI(String websocketHost) {
         this.websocketHost = websocketHost;
-        this.port = port;
     }
 
     /**
      * Builds the full WebSocket URI.
      */
     private URI buildUri() {
-        return URI.create("ws://" + websocketHost + ":" + port + "/skin-gateway");
+        return URI.create("wss://" + websocketHost + "/skin-gateway");
     }
 
     /**
-     * Establishes a WebSocket connection, sends binary data if provided, then sends a JSON message, and returns the SkinQueryResult response.
+     * Establishes a WebSocket connection, sends binary data if provided, then sends a JSON message,
+     * awaits the SkinQueryResult response, closes the connection, and returns the result.
      *
      * @param jsonMessage the JSON message payload
      * @param binaryData  optional binary data to send (for file skin uploads); may be null
@@ -89,15 +87,23 @@ public class SkinShuffleAPI {
             }
         };
 
-        httpClient.newWebSocketBuilder().connectTimeout(Duration.ofSeconds(10))
+        // Build websocket and attach a callback to close it once the response is received.
+        CompletableFuture<WebSocket> wsFuture = httpClient.newWebSocketBuilder()
+                .connectTimeout(Duration.ofSeconds(10))
                 .buildAsync(uri, listener);
+
+        wsFuture.thenAccept(ws ->
+                futureResult.whenComplete((result, error) ->
+                        ws.sendClose(WebSocket.NORMAL_CLOSURE, "Done").join()
+                )
+        );
 
         return futureResult;
     }
 
     /**
      * Uploads a URL-based skin. This function connects to the WebSocket, sends the URL skin upload request,
-     * awaits the server response, and returns the resulting SkinQueryResult.
+     * awaits the server response, closes the connection, and returns the resulting SkinQueryResult.
      *
      * @param skinUrl the URL of the skin to upload
      * @param model the skin model to use (for example, "default")
@@ -112,7 +118,8 @@ public class SkinShuffleAPI {
 
     /**
      * Uploads a file-based skin. This function reads the skin file from a given path, connects to the WebSocket,
-     * sends the binary data followed by the JSON file upload request, awaits the server response, and returns the resulting SkinQueryResult.
+     * sends the binary data followed by the JSON file upload request, awaits the server response, closes the connection,
+     * and returns the resulting SkinQueryResult.
      *
      * @param filePath the path to the skin file
      * @param model the skin model to use (for example, "default")

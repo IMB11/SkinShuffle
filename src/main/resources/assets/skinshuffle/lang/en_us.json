@@ -5,7 +5,7 @@
   "skinshuffle.cape_provider.minecraft": "Mojang",
   "skinshuffle.cape_provider.optifine": "OptiFine",
   "skinshuffle.cape_provider.minecraftcapes": "MinecraftCapes",
-  "skinshuffle.reconnect.warning": "You must %s to allow other players, including yourself, to see your skin.",
+  "skinshuffle.reconnect.warning": "You must %s to allow other players to see your skin.",
   "skinshuffle.reconnect.reconnecting": "Reconnecting...",
   "skinshuffle.reconnect.rejoining": "Rejoining...",
   "skinshuffle.reconnect.rejoin": "rejoin",

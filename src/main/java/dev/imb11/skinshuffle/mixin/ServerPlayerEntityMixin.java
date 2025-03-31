@@ -29,7 +29,7 @@ import java.util.Collections;
 
 
 /**
- * Most mixin methods in this class are credit to FabricTailor and various mods that are licesned under LGPL or GPL.
+ * Most mixin methods in this class are credit to FabricTailor and various mods that are licensed under LGPL or GPL.
  */
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin extends PlayerEntity implements SkinShufflePlayer {

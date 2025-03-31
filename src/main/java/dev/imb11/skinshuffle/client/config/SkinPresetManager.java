@@ -112,7 +112,7 @@ public class SkinPresetManager {
         if (LOADING_LOCK) return;
         LOADING_LOCK = true;
 
-        SKIN_SHUFFLE_API = new SkinShuffleAPI(SkinShuffleConfig.get().mineskinProxyDomain, SkinShuffleConfig.get().mineskinProxyPort);
+        SKIN_SHUFFLE_API = new SkinShuffleAPI(SkinShuffleConfig.get().mineskinProxyDomain);
 
         if (SkinShuffleConfig.get().enableMultiAccountSupport) {
             var username = MinecraftClient.getInstance().getGameProfile().getName();

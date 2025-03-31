@@ -59,9 +59,7 @@ public class SkinShuffleConfig {
     @SerialEntry
     public boolean welcomeGuideShown = false;
     @SerialEntry
-    public String mineskinProxyDomain = "localhost";
-    @SerialEntry
-    public int mineskinProxyPort = 28433;
+    public String mineskinProxyDomain = "skinshuffle.imb11.dev";
 
     public static SkinShuffleConfig get() {
         return HANDLER.instance();
