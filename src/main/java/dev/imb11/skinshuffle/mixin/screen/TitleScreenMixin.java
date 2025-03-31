@@ -2,7 +2,6 @@ package dev.imb11.skinshuffle.mixin.screen;
 
 import com.mojang.authlib.GameProfile;
 import dev.imb11.skinshuffle.MixinStatics;
-import dev.imb11.skinshuffle.SkinShuffle;
 import dev.imb11.skinshuffle.api.MojangSkinAPI;
 import dev.imb11.skinshuffle.client.config.SkinPresetManager;
 import dev.imb11.skinshuffle.client.config.SkinShuffleConfig;
@@ -12,11 +11,7 @@ import dev.imb11.skinshuffle.util.ToastHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.registry.Registries;
-import net.minecraft.sound.MusicSound;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -40,11 +35,6 @@ public class TitleScreenMixin extends Screen {
 
     protected TitleScreenMixin(Text title) {
         super(title);
-    }
-
-    @Override
-    public @Nullable MusicSound getMusic() {
-        return new MusicSound(Registries.SOUND_EVENT.getEntry(SkinShuffle.ITS_ABOUT_DRIVE_ITS_ABOUT_POWER_WE_STAY_HUNGRY_WE_DEVOUR_PUT_IN_THE_WORK_PUT_IN_THE_HOURS_AND_TAKE_WHATS_OURS), 0, 0, true);
     }
 
     @Inject(method = "render", at = @At("HEAD"))
@@ -101,6 +91,5 @@ public class TitleScreenMixin extends Screen {
         for (ClickableWidget carouselWidget : this.openCarouselWidgets) {
             this.addDrawableChild(carouselWidget);
         }
-
     }
 }
