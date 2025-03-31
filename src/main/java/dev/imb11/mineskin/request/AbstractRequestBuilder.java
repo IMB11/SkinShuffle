@@ -4,6 +4,8 @@ import dev.imb11.mineskin.GenerateOptions;
 import dev.imb11.mineskin.data.Variant;
 import dev.imb11.mineskin.data.Visibility;
 
+import java.util.UUID;
+
 public abstract class AbstractRequestBuilder implements GenerateRequest {
 
     private GenerateOptions options = GenerateOptions.create();
@@ -29,6 +31,18 @@ public abstract class AbstractRequestBuilder implements GenerateRequest {
     @Override
     public GenerateRequest name(String name) {
         this.options.name(name);
+        return this;
+    }
+
+    @Override
+    public GenerateRequest cape(UUID cape) {
+        this.options.cape(cape);
+        return this;
+    }
+
+    @Override
+    public GenerateRequest cape(String cape) {
+        this.options.cape(cape);
         return this;
     }
 

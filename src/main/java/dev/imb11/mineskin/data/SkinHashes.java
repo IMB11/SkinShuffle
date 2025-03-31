@@ -1,4 +1,4 @@
 package dev.imb11.mineskin.data;
 
-public record SkinHashes(String skin) {
+public record SkinHashes(String skin, String cape) {
 }
