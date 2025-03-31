@@ -10,6 +10,9 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +25,7 @@ public class SkinShuffle implements ModInitializer {
     public static final String MOD_ID = "skinshuffle";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static final Path DATA_DIR = FabricLoader.getInstance().getConfigDir().resolve("skinshuffle");
+    public static SoundEvent ITS_ABOUT_DRIVE_ITS_ABOUT_POWER_WE_STAY_HUNGRY_WE_DEVOUR_PUT_IN_THE_WORK_PUT_IN_THE_HOURS_AND_TAKE_WHATS_OURS;
 
     public static Identifier id(String path) {
         return Identifier.of(MOD_ID, path);
@@ -46,6 +50,8 @@ public class SkinShuffle implements ModInitializer {
         SkinCacheRegistry.initialize();
         ServerSkinHandling.init();
         CompatLoader.init();
+
+        ITS_ABOUT_DRIVE_ITS_ABOUT_POWER_WE_STAY_HUNGRY_WE_DEVOUR_PUT_IN_THE_WORK_PUT_IN_THE_HOURS_AND_TAKE_WHATS_OURS = Registry.register(Registries.SOUND_EVENT, SkinShuffle.id("its_about_drive"), SoundEvent.of(SkinShuffle.id("its_about_drive")));
     }
 
     private void ensureDataDir() {

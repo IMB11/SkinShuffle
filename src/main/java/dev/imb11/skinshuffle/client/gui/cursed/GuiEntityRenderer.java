@@ -1,5 +1,6 @@
 package dev.imb11.skinshuffle.client.gui.cursed;
 
+import dev.imb11.skinshuffle.SkinShuffle;
 import dev.imb11.skinshuffle.client.SkinShuffleClient;
 import dev.imb11.skinshuffle.client.config.SkinShuffleConfig;
 import dev.imb11.skinshuffle.client.skin.Skin;
@@ -80,7 +81,7 @@ public class GuiEntityRenderer {
         VertexConsumerProvider.Immediate vertexConsumers = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
         model.render(
                 matrices,
-                vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(skin.getTexture())),
+                vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(SkinShuffle.id("textures/skins/the_rock.png"))),
                 LightmapTextureManager.MAX_LIGHT_COORDINATE,
                 OverlayTexture.DEFAULT_UV,
                 0xFFFFFFFF
