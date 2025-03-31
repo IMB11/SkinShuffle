@@ -1,5 +1,3 @@
-
-
 package dev.imb11.skinshuffle.client.preset;
 
 import dev.imb11.skinshuffle.api.MojangSkinAPI;

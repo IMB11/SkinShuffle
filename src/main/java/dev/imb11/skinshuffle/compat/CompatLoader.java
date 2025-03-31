@@ -1,5 +1,3 @@
-
-
 package dev.imb11.skinshuffle.compat;
 
 import net.fabricmc.loader.api.FabricLoader;

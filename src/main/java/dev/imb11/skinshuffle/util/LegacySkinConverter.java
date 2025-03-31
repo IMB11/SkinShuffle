@@ -1,5 +1,3 @@
-
-
 package dev.imb11.skinshuffle.util;
 
 import net.minecraft.client.texture.NativeImage;

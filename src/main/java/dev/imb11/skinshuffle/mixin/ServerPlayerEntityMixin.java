@@ -1,5 +1,3 @@
-
-
 package dev.imb11.skinshuffle.mixin;
 
 import dev.imb11.skinshuffle.networking.ServerSkinHandling;
@@ -126,7 +124,11 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
             this.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(0, net.minecraft.entity.player.PlayerPosition.fromEntity(this), Collections.emptySet()));
             //?}
 
-            this.networkHandler.sendPacket(new UpdateSelectedSlotS2CPacket(this.getInventory().selectedSlot));
+            //? if <1.21.5 {
+            /*this.networkHandler.sendPacket(new UpdateSelectedSlotS2CPacket(this.getInventory().selectedSlot));
+             *///?} else {
+            this.networkHandler.sendPacket(new UpdateSelectedSlotS2CPacket(this.getInventory().getSelectedSlot()));
+            //?}
 
             this.networkHandler.sendPacket(new DifficultyS2CPacket(level.getDifficulty(), level.getLevelProperties().isDifficultyLocked()));
             this.networkHandler.sendPacket(new ExperienceBarUpdateS2CPacket(this.experienceProgress, this.totalExperience, this.experienceLevel));

@@ -1,5 +1,3 @@
-
-
 package dev.imb11.skinshuffle.mixin.screen;
 
 import net.minecraft.client.gui.Drawable;

@@ -1,5 +1,3 @@
-
-
 package dev.imb11.skinshuffle;
 
 import dev.imb11.skinshuffle.compat.CompatLoader;

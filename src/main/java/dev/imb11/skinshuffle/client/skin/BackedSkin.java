@@ -1,5 +1,3 @@
-
-
 package dev.imb11.skinshuffle.client.skin;
 
 import dev.imb11.skinshuffle.SkinShuffle;
@@ -47,28 +45,28 @@ public abstract class BackedSkin implements Skin, AutoCloseable {
             // Texture doesn't exist, we need to fetch it.
             fetching = true;
 
-            CompletableFuture.runAsync(() -> {
-                try {
-                    var texture = loadTexture(() -> {
-                        fetching = false;
-                        fetched = true;
-                        setTexture(id);
-                    });
+            MinecraftClient.getInstance().execute(() -> {
+                    try {
+                        var texture = loadTexture(() -> {
+                            fetching = false;
+                            fetched = true;
+                            setTexture(id);
+                        });
 
-                    if (texture != null) {
-                        textureManager.registerTexture(id, texture);
-                    } else {
+                        if (texture != null) {
+                            textureManager.registerTexture(id, texture);
+                        } else {
+                            fetching = false;
+                            fetched = true;
+                            setTexture(null);
+                        }
+                    } catch (Exception e) {
+                        SkinShuffle.LOGGER.warn("Failed to load skin texture", e);
                         fetching = false;
                         fetched = true;
                         setTexture(null);
                     }
-                } catch (Exception e) {
-                    SkinShuffle.LOGGER.warn("Failed to load skin texture", e);
-                    fetching = false;
-                    fetched = true;
-                    setTexture(null);
-                }
-            }, Util.getMainWorkerExecutor());
+            });
         } else {
             // Texture already exists, we assume it hasn't changed
             fetched = true;

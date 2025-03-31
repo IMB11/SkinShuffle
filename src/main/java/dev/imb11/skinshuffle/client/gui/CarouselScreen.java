@@ -1,5 +1,3 @@
-
-
 package dev.imb11.skinshuffle.client.gui;
 
 import dev.imb11.skinshuffle.SkinShuffle;
@@ -44,6 +42,7 @@ public abstract class CarouselScreen extends SpruceScreen {
     private double cardIndex = -1;
     private double lastCardIndex = 0;
     private double lastCardSwitchTime = 0;
+
     public CarouselScreen(Screen parent, CarouselView viewType, CarouselView nextViewType) {
         super(Text.translatable("skinshuffle.carousel.title"));
         this.parent = parent;

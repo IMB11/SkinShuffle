@@ -1,5 +1,3 @@
-
-
 package dev.imb11.skinshuffle.client.gui.widgets;
 
 import dev.imb11.skinshuffle.client.config.SkinPresetManager;

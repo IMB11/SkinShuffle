@@ -1,5 +1,3 @@
-
-
 package dev.imb11.skinshuffle.mixin.screen;
 
 import com.mojang.authlib.GameProfile;
@@ -49,7 +47,11 @@ public class TitleScreenMixin extends Screen {
                 var texProperty = tex.toProperty();
                 var dummyProfile = new GameProfile(UUID.randomUUID(), "dummyname");
                 dummyProfile.getProperties().put("textures", texProperty);
+                //? if <1.21.4 {
+                /*MixinStatics.INITIAL_SKIN_TEXTURES = client.getSkinProvider().fetchSkinTextures(dummyProfile).thenApply(Optional::of);
+                *///?} else {
                 MixinStatics.INITIAL_SKIN_TEXTURES = client.getSkinProvider().fetchSkinTextures(dummyProfile);
+                //?}
             } catch (Exception ignored) {
                 MixinStatics.INITIAL_SKIN_TEXTURES = CompletableFuture.completedFuture(Optional.of(client.getSkinProvider().getSkinTextures(client.getGameProfile())));
             }

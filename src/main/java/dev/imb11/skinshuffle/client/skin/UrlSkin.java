@@ -1,5 +1,3 @@
-
-
 package dev.imb11.skinshuffle.client.skin;
 
 import dev.imb11.skinshuffle.SkinShuffle;

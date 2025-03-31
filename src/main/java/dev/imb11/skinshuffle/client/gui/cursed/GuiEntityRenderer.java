@@ -1,12 +1,10 @@
-
-
 package dev.imb11.skinshuffle.client.gui.cursed;
 
 import dev.imb11.skinshuffle.client.SkinShuffleClient;
 import dev.imb11.skinshuffle.client.config.SkinShuffleConfig;
 import dev.imb11.skinshuffle.client.skin.Skin;
-import dev.imb11.skinshuffle.compat.ETFCompat;
 import com.mojang.blaze3d.systems.RenderSystem;
+import dev.imb11.skinshuffle.compat.ETFCompat;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.Dilation;
@@ -60,7 +58,11 @@ public class GuiEntityRenderer {
         matrices.translate(0, -1, 0);
         matrices.multiply(entityRotation);
         matrices.translate(0, -1, 0);
-        DiffuseLighting.method_34742();
+        //? if <1.21.5 {
+        /*DiffuseLighting.method_34742();
+        *///?} else {
+        DiffuseLighting.enableGuiShaderLighting();
+        //?}
     }
 
     private static void renderEntity(MatrixStack matrices, float yaw, float pitch, Skin skin, long totalTickDelta) {

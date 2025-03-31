@@ -1,5 +1,3 @@
-
-
 package dev.imb11.skinshuffle.mixin.accessor;
 
 import com.mojang.authlib.minecraft.UserApiService;

@@ -106,7 +106,7 @@ public class SkinShuffleAPI {
      * awaits the server response, closes the connection, and returns the resulting SkinQueryResult.
      *
      * @param skinUrl the URL of the skin to upload
-     * @param model the skin model to use (for example, "default")
+     * @param model   the skin model to use (for example, "default")
      * @return the SkinQueryResult from the server
      * @throws Exception if an error occurs during the process
      */
@@ -122,10 +122,10 @@ public class SkinShuffleAPI {
      * and returns the resulting SkinQueryResult.
      *
      * @param filePath the path to the skin file
-     * @param model the skin model to use (for example, "default")
+     * @param model    the skin model to use (for example, "default")
      * @return the SkinQueryResult from the server
      * @throws IOException if there is an error reading the file
-     * @throws Exception if an error occurs during the process
+     * @throws Exception   if an error occurs during the process
      */
     public SkinQueryResult uploadFileSkin(Path filePath, String model) throws Exception {
         byte[] fileBytes = Files.readAllBytes(filePath);

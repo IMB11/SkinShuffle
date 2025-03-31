@@ -1,5 +1,3 @@
-
-
 package dev.imb11.skinshuffle.api.data;
 
 import com.mojang.authlib.properties.Property;

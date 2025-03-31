@@ -1,5 +1,3 @@
-
-
 package dev.imb11.skinshuffle.api;
 
 import com.google.gson.Gson;
@@ -133,7 +131,8 @@ public class MojangSkinAPI {
                 var cape = textureJSON
                         .get("textures").getAsJsonObject().get("CAPE").getAsJsonObject();
                 capeURL = cape.get("url").getAsString();
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
 
             return new SkinQueryResult(false, skinURL, modelType, textureSignature, textureValue);
         } catch (Exception e) {

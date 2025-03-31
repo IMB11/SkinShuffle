@@ -1,5 +1,3 @@
-
-
 package dev.imb11.skinshuffle.util;
 
 import com.mojang.authlib.yggdrasil.YggdrasilUserApiService;

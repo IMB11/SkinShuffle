@@ -1,5 +1,3 @@
-
-
 package dev.imb11.skinshuffle.compat;
 
 import dev.imb11.skinshuffle.client.gui.GeneratedScreens;

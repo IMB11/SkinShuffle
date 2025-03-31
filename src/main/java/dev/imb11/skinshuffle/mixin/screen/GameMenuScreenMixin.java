@@ -1,5 +1,3 @@
-
-
 package dev.imb11.skinshuffle.mixin.screen;
 
 import dev.imb11.skinshuffle.client.config.SkinShuffleConfig;

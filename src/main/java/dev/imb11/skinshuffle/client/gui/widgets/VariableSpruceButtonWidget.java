@@ -1,5 +1,3 @@
-
-
 package dev.imb11.skinshuffle.client.gui.widgets;
 
 import dev.lambdaurora.spruceui.Position;

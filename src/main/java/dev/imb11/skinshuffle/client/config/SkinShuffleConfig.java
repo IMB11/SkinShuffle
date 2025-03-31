@@ -1,5 +1,3 @@
-
-
 package dev.imb11.skinshuffle.client.config;
 
 import com.google.gson.GsonBuilder;

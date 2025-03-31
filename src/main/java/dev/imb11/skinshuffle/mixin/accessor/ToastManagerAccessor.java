@@ -1,5 +1,3 @@
-
-
 package dev.imb11.skinshuffle.mixin.accessor;
 
 import net.minecraft.client.toast.ToastManager;
