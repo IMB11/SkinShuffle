@@ -59,7 +59,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${property('deps.fabric_api')}"
 
     modLocalRuntime modCompileOnly("maven.modrinth:modmenu:${property('runtime.modmenu')}")
-    modLocalRuntime modCompileOnly("maven.modrinth:entitytexturefeatures:${property('runtime.etf')}")
+    modCompileOnly("maven.modrinth:entitytexturefeatures:${property('runtime.etf')}")
 
     include implementation('com.konghq:unirest-java:3.11.09:standalone')
 

@@ -1,7 +1,7 @@
 package dev.imb11.skinshuffle.client.skin;
 
 import dev.imb11.skinshuffle.SkinShuffle;
-import dev.imb11.skinshuffle.util.LegacySkinConverter;
+import dev.imb11.skinshuffle.util.SkinTextureSafetyUtil;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
@@ -23,15 +23,15 @@ public abstract class FileBackedSkin extends BackedSkin {
     @Override
     protected @Nullable AbstractTexture loadTexture(Runnable completionCallback) {
         try (var inputStream = Files.newInputStream(getFile())) {
-            var image = LegacySkinConverter.processTexture(NativeImage.read(NativeImage.Format.RGBA, inputStream));
+            var image = SkinTextureSafetyUtil.processTexture(NativeImage.read(NativeImage.Format.RGBA, inputStream));
 
             if (image == null) throw new RuntimeException("Texture is null!");
 
             //? if <1.21.5 {
-            /*var texture = new NativeImageBackedTexture(image);
-             *///?} else {
-            var texture = new NativeImageBackedTexture(() -> String.valueOf(Math.abs(getTextureUniqueness().hashCode())), image);
-            //?}
+            var texture = new NativeImageBackedTexture(image);
+             //?} else {
+            /*var texture = new NativeImageBackedTexture(() -> String.valueOf(Math.abs(getTextureUniqueness().hashCode())), image);
+            *///?}
 
             completionCallback.run();
             return texture;

@@ -1,15 +1,30 @@
 package dev.imb11.skinshuffle.util;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.texture.NativeImage;
 
-public class LegacySkinConverter {
+public class SkinTextureSafetyUtil {
     /**
      * Convert a legacy 64x32 skin to a 64x64 skin.
      *
      * @param image The image to convert.
-     * @return The converted image.
+     * @return The converted image or null if it's invalid.
      */
-    public static NativeImage processTexture(NativeImage image) {
+    public static NativeImage processTexture(NativeImage image) throws IllegalStateException {
+//        if (FabricLoader.getInstance().isModLoaded("entity_texture_features")) {
+            //? if >1.21.3 {
+            /*return net.minecraft.client.texture.PlayerSkinTextureDownloader.remapTexture(image, null);
+            *///?} else {
+            try (net.minecraft.client.texture.PlayerSkinTexture tex = new net.minecraft.client.texture.PlayerSkinTexture(null, null, null, false, null)) {
+                return tex.remapTexture(image);
+            }
+            //?}
+//        } else {
+//            return vanillaProcessTexture(image);
+//        }
+    }
+
+    public static NativeImage vanillaProcessTexture(NativeImage image) {
         int imageHeight = image.getHeight();
         int imageWidth = image.getWidth();
 

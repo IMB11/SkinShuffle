@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public interface Skin {
     Map<Identifier, MapCodec<? extends Skin>> TYPES = Map.of(
@@ -33,12 +34,13 @@ public interface Skin {
 
     default SkinTextures getSkinTextures() {
         MinecraftClient client = MinecraftClient.getInstance();
-        SkinTextures clientTexture;
-        if (MixinStatics.INITIAL_SKIN_TEXTURES.isDone()) {
-            clientTexture = MixinStatics.INITIAL_SKIN_TEXTURES.join().get();
-        } else {
-            clientTexture = client.getSkinProvider().getSkinTextures(client.getGameProfile());
-        }
+        Supplier<SkinTextures> textureSupplier = () ->
+                client.getSkinProvider().getSkinTextures(client.getGameProfile());
+
+        SkinTextures clientTexture = MixinStatics.INITIAL_SKIN_TEXTURES.isDone()
+                ? MixinStatics.INITIAL_SKIN_TEXTURES.join().orElseGet(textureSupplier)
+                : textureSupplier.get();
+
         return new SkinTextures(this.getTexture(), null, clientTexture.capeTexture(), clientTexture.elytraTexture(), SkinTextures.Model.fromName(this.getModel()), false);
     }
 

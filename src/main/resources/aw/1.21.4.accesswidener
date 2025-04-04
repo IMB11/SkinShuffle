@@ -19,3 +19,6 @@ accessible method net/minecraft/client/texture/PlayerSkinTextureDownloader downl
 accessible method net/minecraft/client/texture/ReloadableTexture load (Lnet/minecraft/client/texture/NativeImage;ZZ)V
 accessible field net/minecraft/client/texture/TextureManager textures Ljava/util/Map;
 accessible field net/minecraft/client/texture/ReloadableTexture textureId Lnet/minecraft/util/Identifier;
+
+accessible field net/minecraft/client/texture/NativeImage pointer J
+accessible method net/minecraft/client/texture/PlayerSkinTextureDownloader remapTexture (Lnet/minecraft/client/texture/NativeImage;Ljava/lang/String;)Lnet/minecraft/client/texture/NativeImage;

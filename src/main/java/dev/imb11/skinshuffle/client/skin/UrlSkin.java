@@ -12,12 +12,16 @@ import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import java.util.Optional;
 
-public class UrlSkin extends BackedSkin {
+public class UrlSkin extends FileBackedSkin {
     public static final Int2ObjectMap<String> MODEL_CACHE = new Int2ObjectOpenHashMap<>();
 
     public static final Identifier SERIALIZATION_ID = SkinShuffle.id("url");
@@ -91,34 +95,28 @@ public class UrlSkin extends BackedSkin {
     @Override
     protected @Nullable AbstractTexture loadTexture(Runnable completionCallback) {
         try {
-            Path cacheFolder = FabricLoader.getInstance().getGameDir().resolve(".cache/");
+            Path cacheFolder = SkinShuffle.DATA_DIR.resolve("skins/downloaded");
             if (!cacheFolder.toFile().exists()) {
-                Files.createDirectory(cacheFolder);
+                Files.createDirectories(cacheFolder);
             }
 
-            Path temporaryFilePath = cacheFolder.resolve(Math.abs(url.hashCode()) + ".png");
+            Path temporaryFilePath = getFile();
+            // Download texture from URL into temporaryFilePath
+            String url = getUrl();
+            InputStream in = new URI(url).toURL().openStream();
+            Files.copy(in, temporaryFilePath, StandardCopyOption.REPLACE_EXISTING);
+            in.close();
 
-            //? if <1.21.4 {
-            /*return new net.minecraft.client.texture.PlayerSkinTexture(temporaryFilePath.toFile(), url, Identifier.of("minecraft", "textures/entity/player/wide/steve.png"), true, () -> {
-                completionCallback.run();
-
-                try {
-                    if (temporaryFilePath.toFile().exists()) {
-                        Files.delete(temporaryFilePath);
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            *///?} else {
-            var id = SkinShuffle.id("skin/" + getSerializationId().getPath() + "/" + Math.abs(getTextureUniqueness().hashCode()));
-            var texID = net.minecraft.client.texture.PlayerSkinTextureDownloader.downloadAndRegisterTexture(id, temporaryFilePath, url, true);
-            return net.minecraft.client.MinecraftClient.getInstance().getTextureManager().getTexture(texID.join());
-            //?}
+            return super.loadTexture(completionCallback);
         } catch (Exception e) {
-            SkinShuffle.LOGGER.warn("Failed to load skin from URL: " + url, e);
+            SkinShuffle.LOGGER.warn("Failed to load skin from URL: {}", url, e);
             return null;
         }
+    }
+
+    @Override
+    protected Path getFile() {
+        return SkinShuffle.DATA_DIR.resolve("skins/downloaded").resolve(getTextureUniqueness().hashCode() + ".png");
     }
 
     public String getUrl() {

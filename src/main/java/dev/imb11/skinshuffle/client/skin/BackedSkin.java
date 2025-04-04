@@ -1,6 +1,7 @@
 package dev.imb11.skinshuffle.client.skin;
 
 import dev.imb11.skinshuffle.SkinShuffle;
+import dev.imb11.skinshuffle.util.ToastHelper;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.MinecraftClient;
@@ -38,10 +39,10 @@ public abstract class BackedSkin implements Skin, AutoCloseable {
         var textureManager = MinecraftClient.getInstance().getTextureManager();
 
         //? if <1.21.4 {
-        /*if (textureManager.getOrDefault(id, null) == null) {
-         *///?} else {
-        if (textureManager.textures.get(id) == null) {
-            //?}
+        if (textureManager.getOrDefault(id, null) == null) {
+         //?} else {
+        /*if (textureManager.textures.get(id) == null) {
+            *///?}
             // Texture doesn't exist, we need to fetch it.
             fetching = true;
 
