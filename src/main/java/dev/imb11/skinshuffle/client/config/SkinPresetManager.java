@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public class SkinPresetManager {
@@ -59,6 +60,35 @@ public class SkinPresetManager {
 
     public static void setApiPreset(SkinPreset preset) {
         apiPreset = preset;
+    }
+
+    /**
+     * Gets a preset by its keybind ID.
+     *
+     * @param keybindId The keybind ID to look for
+     * @return Optional containing the preset if found, empty otherwise
+     */
+    public static Optional<SkinPreset> getPresetByKeybindId(int keybindId) {
+        if (keybindId < 0) return Optional.empty();
+
+        return loadedPresets.stream()
+                .filter(preset -> preset.getKeybindId() == keybindId)
+                .findFirst();
+    }
+
+    /**
+     * Apply a skin preset by keybind ID. Used when hotkeys are pressed.
+     *
+     * @param keybindId The keybind ID of the preset to apply
+     * @return true if a preset was found and applied, false otherwise
+     */
+    public static boolean applyPresetByKeybindId(int keybindId) {
+        Optional<SkinPreset> preset = getPresetByKeybindId(keybindId);
+        if (preset.isPresent()) {
+            setChosenPreset(preset.get(), true);
+            return true;
+        }
+        return false;
     }
 
     public static void swapPresets(int index1, int index2) {
@@ -146,6 +176,10 @@ public class SkinPresetManager {
                 SkinPreset preset = pair.getFirst();
                 loadedPresets.add(preset);
             }
+            
+            // Validate keybind IDs for uniqueness
+            validateAndFixKeybindIds();
+            
             chosenPreset = loadedPresets.get(chosenPresetIndex);
             apiPreset = apiPresetIndex < 0 ? null : loadedPresets.get(apiPresetIndex);
         } catch (Exception e) {
@@ -158,6 +192,40 @@ public class SkinPresetManager {
             savePresets();
         } finally {
             LOADING_LOCK = false;
+        }
+    }
+    
+    /**
+     * Validates that all keybind IDs are unique (except for -1 which means "no keybind")
+     * and fixes any duplicates by resetting them to -1.
+     */
+    private static void validateAndFixKeybindIds() {
+        // Skip validation if there are no presets
+        if (loadedPresets.isEmpty()) return;
+        
+        // Track used keybind IDs
+        List<Integer> usedKeybindIds = new ArrayList<>();
+        boolean hasChanges = false;
+        
+        for (SkinPreset preset : loadedPresets) {
+            int keybindId = preset.getKeybindId();
+            
+            // Skip -1 (no keybind) values
+            if (keybindId == -1) continue;
+            
+            // If this keybind ID is already used, reset it to -1
+            if (usedKeybindIds.contains(keybindId)) {
+                SkinShuffle.LOGGER.warn("Duplicate keybind ID detected: " + keybindId + ". Resetting to -1 for preset: " + preset.getName());
+                preset.setKeybindId(-1);
+                hasChanges = true;
+            } else {
+                usedKeybindIds.add(keybindId);
+            }
+        }
+        
+        // Save changes if any duplicates were fixed
+        if (hasChanges) {
+            savePresets();
         }
     }
 

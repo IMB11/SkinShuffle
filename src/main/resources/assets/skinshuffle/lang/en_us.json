@@ -87,6 +87,9 @@
   "skinshuffle.edit.customize.model_cycle_prefix": "Model Type",
   "skinshuffle.edit.customize.preset_name": "Preset Name",
   "skinshuffle.edit.customize.cape_provider": "Cape Provider",
+  "skinshuffle.edit.customize.keybind_id": "Quick Changer Keybind",
+  "skinshuffle.edit.customize.keybind_id_prefix": "Keybind ID",
+  "skinshuffle.edit.customize.keybind_id.none": "None",
   "skinshuffle.edit.source.username": "Username",
   "skinshuffle.edit.source.invalid_username": "§4§nInvalid Username§r\n\nUsername must only contain a-Z 0-9.\nUsername may contain underscores.\nUsername must be between 3-16 characters long.\nUsername must exist.",
   "skinshuffle.edit.source.file": "File",
@@ -125,5 +128,17 @@
   "skinshuffle.config.general.enableMultiAccount.title": "Enable Multi Account Support",
   "skinshuffle.config.general.enableMultiAccount.description": "Should SkinShuffle use preset files per-account instead of one shared between all accounts used by this instance?",
   "skinshuffle.config.mineskin_proxy_port.name": "Mineskin Proxy Port",
-  "skinshuffle.config.mineskin_proxy_port.description": "The port number to connect to when uploading skins to the MineSkin proxy. Please do not modify this unless you know what you're doing or the mod will break."
+  "skinshuffle.config.mineskin_proxy_port.description": "The port number to connect to when uploading skins to the MineSkin proxy. Please do not modify this unless you know what you're doing or the mod will break.",
+  "skinshuffle.config.popups.keybind_sound.name": "Enable Quick Change Keybind Sound",
+  "skinshuffle.config.popups.keybind_sound.description": "Should a sound play when you switch skins using a keybind?",
+  "key.skinshuffle.preset_1": "Preset Keybind 1",
+  "key.skinshuffle.preset_2": "Preset Keybind 2",
+  "key.skinshuffle.preset_3": "Preset Keybind 3",
+  "key.skinshuffle.preset_4": "Preset Keybind 4",
+  "key.skinshuffle.preset_5": "Preset Keybind 5",
+  "key.skinshuffle.preset_6": "Preset Keybind 6",
+  "key.skinshuffle.preset_7": "Preset Keybind 7",
+  "key.skinshuffle.preset_8": "Preset Keybind 8",
+  "key.skinshuffle.preset_9": "Preset Keybind 9",
+  "category.skinshuffle.presets": "SkinShuffle Quick Changers"
 }

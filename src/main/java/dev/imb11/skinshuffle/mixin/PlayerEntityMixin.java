@@ -7,12 +7,14 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.client.util.SkinTextures;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -27,19 +29,28 @@ public abstract class PlayerEntityMixin extends PlayerEntity implements SkinShuf
         super(world, pos, yaw, gameProfile);
     }
 
+    private @Unique SkinTextures prevTextures;
+
     @Inject(method = "getSkinTextures", at = @At("TAIL"), cancellable = true)
-    private void modifySkinModel(CallbackInfoReturnable<net.minecraft.client.util.SkinTextures> cir) {
+    private void modifySkinTextures(CallbackInfoReturnable<net.minecraft.client.util.SkinTextures> cir) {
         MinecraftClient client = MinecraftClient.getInstance();
-        if (client.world != null) {
+        if (client.world != null && client.player != null) {
             if (this.getUuid().equals(client.player.getUuid())) {
                 SkinPreset currentPreset = SkinPresetManager.getChosenPreset();
-                cir.setReturnValue(currentPreset.getSkin().getSkinTextures());
+                var textures = currentPreset.getSkin().getSkinTextures();
+                if (currentPreset.getSkin().isLoading()) {
+                    if (prevTextures != null)
+                        cir.setReturnValue(prevTextures);
+                    return;
+                }
+                prevTextures = textures;
+                cir.setReturnValue(textures);
             }
         }
     }
 
     @Override
     public void skinShuffle$refreshPlayerListEntry() {
-        playerListEntry = null;
+        this.playerListEntry = null;
     }
 }

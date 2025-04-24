@@ -58,6 +58,8 @@ public class SkinShuffleConfig {
     public boolean welcomeGuideShown = false;
     @SerialEntry
     public String mineskinProxyDomain = "skinshuffle.imb11.dev";
+    @SerialEntry
+    public boolean playKeybindSoundEffect = true;
 
     public static SkinShuffleConfig get() {
         return HANDLER.instance();
@@ -154,6 +156,12 @@ public class SkinShuffleConfig {
                             .binding(defaults.disableReconnectToast, () -> config.disableReconnectToast, val -> config.disableReconnectToast = val)
                             .controller(TickBoxControllerBuilder::create).build();
 
+                    var playKeybindSound = Option.<Boolean>createBuilder()
+                            .name(translatable("skinshuffle.config.popups.keybind_sound.name"))
+                            .description(OptionDescription.createBuilder().text(translatable("skinshuffle.config.popups.keybind_sound.description")).build())
+                            .binding(defaults.playKeybindSoundEffect, () -> config.playKeybindSoundEffect, val -> config.playKeybindSoundEffect = val)
+                            .controller(TickBoxControllerBuilder::create).build();
+
                     var enableMltiAccount = Option.<Boolean>createBuilder()
                             .name(Text.translatable("skinshuffle.config.general.enableMultiAccount.title"))
                             .description(OptionDescription.of(Text.translatable("skinshuffle.config.general.enableMultiAccount.description")))
@@ -184,7 +192,7 @@ public class SkinShuffleConfig {
                             ).category(ConfigCategory.createBuilder()
                                     .name(translatable("skinshuffle.config.popups.title"))
                                     .tooltip(translatable("skinshuffle.config.popups.description"))
-                                    .options(List.of(disableRnnoctToast))
+                                    .options(List.of(disableRnnoctToast, playKeybindSound))
                                     .build())
                             .save(() -> {
                                 HANDLER.save();
