@@ -1,10 +1,10 @@
-package dev.imb11.skinshuffle.client.gui;
+package dev.imb11.skinshuffle.client.gui.carousels;
 
 import dev.imb11.skinshuffle.SkinShuffle;
 import dev.imb11.skinshuffle.client.config.CarouselView;
-import dev.imb11.skinshuffle.client.gui.widgets.ActualSpruceIconButtonWidget;
-import dev.imb11.skinshuffle.client.gui.widgets.preset.AbstractCardWidget;
-import dev.imb11.skinshuffle.client.gui.widgets.preset.CompactPresetWidget;
+import dev.imb11.skinshuffle.client.gui.widgets.buttons.SkinShuffleIconButton;
+import dev.imb11.skinshuffle.client.gui.widgets.presets.AbstractCardWidget;
+import dev.imb11.skinshuffle.client.gui.widgets.presets.CompactPresetWidget;
 import dev.imb11.skinshuffle.client.preset.SkinPreset;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
@@ -28,7 +28,7 @@ public class CompactCarouselScreen extends CarouselScreen {
     protected void init() {
         super.init();
 
-        this.shuffleButton = this.addDrawableChild(new ActualSpruceIconButtonWidget(Position.of(46, 2), 20, 20, Text.empty(),
+        this.shuffleButton = this.addDrawableChild(new SkinShuffleIconButton(Position.of(46, 2), 20, 20, Text.empty(),
                 (btn) -> setEditMode(!isEditMode()), (btn) -> SkinShuffle.id("textures/gui/shuffle-mode-" + (isEditMode() ? "on" : "off") + ".png")));
 
         this.addDrawableChild(new SpruceButtonWidget(Position.of(this.width / 2 - 64, this.height - 23), 128, 20, ScreenTexts.DONE, button -> {

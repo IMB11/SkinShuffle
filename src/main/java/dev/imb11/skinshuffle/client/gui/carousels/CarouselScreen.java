@@ -1,13 +1,14 @@
-package dev.imb11.skinshuffle.client.gui;
+package dev.imb11.skinshuffle.client.gui.carousels;
 
 import dev.imb11.skinshuffle.SkinShuffle;
 import dev.imb11.skinshuffle.client.config.CarouselView;
 import dev.imb11.skinshuffle.client.config.SkinPresetManager;
 import dev.imb11.skinshuffle.client.config.SkinShuffleConfig;
-import dev.imb11.skinshuffle.client.gui.widgets.ActualSpruceIconButtonWidget;
-import dev.imb11.skinshuffle.client.gui.widgets.preset.AbstractCardWidget;
-import dev.imb11.skinshuffle.client.gui.widgets.preset.AddCardWidget;
-import dev.imb11.skinshuffle.client.gui.widgets.preset.PresetWidget;
+import dev.imb11.skinshuffle.client.gui.GeneratedScreens;
+import dev.imb11.skinshuffle.client.gui.widgets.buttons.SkinShuffleIconButton;
+import dev.imb11.skinshuffle.client.gui.widgets.presets.AbstractCardWidget;
+import dev.imb11.skinshuffle.client.gui.widgets.presets.AddCardWidget;
+import dev.imb11.skinshuffle.client.gui.widgets.presets.PresetWidget;
 import dev.imb11.skinshuffle.client.preset.SkinPreset;
 import dev.imb11.skinshuffle.client.skin.Skin;
 import dev.imb11.skinshuffle.networking.ClientSkinHandling;
@@ -92,12 +93,12 @@ public abstract class CarouselScreen extends SpruceScreen {
             this.close();
         }));
 
-        this.configButton = this.addDrawableChild(new ActualSpruceIconButtonWidget(Position.of(2, 2), 20, 20, Text.empty(),
+        this.configButton = this.addDrawableChild(new SkinShuffleIconButton(Position.of(2, 2), 20, 20, Text.empty(),
                 (btn) -> this.client.setScreenAndRender(GeneratedScreens.getConfigScreen(this)),
                 (btn) -> SkinShuffle.id("textures/gui/config-button-icon.png")));
         this.configButton.setTooltip(Text.translatable("skinshuffle.carousel.config_button.tooltip"));
 
-        this.viewTypeButton = this.addDrawableChild(new ActualSpruceIconButtonWidget(Position.of(24, 2), 20, 20, Text.empty(), (btn) -> {
+        this.viewTypeButton = this.addDrawableChild(new SkinShuffleIconButton(Position.of(24, 2), 20, 20, Text.empty(), (btn) -> {
             this.client.setScreenAndRender(nextViewType.factory.apply(this.parent));
             SkinShuffleConfig.get().carouselView = nextViewType;
             SkinShuffleConfig.save();

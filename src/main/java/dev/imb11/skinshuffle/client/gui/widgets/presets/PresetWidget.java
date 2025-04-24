@@ -1,12 +1,12 @@
-package dev.imb11.skinshuffle.client.gui.widgets.preset;
+package dev.imb11.skinshuffle.client.gui.widgets.presets;
 
 import dev.imb11.skinshuffle.client.config.SkinPresetManager;
 import dev.imb11.skinshuffle.client.config.SkinShuffleConfig;
-import dev.imb11.skinshuffle.client.gui.CarouselScreen;
-import dev.imb11.skinshuffle.client.gui.CompactCarouselScreen;
+import dev.imb11.skinshuffle.client.gui.carousels.CarouselScreen;
+import dev.imb11.skinshuffle.client.gui.carousels.CompactCarouselScreen;
 import dev.imb11.skinshuffle.client.gui.PresetEditScreen;
-import dev.imb11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
-import dev.imb11.skinshuffle.client.gui.widgets.VariableSpruceButtonWidget;
+import dev.imb11.skinshuffle.client.gui.renderer.GuiEntityRenderer;
+import dev.imb11.skinshuffle.client.gui.widgets.buttons.VariableButton;
 import dev.imb11.skinshuffle.client.preset.SkinPreset;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.widget.SpruceWidget;
@@ -20,9 +20,9 @@ import net.minecraft.text.Text;
 public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCardWidget<S> {
     protected final SkinPreset skinPreset;
     private final boolean showButtons;
-    protected VariableSpruceButtonWidget editButton;
-    protected VariableSpruceButtonWidget copyButton;
-    protected VariableSpruceButtonWidget deleteButton;
+    protected VariableButton editButton;
+    protected VariableButton copyButton;
+    protected VariableButton deleteButton;
     protected double scaleFactor;
 
     public PresetWidget(S parent, SkinPreset skinPreset) {
@@ -34,13 +34,13 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
         this.showButtons = true;
 
         if (showButtons) {
-            this.editButton = new VariableSpruceButtonWidget(
+            this.editButton = new VariableButton(
                     Position.of(0, 0), 0, 0,
                     Text.translatable("skinshuffle.carousel.preset_widget.edit"),
                     button -> client.setScreen(new PresetEditScreen(this, this.parent, this.skinPreset))
             );
 
-            this.copyButton = new VariableSpruceButtonWidget(
+            this.copyButton = new VariableButton(
                     Position.of(0, 0), 0, 0,
                     Text.translatable("skinshuffle.carousel.preset_widget.copy"),
                     button -> {
@@ -51,7 +51,7 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
                     }
             );
 
-            this.deleteButton = new VariableSpruceButtonWidget(
+            this.deleteButton = new VariableButton(
                     Position.of(0, 0), 0, 0,
                     Text.translatable("skinshuffle.carousel.preset_widget.delete"),
                     button -> {

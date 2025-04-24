@@ -1,8 +1,8 @@
-package dev.imb11.skinshuffle.client.gui.widgets.preset;
+package dev.imb11.skinshuffle.client.gui.widgets.presets;
 
 import dev.imb11.skinshuffle.client.config.SkinPresetManager;
-import dev.imb11.skinshuffle.client.gui.CompactCarouselScreen;
-import dev.imb11.skinshuffle.client.gui.widgets.VariableSpruceButtonWidget;
+import dev.imb11.skinshuffle.client.gui.carousels.CompactCarouselScreen;
+import dev.imb11.skinshuffle.client.gui.widgets.buttons.VariableButton;
 import dev.imb11.skinshuffle.client.preset.SkinPreset;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.widget.SpruceWidget;
@@ -18,7 +18,7 @@ public class CompactPresetWidget extends PresetWidget<CompactCarouselScreen> {
     private static final Random WIGGLE_RANDOM = Random.create();
     private final float wiggleAmount = WIGGLE_RANDOM.nextFloat() + 1f;
     private final float wiggleSpeed = WIGGLE_RANDOM.nextFloat() * 4f + 16f;
-    protected VariableSpruceButtonWidget selectButton;
+    protected VariableButton selectButton;
 
     public CompactPresetWidget(CompactCarouselScreen parent, SkinPreset skinPreset) {
         super(parent, skinPreset);
@@ -26,7 +26,7 @@ public class CompactPresetWidget extends PresetWidget<CompactCarouselScreen> {
         editButton.overridePosition((getWidth() / 2) + 4, getHeight() - 48);
         editButton.overrideDimensions(getWidth() / 2 - (4 * 2), 20);
 
-        selectButton = new VariableSpruceButtonWidget(
+        selectButton = new VariableButton(
                 Position.of((getWidth() / 2) + 4, getHeight() - 24), getWidth() / 2 - (4 * 2), 20,
                 Text.translatable("skinshuffle.carousel.preset_widget.select"),
                 button -> {

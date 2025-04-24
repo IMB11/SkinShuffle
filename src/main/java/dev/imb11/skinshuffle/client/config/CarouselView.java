@@ -1,9 +1,9 @@
 package dev.imb11.skinshuffle.client.config;
 
 import dev.imb11.skinshuffle.SkinShuffle;
-import dev.imb11.skinshuffle.client.gui.CarouselScreen;
-import dev.imb11.skinshuffle.client.gui.CompactCarouselScreen;
-import dev.imb11.skinshuffle.client.gui.LargeCarouselScreen;
+import dev.imb11.skinshuffle.client.gui.carousels.CarouselScreen;
+import dev.imb11.skinshuffle.client.gui.carousels.CompactCarouselScreen;
+import dev.imb11.skinshuffle.client.gui.carousels.LargeCarouselScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;

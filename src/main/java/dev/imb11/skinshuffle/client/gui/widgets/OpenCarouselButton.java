@@ -3,7 +3,7 @@ package dev.imb11.skinshuffle.client.gui.widgets;
 import dev.imb11.skinshuffle.client.config.SkinPresetManager;
 import dev.imb11.skinshuffle.client.config.SkinShuffleConfig;
 import dev.imb11.skinshuffle.client.gui.GeneratedScreens;
-import dev.imb11.skinshuffle.client.gui.cursed.GuiEntityRenderer;
+import dev.imb11.skinshuffle.client.gui.renderer.GuiEntityRenderer;
 import dev.imb11.skinshuffle.client.preset.SkinPreset;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;

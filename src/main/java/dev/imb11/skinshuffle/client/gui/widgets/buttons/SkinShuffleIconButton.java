@@ -1,4 +1,4 @@
-package dev.imb11.skinshuffle.client.gui.widgets;
+package dev.imb11.skinshuffle.client.gui.widgets.buttons;
 
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.Tooltip;
@@ -11,10 +11,10 @@ import net.minecraft.util.Identifier;
 import java.util.List;
 import java.util.function.Function;
 
-public class ActualSpruceIconButtonWidget extends SpruceIconButtonWidget {
-    private final Function<ActualSpruceIconButtonWidget, Identifier> iconTexture;
+public class SkinShuffleIconButton extends SpruceIconButtonWidget {
+    private final Function<SkinShuffleIconButton, Identifier> iconTexture;
 
-    public ActualSpruceIconButtonWidget(Position position, int width, int height, Text message, PressAction action, Function<ActualSpruceIconButtonWidget, Identifier> iconTexture) {
+    public SkinShuffleIconButton(Position position, int width, int height, Text message, PressAction action, Function<SkinShuffleIconButton, Identifier> iconTexture) {
         super(position, width, height, message, action);
         this.iconTexture = iconTexture;
     }

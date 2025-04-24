@@ -1,4 +1,4 @@
-package dev.imb11.skinshuffle.client.gui.widgets;
+package dev.imb11.skinshuffle.client.gui.widgets.buttons;
 
 import dev.imb11.skinshuffle.SkinShuffle;
 import dev.imb11.skinshuffle.client.gui.GeneratedScreens;

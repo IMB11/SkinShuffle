@@ -1,4 +1,4 @@
-package dev.imb11.skinshuffle.client.gui.widgets;
+package dev.imb11.skinshuffle.client.gui.widgets.buttons;
 
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;

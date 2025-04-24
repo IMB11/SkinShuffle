@@ -1,4 +1,4 @@
-package dev.imb11.skinshuffle.client.gui.cursed;
+package dev.imb11.skinshuffle.client.gui.renderer;
 
 import dev.imb11.skinshuffle.client.SkinShuffleClient;
 import dev.imb11.skinshuffle.client.config.SkinShuffleConfig;

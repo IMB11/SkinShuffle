@@ -2,7 +2,7 @@ package dev.imb11.skinshuffle.client.gui;
 
 import dev.imb11.skinshuffle.client.config.SkinShuffleConfig;
 import dev.imb11.skinshuffle.client.gui.widgets.OpenCarouselButton;
-import dev.imb11.skinshuffle.client.gui.widgets.WarningIndicatorButton;
+import dev.imb11.skinshuffle.client.gui.widgets.buttons.WarningIndicatorButton;
 import dev.imb11.skinshuffle.mixin.accessor.GameMenuScreenAccessor;
 import dev.imb11.skinshuffle.networking.ClientSkinHandling;
 import dev.imb11.skinshuffle.util.NetworkingUtil;

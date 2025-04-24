@@ -2,7 +2,7 @@ package dev.imb11.skinshuffle.mixin.screen;
 
 import dev.imb11.skinshuffle.client.config.SkinShuffleConfig;
 import dev.imb11.skinshuffle.client.gui.GeneratedScreens;
-import dev.imb11.skinshuffle.client.gui.widgets.WarningIndicatorButton;
+import dev.imb11.skinshuffle.client.gui.widgets.buttons.WarningIndicatorButton;
 import dev.imb11.skinshuffle.networking.ClientSkinHandling;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.GameMenuScreen;

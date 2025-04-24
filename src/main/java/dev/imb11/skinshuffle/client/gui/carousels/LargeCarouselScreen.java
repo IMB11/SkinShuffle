@@ -1,9 +1,9 @@
-package dev.imb11.skinshuffle.client.gui;
+package dev.imb11.skinshuffle.client.gui.carousels;
 
 import dev.imb11.skinshuffle.client.config.CarouselView;
-import dev.imb11.skinshuffle.client.gui.widgets.CarouselMoveButton;
-import dev.imb11.skinshuffle.client.gui.widgets.preset.AbstractCardWidget;
-import dev.imb11.skinshuffle.client.gui.widgets.preset.LargePresetWidget;
+import dev.imb11.skinshuffle.client.gui.widgets.buttons.CarouselMoveButton;
+import dev.imb11.skinshuffle.client.gui.widgets.presets.AbstractCardWidget;
+import dev.imb11.skinshuffle.client.gui.widgets.presets.LargePresetWidget;
 import dev.imb11.skinshuffle.client.preset.SkinPreset;
 import net.minecraft.client.gui.screen.Screen;
 

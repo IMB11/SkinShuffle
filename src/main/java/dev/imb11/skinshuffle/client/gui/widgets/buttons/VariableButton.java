@@ -1,11 +1,11 @@
-package dev.imb11.skinshuffle.client.gui.widgets;
+package dev.imb11.skinshuffle.client.gui.widgets.buttons;
 
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
 import net.minecraft.text.Text;
 
-public class VariableSpruceButtonWidget extends SpruceButtonWidget {
-    public VariableSpruceButtonWidget(Position position, int width, int height, Text message, PressAction action) {
+public class VariableButton extends SpruceButtonWidget {
+    public VariableButton(Position position, int width, int height, Text message, PressAction action) {
         super(position, width, height, message, action);
     }
 

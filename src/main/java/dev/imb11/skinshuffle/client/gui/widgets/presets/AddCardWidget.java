@@ -1,7 +1,7 @@
-package dev.imb11.skinshuffle.client.gui.widgets.preset;
+package dev.imb11.skinshuffle.client.gui.widgets.presets;
 
 import dev.imb11.skinshuffle.SkinShuffle;
-import dev.imb11.skinshuffle.client.gui.CarouselScreen;
+import dev.imb11.skinshuffle.client.gui.carousels.CarouselScreen;
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
 import dev.lambdaurora.spruceui.widget.SpruceWidget;
