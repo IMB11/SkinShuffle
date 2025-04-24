@@ -87,11 +87,19 @@ public class MojangSkinAPI {
 
             for (JsonElement properties : object.get("properties").getAsJsonArray()) {
                 if (properties.getAsJsonObject().get("name").getAsString().equals("textures")) {
-                    textureSignature = properties.getAsJsonObject().get("signature").getAsString();
-                    textureValue = properties.getAsJsonObject().get("value").getAsString();
+                    try {
+                        textureSignature = properties.getAsJsonObject().get("signature").getAsString();
+                        textureValue = properties.getAsJsonObject().get("value").getAsString();
 
-                    String jsonContent = new String(Base64.getDecoder().decode(textureValue), StandardCharsets.UTF_8);
-                    textureJSON = gson.fromJson(jsonContent, JsonObject.class);
+                        if (textureValue != null) {
+                            String jsonContent = new String(Base64.getDecoder().decode(textureValue), StandardCharsets.UTF_8);
+                            textureJSON = gson.fromJson(jsonContent, JsonObject.class);
+                        } else {
+                            SkinShuffle.LOGGER.warn("Received null texture value from Mojang API");
+                        }
+                    } catch (Exception e) {
+                        SkinShuffle.LOGGER.error("Failed to decode texture data", e);
+                    }
                     break;
                 }
             }
