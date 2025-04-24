@@ -9,6 +9,7 @@ import dev.imb11.skinshuffle.client.gui.renderer.SkinPreviewRenderer;
 import dev.imb11.skinshuffle.client.gui.widgets.presets.PresetWidget;
 import dev.imb11.skinshuffle.client.preset.SkinPreset;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.ScreenRect;
 import net.minecraft.client.gui.tab.TabManager;
@@ -56,7 +57,7 @@ public class PresetEditScreen extends SpruceScreen {
         this.preset = preset.copy();
         this.originalPreset = preset;
         this.parent = parent;
-        this.previewRenderer = new SkinPreviewRenderer(client);
+        this.previewRenderer = new SkinPreviewRenderer(MinecraftClient.getInstance());
     }
 
     @Override
@@ -81,7 +82,6 @@ public class PresetEditScreen extends SpruceScreen {
         this.tabNavigation = TabNavigationWidget.builder(this.tabManager, this.width)
                 .tabs(skinSourceTab, skinCustomizationTab).build();
         this.addDrawableChild(this.tabNavigation);
-        this.tabNavigation.selectTab(0, false);
         
         // Create action buttons
         this.actionButtonsGrid = new GridWidget().setColumnSpacing(10);
@@ -106,6 +106,9 @@ public class PresetEditScreen extends SpruceScreen {
 
         // Initialize the UI components
         initTabNavigation();
+        
+        // Select the first tab and ensure it's properly initialized
+        this.tabNavigation.selectTab(0, false);
     }
 
     /**
