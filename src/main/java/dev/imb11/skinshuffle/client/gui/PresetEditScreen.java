@@ -12,6 +12,7 @@ import dev.lambdaurora.spruceui.screen.SpruceScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.ScreenRect;
+import net.minecraft.client.gui.screen.pack.PackListWidget;
 import net.minecraft.client.gui.tab.TabManager;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.GridWidget;
@@ -162,7 +163,13 @@ public class PresetEditScreen extends SpruceScreen {
     /**
      * Handle files dropped onto the screen.
      */
+    //? if <1.21.4 {
+    /*@Override
+    public void filesDragged(List<Path> paths) {
+    *///?} else {
+    @Override
     public void onFilesDropped(List<Path> paths) {
+    //?}
         if (!paths.isEmpty()) {
             Path firstPath = paths.getFirst();
             this.tabNavigation.selectTab(0, false);
