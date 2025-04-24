@@ -7,6 +7,7 @@ import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -14,10 +15,22 @@ import java.nio.file.StandardCopyOption;
 public abstract class FileBackedSkin extends BackedSkin {
     @Nullable
     private Boolean exists;
+    private long lastModifiedTime = -1;
 
     @Override
     protected Object getTextureUniqueness() {
-        return getFile();
+        try {
+            // Check if the file exists and get its last modified time
+            if (Files.exists(getFile())) {
+                lastModifiedTime = Files.getLastModifiedTime(getFile()).toMillis();
+            }
+            // Return a combination of file path and last modified time
+            return getFile().toString() + "_" + lastModifiedTime;
+        } catch (IOException e) {
+            SkinShuffle.LOGGER.warn("Failed to get last modified time for file: " + getFile(), e);
+            // Fall back to just the file path if we can't get the modified time
+            return getFile();
+        }
     }
 
     @Override
@@ -54,9 +67,7 @@ public abstract class FileBackedSkin extends BackedSkin {
     }
 
     public boolean fileExists() {
-        if (exists == null) exists = Files.isReadable(getFile());
-
-        return exists;
+        return Files.isReadable(getFile());
     }
 
     protected abstract Path getFile();

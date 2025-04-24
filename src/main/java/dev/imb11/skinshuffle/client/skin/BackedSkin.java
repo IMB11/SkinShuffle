@@ -35,7 +35,8 @@ public abstract class BackedSkin implements Skin, AutoCloseable {
     }
 
     public void fetchSkin() {
-        var id = SkinShuffle.id("skin/" + getSerializationId().getPath() + "/" + Math.abs(getTextureUniqueness().hashCode()));
+        var uniqueness = getTextureUniqueness();
+        var id = SkinShuffle.id("skin/" + getSerializationId().getPath() + "/" + Math.abs(uniqueness.hashCode()));
         var textureManager = MinecraftClient.getInstance().getTextureManager();
 
         //? if <1.21.4 {
@@ -69,7 +70,7 @@ public abstract class BackedSkin implements Skin, AutoCloseable {
                     }
             });
         } else {
-            // Texture already exists, we assume it hasn't changed
+            // Texture already exists, we still set it
             fetched = true;
             setTexture(id);
         }
