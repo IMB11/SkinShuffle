@@ -13,12 +13,12 @@ public class SkinTextureSafetyUtil {
     public static NativeImage processTexture(NativeImage image) throws IllegalStateException {
 //        if (FabricLoader.getInstance().isModLoaded("entity_texture_features")) {
             //? if >1.21.3 {
-            /*return net.minecraft.client.texture.PlayerSkinTextureDownloader.remapTexture(image, null);
-            *///?} else {
-            try (net.minecraft.client.texture.PlayerSkinTexture tex = new net.minecraft.client.texture.PlayerSkinTexture(null, null, null, false, null)) {
+            return net.minecraft.client.texture.PlayerSkinTextureDownloader.remapTexture(image, null);
+            //?} else {
+            /*try (net.minecraft.client.texture.PlayerSkinTexture tex = new net.minecraft.client.texture.PlayerSkinTexture(null, null, null, false, null)) {
                 return tex.remapTexture(image);
             }
-            //?}
+            *///?}
 //        } else {
 //            return vanillaProcessTexture(image);
 //        }

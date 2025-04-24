@@ -59,10 +59,10 @@ public class GuiEntityRenderer {
         matrices.multiply(entityRotation);
         matrices.translate(0, -1, 0);
         //? if <1.21.5 {
-        DiffuseLighting.method_34742();
-        //?} else {
-        /*DiffuseLighting.enableGuiShaderLighting();
-        *///?}
+        /*DiffuseLighting.method_34742();
+        *///?} else {
+        DiffuseLighting.enableGuiShaderLighting();
+        //?}
     }
 
     private static void renderEntity(MatrixStack matrices, float yaw, float pitch, Skin skin, long totalTickDelta) {

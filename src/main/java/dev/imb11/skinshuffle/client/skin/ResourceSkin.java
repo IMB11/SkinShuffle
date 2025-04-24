@@ -60,21 +60,21 @@ public final class ResourceSkin implements Skin {
 
         var resourceManager = MinecraftClient.getInstance().getResourceManager();
         //? if <1.21.4 {
-        try (ResourceTexture.TextureData data = ResourceTexture.TextureData.load(resourceManager, getTexture())) {
+        /*try (ResourceTexture.TextureData data = ResourceTexture.TextureData.load(resourceManager, getTexture())) {
             var nativeImage = data.getImage();
             nativeImage.writeTo(configSkin.getFile());
         } catch (IOException e) {
             throw new RuntimeException("Failed to save ResourceSkin to config.", e);
         }
-        //?} else {
-        /*try (var resource = new ResourceTexture(getTexture())) {
+        *///?} else {
+        try (var resource = new ResourceTexture(getTexture())) {
             var resourceTex = resource.loadContents(resourceManager);
             var image = resourceTex.image();
             image.writeTo(configSkin.getFile());
         } catch (IOException e) {
             throw new RuntimeException("Failed to save ResourceSkin to config.", e);
         }
-        *///?}
+        //?}
 
         return configSkin;
     }

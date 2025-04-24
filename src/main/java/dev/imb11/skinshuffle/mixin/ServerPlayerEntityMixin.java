@@ -125,10 +125,10 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
             //?}
 
             //? if <1.21.5 {
-            this.networkHandler.sendPacket(new UpdateSelectedSlotS2CPacket(this.getInventory().selectedSlot));
-             //?} else {
-            /*this.networkHandler.sendPacket(new UpdateSelectedSlotS2CPacket(this.getInventory().getSelectedSlot()));
-            *///?}
+            /*this.networkHandler.sendPacket(new UpdateSelectedSlotS2CPacket(this.getInventory().selectedSlot));
+             *///?} else {
+            this.networkHandler.sendPacket(new UpdateSelectedSlotS2CPacket(this.getInventory().getSelectedSlot()));
+            //?}
 
             this.networkHandler.sendPacket(new DifficultyS2CPacket(level.getDifficulty(), level.getLevelProperties().isDifficultyLocked()));
             this.networkHandler.sendPacket(new ExperienceBarUpdateS2CPacket(this.experienceProgress, this.totalExperience, this.experienceLevel));
