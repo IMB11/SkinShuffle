@@ -8,6 +8,7 @@ public class CompatLoader {
     private static final ArrayList<CompatHandler> HELPERS = new ArrayList<>();
 
     static {
+        HELPERS.add(new MinecraftCapesCompat());
     }
 
     public static void init() {
