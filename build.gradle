@@ -59,7 +59,8 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${property('deps.fabric_api')}"
 
     modLocalRuntime modCompileOnly("maven.modrinth:modmenu:${property('runtime.modmenu')}")
-    modLocalRuntime modCompileOnly("maven.modrinth:minecraftcapes:${property('runtime.minecraftcapes')}")
+    modCompileOnly("maven.modrinth:minecraftcapes:${property('runtime.minecraftcapes')}")
+    modLocalRuntime modCompileOnly("maven.modrinth:capes:${property('runtime.capes')}")
     modCompileOnly("maven.modrinth:entitytexturefeatures:${property('runtime.etf')}")
 
     include implementation('com.konghq:unirest-java:3.11.09:standalone')
@@ -74,6 +75,7 @@ dependencies {
     include implementation("com.drewnoakes:metadata-extractor:2.19.0")
 
     modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:1.2.1")
+    modRuntimeOnly("net.fabricmc:fabric-language-kotlin:1.13.2+kotlin.2.1.20")
 }
 
 processResources {

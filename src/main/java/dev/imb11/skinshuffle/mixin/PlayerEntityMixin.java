@@ -2,6 +2,7 @@ package dev.imb11.skinshuffle.mixin;
 
 import dev.imb11.skinshuffle.client.config.SkinPresetManager;
 import dev.imb11.skinshuffle.client.preset.SkinPreset;
+import dev.imb11.skinshuffle.compat.CapesCompat;
 import dev.imb11.skinshuffle.compat.MinecraftCapesCompat;
 import dev.imb11.skinshuffle.util.SkinShuffleClientPlayer;
 import com.mojang.authlib.GameProfile;
@@ -40,8 +41,9 @@ public abstract class PlayerEntityMixin extends PlayerEntity implements SkinShuf
                 SkinPreset currentPreset = SkinPresetManager.getChosenPreset();
                 var textures = currentPreset.getSkin().getSkinTextures();
 
-                // If MinecraftCapes use their capes
-                if (MinecraftCapesCompat.IS_INSTALLED) {
+                if (CapesCompat.IS_INSTALLED) {
+                    textures = CapesCompat.loadTextures(this.getGameProfile(), textures);
+                } else if (MinecraftCapesCompat.IS_INSTALLED) {
                     textures = MinecraftCapesCompat.loadTextures(uuid, textures);
                 }
 

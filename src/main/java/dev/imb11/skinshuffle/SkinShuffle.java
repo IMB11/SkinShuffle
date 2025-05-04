@@ -2,7 +2,7 @@ package dev.imb11.skinshuffle;
 
 import com.mojang.authlib.GameProfile;
 import dev.imb11.skinshuffle.api.MojangSkinAPI;
-import dev.imb11.skinshuffle.compat.CompatLoader;
+import dev.imb11.skinshuffle.compat.api.CompatLoader;
 import dev.imb11.skinshuffle.networking.HandshakePayload;
 import dev.imb11.skinshuffle.networking.RefreshPlayerListEntryPayload;
 import dev.imb11.skinshuffle.networking.ServerSkinHandling;

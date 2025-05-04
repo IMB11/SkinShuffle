@@ -1,5 +1,7 @@
-package dev.imb11.skinshuffle.compat;
+package dev.imb11.skinshuffle.compat.api;
 
+import dev.imb11.skinshuffle.compat.CapesCompat;
+import dev.imb11.skinshuffle.compat.MinecraftCapesCompat;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.util.ArrayList;
@@ -9,6 +11,7 @@ public class CompatLoader {
 
     static {
         HELPERS.add(new MinecraftCapesCompat());
+        HELPERS.add(new CapesCompat());
     }
 
     public static void init() {

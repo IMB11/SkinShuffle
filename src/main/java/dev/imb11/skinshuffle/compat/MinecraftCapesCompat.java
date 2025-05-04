@@ -1,5 +1,6 @@
 package dev.imb11.skinshuffle.compat;
 
+import dev.imb11.skinshuffle.compat.api.CompatHandler;
 import net.minecraft.client.util.SkinTextures;
 import net.minecraft.util.Identifier;
 import net.minecraftcapes.config.MinecraftCapesConfig;
@@ -8,7 +9,6 @@ import net.minecraftcapes.player.PlayerHandler;
 import java.util.UUID;
 
 public class MinecraftCapesCompat implements CompatHandler {
-
     public static boolean IS_INSTALLED = false;
 
     @Override
