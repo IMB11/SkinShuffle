@@ -74,7 +74,7 @@ public class SkinShuffle implements ModInitializer {
             var dummyProfile = new GameProfile(UUID.randomUUID(), "dummyname");
             dummyProfile.getProperties().put("textures", texProperty);
             //? if <1.21.4 {
-            /*return client.getSkinProvider().fetchSkinTextures(dummyProfile).thenApply(Optional::of);
+            /*return client.getSkinProvider().fetchSkinTextures(dummyProfile).thenApply(Optional::of).get();
              *///?} else {
             return client.getSkinProvider().fetchSkinTextures(dummyProfile).get();
             //?}
