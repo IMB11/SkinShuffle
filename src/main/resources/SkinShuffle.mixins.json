@@ -11,6 +11,7 @@
   "client": [
     "MinecraftClientMixin",
     "PlayerEntityMixin",
+    "QuickplayMixin",
     "accessor.GameMenuScreenAccessor",
     "accessor.MinecraftClientAccessor",
     "accessor.ToastManagerAccessor",

@@ -73,7 +73,7 @@ dependencies {
 
     include implementation("com.drewnoakes:metadata-extractor:2.19.0")
 
-    modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:1.2.0")
+    modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:1.2.1")
 }
 
 processResources {

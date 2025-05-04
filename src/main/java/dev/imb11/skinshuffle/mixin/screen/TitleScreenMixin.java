@@ -41,20 +41,6 @@ public class TitleScreenMixin extends Screen {
     public void refreshConfig(CallbackInfo ci) {
         if (!MixinStatics.APPLIED_SKIN_MANAGER_CONFIGURATION && this.doBackgroundFade) {
             MixinStatics.APPLIED_SKIN_MANAGER_CONFIGURATION = true;
-            try {
-                assert client != null;
-                var tex = MojangSkinAPI.getPlayerSkinTexture(String.valueOf(client.getGameProfile().getId()));
-                var texProperty = tex.toProperty();
-                var dummyProfile = new GameProfile(UUID.randomUUID(), "dummyname");
-                dummyProfile.getProperties().put("textures", texProperty);
-                //? if <1.21.4 {
-                /*MixinStatics.INITIAL_SKIN_TEXTURES = client.getSkinProvider().fetchSkinTextures(dummyProfile).thenApply(Optional::of);
-                *///?} else {
-                MixinStatics.INITIAL_SKIN_TEXTURES = client.getSkinProvider().fetchSkinTextures(dummyProfile);
-                //?}
-            } catch (Exception ignored) {
-                MixinStatics.INITIAL_SKIN_TEXTURES = CompletableFuture.completedFuture(Optional.of(client.getSkinProvider().getSkinTextures(client.getGameProfile())));
-            }
             SkinPresetManager.apply();
 
             if (!NetworkingUtil.isLoggedIn()) {
