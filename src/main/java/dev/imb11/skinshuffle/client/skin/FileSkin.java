@@ -1,10 +1,10 @@
 package dev.imb11.skinshuffle.client.skin;
 
-import dev.imb11.skinshuffle.SkinShuffle;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.imb11.skinshuffle.SkinShuffle;
 import net.minecraft.util.Identifier;
 
 import java.nio.file.Path;

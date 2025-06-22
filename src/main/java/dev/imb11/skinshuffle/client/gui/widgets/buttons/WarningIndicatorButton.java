@@ -3,10 +3,10 @@ package dev.imb11.skinshuffle.client.gui.widgets.buttons;
 import dev.imb11.skinshuffle.SkinShuffle;
 import dev.imb11.skinshuffle.client.gui.GeneratedScreens;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -39,18 +39,16 @@ public class WarningIndicatorButton extends IconButtonWidget {
         super.renderWidget(context, mouseX, mouseY, delta);
 
         context.drawTexture(
-                //? >=1.21.2 {
-                RenderLayer::getGuiTextured,
-                //?}
+                RenderPipelines.GUI_TEXTURED,
                 this.iconTexture,
                 this.getIconX(),
                 this.getIconY(),
                 this.iconU,
                 this.iconV + (active ? (hovered ? 16 : 0) : this.iconDisabledVOffset),
-                0,
                 this.iconWidth,
                 this.iconHeight,
                 this.iconTextureWidth,
-                this.iconTextureHeight);
+                this.iconTextureHeight
+        );
     }
 }

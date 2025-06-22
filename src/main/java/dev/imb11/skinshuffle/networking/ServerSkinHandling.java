@@ -1,8 +1,8 @@
 package dev.imb11.skinshuffle.networking;
 
+import com.mojang.authlib.properties.Property;
 import dev.imb11.skinshuffle.SkinShuffle;
 import dev.imb11.skinshuffle.util.SkinShufflePlayer;
-import com.mojang.authlib.properties.Property;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.MinecraftServer;

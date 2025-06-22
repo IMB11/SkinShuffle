@@ -1,14 +1,12 @@
 package dev.imb11.skinshuffle.client.gui.widgets.buttons;
 
 import dev.lambdaurora.spruceui.Position;
-import dev.lambdaurora.spruceui.Tooltip;
+import dev.lambdaurora.spruceui.render.SpruceGuiGraphics;
 import dev.lambdaurora.spruceui.widget.SpruceIconButtonWidget;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-import java.util.List;
 import java.util.function.Function;
 
 public class SkinShuffleIconButton extends SpruceIconButtonWidget {
@@ -17,28 +15,18 @@ public class SkinShuffleIconButton extends SpruceIconButtonWidget {
     public SkinShuffleIconButton(Position position, int width, int height, Text message, PressAction action, Function<SkinShuffleIconButton, Identifier> iconTexture) {
         super(position, width, height, message, action);
         this.iconTexture = iconTexture;
+        this.setTooltip(message);
     }
 
     @Override
-    protected int renderIcon(DrawContext graphics, int mouseX, int mouseY, float delta) {
+    protected int renderIcon(SpruceGuiGraphics graphics, int mouseX, int mouseY, float delta) {
         graphics.drawTexture(
-                //? >=1.21.2 {
-                RenderLayer::getGuiTextured,
-                //?}
+                RenderPipelines.GUI_TEXTURED,
                 iconTexture.apply(this),
                 this.getX() + this.getWidth() / 2 - (16 / 2),
                 this.getY() + this.getHeight() / 2 - (16 / 2),
-                //? <1.21.2 {
-                /*16,
-                16,
                 0,
                 isMouseHovered() ? 16 : 0,
-                *///?} else {
-                0,
-                isMouseHovered() ? 16 : 0,
-                16,
-                16,
-                //?}
                 16,
                 16,
                 16,
@@ -48,12 +36,7 @@ public class SkinShuffleIconButton extends SpruceIconButtonWidget {
     }
 
     @Override
-    protected void renderWidget(DrawContext graphics, int mouseX, int mouseY, float delta) {
+    protected void renderWidget(SpruceGuiGraphics graphics, int mouseX, int mouseY, float delta) {
         this.renderButton(graphics, mouseX, mouseY, delta);
-
-        var tooltip = getTooltip();
-        if (!this.dragging && isMouseHovered() && tooltip.isPresent()) {
-            Tooltip.create(mouseX, mouseY, List.of(tooltip.get().asOrderedText())).queue();
-        }
     }
 }

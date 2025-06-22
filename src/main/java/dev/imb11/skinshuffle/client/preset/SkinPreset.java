@@ -1,17 +1,16 @@
 package dev.imb11.skinshuffle.client.preset;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.imb11.skinshuffle.api.MojangSkinAPI;
 import dev.imb11.skinshuffle.client.skin.ResourceSkin;
 import dev.imb11.skinshuffle.client.skin.Skin;
 import dev.imb11.skinshuffle.client.skin.UrlSkin;
 import dev.imb11.skinshuffle.util.NetworkingUtil;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.Identifier;
-
-import net.minecraft.client.util.SkinTextures;
 import net.minecraft.client.session.Session;
+import net.minecraft.client.util.SkinTextures;
+import net.minecraft.util.Identifier;
 
 public class SkinPreset {
     public static final Codec<SkinPreset> CODEC = RecordCodecBuilder.create(instance ->
@@ -78,11 +77,11 @@ public class SkinPreset {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public int getKeybindId() {
         return keybindId;
     }
-    
+
     public void setKeybindId(int keybindId) {
         this.keybindId = keybindId;
     }

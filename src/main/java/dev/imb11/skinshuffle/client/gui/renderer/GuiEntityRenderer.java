@@ -3,160 +3,143 @@ package dev.imb11.skinshuffle.client.gui.renderer;
 import dev.imb11.skinshuffle.client.SkinShuffleClient;
 import dev.imb11.skinshuffle.client.config.SkinShuffleConfig;
 import dev.imb11.skinshuffle.client.skin.Skin;
-import com.mojang.blaze3d.systems.RenderSystem;
-import dev.imb11.skinshuffle.compat.ETFCompat;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.model.Dilation;
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.model.TexturedModelData;
-import net.minecraft.client.render.*;
-import net.minecraft.client.render.entity.model.PlayerEntityModel;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.util.math.MathHelper;
-import org.joml.Matrix4f;
-import org.joml.Matrix4fStack;
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 public class GuiEntityRenderer {
-    public static void drawEntity(MatrixStack matrices, int x, int y, int size, float rotation, double mouseX, double mouseY, Skin skin, SkinShuffleConfig.SkinRenderStyle style) {
-        float yaw = (float) (Math.atan2(mouseX, 120.0F));
-        float pitch = (float) (Math.atan2(-mouseY, 120.0F));
 
-        Quaternionf entityRotation = new Quaternionf().rotateY(rotation * 0.025f);
-
+    public static void drawEntity(DrawContext context, int x1, int y1, int x2, int y2, int size,
+                                  float rotation, double mouseX, double mouseY, Skin skin,
+                                  SkinShuffleConfig.SkinRenderStyle style) {
+        
+        // Calculate center position
+        int centerX = (x1 + x2) / 2;
+        int centerY = (y1 + y2) / 2;
+        
+        // Calculate head rotation based on style
+        float headYaw = 0.0f;
+        float headPitch = 0.0f;
+        
         if (style == SkinShuffleConfig.SkinRenderStyle.CURSOR) {
-            Quaternionf pitchRotation = new Quaternionf().rotateX(pitch * 10.0F * 0.017453292F);
-            Quaternionf yawRotation = new Quaternionf().rotateY(yaw * 10.0F * 0.017453292F);
-            entityRotation.mul(pitchRotation);
-            entityRotation.mul(yawRotation);
+            // Calculate mouse position relative to the render area center
+            float deltaX = (float) (centerX - mouseX);
+            float deltaY = (float) (mouseY - centerY);
+            
+            // Use atan2 for smooth, natural head rotation
+            // Scale the input to create a reasonable sensitivity
+            float sensitivity = 0.003f; // Adjust this value to control sensitivity
+            headYaw = (float) Math.toDegrees(Math.atan(deltaX * sensitivity));
+            headPitch = (float) Math.toDegrees(Math.atan(deltaY * sensitivity));
         }
-
-        setupModelViewStack();
-        setupMatrices(matrices, x, y, size, entityRotation);
-
-        renderEntity(matrices, yaw, pitch, skin, (long) SkinShuffleClient.TOTAL_TICK_DELTA);
-
-        cleanupMatrices(matrices);
-        cleanupModelViewStack();
-    }
-
-    private static void setupModelViewStack() {
-        Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
-        modelViewStack.pushMatrix();
-        modelViewStack.translate(0.0f, 0.0f, 1000.0f);
-
-        //? if <1.21.2 {
-        /*RenderSystem.applyModelViewMatrix();
-         *///?}
-    }
-
-    private static void setupMatrices(MatrixStack matrices, int x, int y, int size, Quaternionf entityRotation) {
-        matrices.push();
-        matrices.translate(x, y, 100.0);
-        matrices.multiplyPositionMatrix(new Matrix4f().scaling(size, size, -size));
-        matrices.translate(0, -1, 0);
-        matrices.multiply(entityRotation);
-        matrices.translate(0, -1, 0);
-        //? if <1.21.5 {
-        /*DiffuseLighting.method_34742();
-        *///?} else {
-        DiffuseLighting.enableGuiShaderLighting();
-        //?}
-    }
-
-    private static void renderEntity(MatrixStack matrices, float yaw, float pitch, Skin skin, long totalTickDelta) {
-        var modelData = PlayerEntityModel.getTexturedModelData(Dilation.NONE, skin.getModel().equals("slim"));
-        NoEntityPlayerModel model = new NoEntityPlayerModel(TexturedModelData.of(modelData, 64, 64).createModel(), skin.getModel().equals("slim"));
-
-        model.swingArmsGently(totalTickDelta);
-        model.setHeadPos(yaw, pitch);
-        model.waveCapeGently(totalTickDelta);
-
-        if (FabricLoader.getInstance().isModLoaded("entity_texture_features")) {
-            ETFCompat.preventRenderLayerIssue();
-        }
-
-        VertexConsumerProvider.Immediate vertexConsumers = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-        model.render(
-                matrices,
-                vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(skin.getTexture())),
-                LightmapTextureManager.MAX_LIGHT_COORDINATE,
-                OverlayTexture.DEFAULT_UV,
-                0xFFFFFFFF
+        
+        // Create player render state
+        PlayerEntityRenderState renderState = createPlayerRenderState(skin, headYaw, headPitch, rotation);
+        
+        // Create base rotation quaternion (try Z-axis rotation if Y-axis doesn't work)
+//        System.out.println(rotation);
+        Quaternionf baseRotation = new Quaternionf();
+        baseRotation.rotationZ((float) (Math.PI * 1.0f));
+        
+        // Calculate entity position (negative Y to fix upside down rendering)
+        Vector3f entityPosition = new Vector3f(0.0F, 1.1F, 0.0F);
+        
+        // Render the entity within the scissor area
+        context.enableScissor(x1, y1, x2, y2);
+        context.addEntity(
+                renderState,
+                size,
+                entityPosition,
+                baseRotation,
+                null,
+                x1, y1, x2, y2
         );
-
-        if (skin.getSkinTextures().capeTexture() != null && SkinShuffleConfig.get().showCapeInPreview) {
-            matrices.push();
-            matrices.translate(0.0F, 0.0F, 0.2F);
-
-            // Get model for cape.
-            //? >=1.21.2 {
-            //?} else {
-            /*model.renderCape(
-                    matrices,
-                    //? if !=1.20.1 {
-                    vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(skin.getSkinTextures().capeTexture())),
-                    //?} else {
-                    /^vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentCull(client.getSkinProvider().loadSkin(client.getSkinProvider().getTextures(client.getSession().getProfile()).get(MinecraftProfileTexture.Type.CAPE), MinecraftProfileTexture.Type.CAPE))),
-                    ^///?}
-                    0,
-                    OverlayTexture.DEFAULT_UV
-            );
-            *///?}
-
-            matrices.pop();
-        }
-        vertexConsumers.draw();
+        context.disableScissor();
     }
 
-    private static void cleanupMatrices(MatrixStack matrices) {
-        matrices.pop();
-        DiffuseLighting.enableGuiDepthLighting();
-    }
+    private static PlayerEntityRenderState createPlayerRenderState(Skin skin, float headYaw, float headPitch, float rotation) {
+        PlayerEntityRenderState state = new PlayerEntityRenderState();
 
-    private static void cleanupModelViewStack() {
-        Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
-        modelViewStack.popMatrix();
+        // Basic entity properties
+        state.age = SkinShuffleClient.TOTAL_TICK_DELTA;
+        state.width = 0.6F;
+        state.height = 1.8F;
+        state.standingEyeHeight = 1.62F;
+        state.invisible = false;
+        state.sneaking = false;
+        state.onFire = false;
 
-        //? if <1.21.2 {
-        /*RenderSystem.applyModelViewMatrix();
-         *///?}
-    }
+        // Body orientation - keep body facing forward
+        state.bodyYaw = headYaw * 0.1f + rotation;
+        state.relativeHeadYaw = headYaw; // Only the head turns with mouse
+        state.pitch = headPitch; // Head pitch
+        state.deathTime = 0.0F;
 
-    public static class NoEntityPlayerModel extends PlayerEntityModel {
-        public NoEntityPlayerModel(ModelPart root, boolean thinArms) {
-            super(root, thinArms);
+        // Gentle arm swaying animation
+        float animationTime = SkinShuffleClient.TOTAL_TICK_DELTA * 0.067F;
+        state.limbSwingAnimationProgress = MathHelper.sin(animationTime) * 0.05F;
+        state.limbSwingAmplitude = 0.1F;
 
-            //? <1.21.2 {
-            /*this.child = false;
-             *///?}
-        }
+        // Standard entity state
+        state.baseScale = 1.0F;
+        state.ageScale = 1.0F;
+        state.flipUpsideDown = false; // Ensure this is explicitly false
+        state.shaking = false;
+        state.baby = false;
+        state.touchingWater = false;
+        state.usingRiptide = false;
+        state.hurt = false;
+        state.invisibleToPlayer = false;
+        state.hasOutline = false;
+        state.sleepingDirection = null;
+        state.customName = null;
+        state.pose = EntityPose.STANDING;
 
-        public void swingArmsGently(long totalDeltaTick) {
-            float f = MathHelper.sin(totalDeltaTick * 0.067F) * 0.05F;
-            this.rightArm.roll = f + 0.06F;
-            this.rightSleeve.roll = f + 0.06F;
-            this.leftArm.roll = -f - 0.06F;
-            this.leftSleeve.roll = -f - 0.06F;
-        }
+        // Biped state - keep everything neutral
+        state.leaningPitch = 0.0F;
+        state.handSwingProgress = 0.0F;
+        state.limbAmplitudeInverse = 1.0F;
+        state.crossbowPullTime = 0.0F;
+        state.itemUseTime = 0;
+        state.isInSneakingPose = false;
+        state.isGliding = false;
+        state.isSwimming = false;
+        state.hasVehicle = false;
+        state.isUsingItem = false;
+        state.leftWingPitch = 0.0F;
+        state.leftWingYaw = 0.0F;
+        state.leftWingRoll = 0.0F;
 
-        public void setHeadPos(float headYaw, float headPitch) {
-            this.head.yaw = headYaw;
-            this.head.pitch = headPitch;
+        // Player-specific properties
+        state.skinTextures = skin.getSkinTextures();
+        state.name = String.valueOf(skin.hashCode());
+        state.spectator = false;
+        state.stuckArrowCount = 0;
+        state.stingerCount = 0;
+        state.itemUseTimeLeft = 0;
+        state.handSwinging = false;
+        state.glidingTicks = 0.0F;
+        state.applyFlyingRotation = false;
+        state.flyingRotation = 0.0F;
 
-            //? if =1.21 {
-            /*this.hat.yaw = headYaw;
-            this.hat.pitch = headPitch;
-            *///?}
-        }
+        // Skin layer visibility
+        state.hatVisible = true;
+        state.jacketVisible = true;
+        state.leftPantsLegVisible = true;
+        state.rightPantsLegVisible = true;
+        state.leftSleeveVisible = true;
+        state.rightSleeveVisible = true;
+        state.capeVisible = SkinShuffleConfig.get().showCapeInPreview;
 
-        public void waveCapeGently(long totalDeltaTick) {
-            float f = MathHelper.sin(totalDeltaTick * 0.067F) * 0.05F;
+        // Misc properties
+        state.playerName = null;
+        state.leftShoulderParrotVariant = null;
+        state.rightShoulderParrotVariant = null;
+        state.id = 0;
 
-            //? <1.21.2 {
-            /*this.cloak.pitch = f;
-             *///?}
-        }
+        return state;
     }
 }

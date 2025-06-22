@@ -26,8 +26,8 @@ public class NetworkingUtil {
         if (isSingleplayer) {
             serverAddress = null;
             folderName = client.getServer().getSavePath(WorldSavePath.ROOT).toFile().getName();
-            client.world.disconnect();
-            client.disconnect(new MessageScreen(Text.translatable("skinshuffle.reconnect.rejoining")));
+//            client.world.disconnect(Text.literal("Rejoining world."));
+            client.disconnect(new MessageScreen(Text.translatable("skinshuffle.reconnect.rejoining")), false);
         } else {
             folderName = null;
             if (!client.getNetworkHandler().getConnection().isLocal()) {
@@ -35,8 +35,8 @@ public class NetworkingUtil {
             } else {
                 serverAddress = null;
             }
-            client.world.disconnect();
-            client.disconnect(new MessageScreen(Text.translatable("skinshuffle.reconnect.reconnecting")));
+//            client.world.disconnect(Text.literal("Rejoining world."));
+            client.disconnect(new MessageScreen(Text.translatable("skinshuffle.reconnect.reconnecting")), false);
         }
 
 

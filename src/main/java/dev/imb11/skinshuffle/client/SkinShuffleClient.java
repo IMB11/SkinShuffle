@@ -16,7 +16,7 @@ public class SkinShuffleClient implements ClientModInitializer {
         SkinPresetManager.setup();
         SkinPresetManager.loadPresets();
         KeybindManager.init();
-        
+
         ClientSkinHandling.init();
     }
 }

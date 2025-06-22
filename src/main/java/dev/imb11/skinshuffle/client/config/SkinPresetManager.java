@@ -1,6 +1,9 @@
 package dev.imb11.skinshuffle.client.config;
 
 import com.google.gson.*;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
 import dev.imb11.skinshuffle.SkinShuffle;
 import dev.imb11.skinshuffle.api.MojangSkinAPI;
 import dev.imb11.skinshuffle.api.SkinShuffleAPI;
@@ -11,9 +14,6 @@ import dev.imb11.skinshuffle.client.skin.UrlSkin;
 import dev.imb11.skinshuffle.networking.ClientSkinHandling;
 import dev.imb11.skinshuffle.util.NetworkingUtil;
 import dev.imb11.skinshuffle.util.SkinCacheRegistry;
-import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.JsonOps;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Util;
 
@@ -176,10 +176,10 @@ public class SkinPresetManager {
                 SkinPreset preset = pair.getFirst();
                 loadedPresets.add(preset);
             }
-            
+
             // Validate keybind IDs for uniqueness
             validateAndFixKeybindIds();
-            
+
             chosenPreset = loadedPresets.get(chosenPresetIndex);
             apiPreset = apiPresetIndex < 0 ? null : loadedPresets.get(apiPresetIndex);
         } catch (Exception e) {
@@ -194,7 +194,7 @@ public class SkinPresetManager {
             LOADING_LOCK = false;
         }
     }
-    
+
     /**
      * Validates that all keybind IDs are unique (except for -1 which means "no keybind")
      * and fixes any duplicates by resetting them to -1.
@@ -202,17 +202,17 @@ public class SkinPresetManager {
     private static void validateAndFixKeybindIds() {
         // Skip validation if there are no presets
         if (loadedPresets.isEmpty()) return;
-        
+
         // Track used keybind IDs
         List<Integer> usedKeybindIds = new ArrayList<>();
         boolean hasChanges = false;
-        
+
         for (SkinPreset preset : loadedPresets) {
             int keybindId = preset.getKeybindId();
-            
+
             // Skip -1 (no keybind) values
             if (keybindId == -1) continue;
-            
+
             // If this keybind ID is already used, reset it to -1
             if (usedKeybindIds.contains(keybindId)) {
                 SkinShuffle.LOGGER.warn("Duplicate keybind ID detected: " + keybindId + ". Resetting to -1 for preset: " + preset.getName());
@@ -222,7 +222,7 @@ public class SkinPresetManager {
                 usedKeybindIds.add(keybindId);
             }
         }
-        
+
         // Save changes if any duplicates were fixed
         if (hasChanges) {
             savePresets();

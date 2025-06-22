@@ -3,10 +3,10 @@ package dev.imb11.skinshuffle.client.gui.widgets.presets;
 import dev.imb11.skinshuffle.SkinShuffle;
 import dev.imb11.skinshuffle.client.gui.carousels.CarouselScreen;
 import dev.lambdaurora.spruceui.Position;
+import dev.lambdaurora.spruceui.render.SpruceGuiGraphics;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
 import dev.lambdaurora.spruceui.widget.SpruceWidget;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,14 +35,12 @@ public class AddCardWidget extends AbstractCardWidget<CarouselScreen> {
     }
 
     @Override
-    protected void renderBackground(DrawContext graphics, int mouseX, int mouseY, float delta) {
-        graphics.drawBorder(getX(), getY(), getWidth(), getHeight(), this.active ? 0xDF000000 : 0x5F000000);
+    protected void renderBackground(SpruceGuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        graphics.vanilla().drawBorder(getX(), getY(), getWidth(), getHeight(), this.active ? 0xDF000000 : 0x5F000000);
         graphics.fill(getX() + 1, getY() + 1, getX() + getWidth() - 1, getY() + getHeight() - 1, this.active ? 0x7F000000 : 0x0D000000);
 
         graphics.drawTexture(
-                //? >=1.21.2 {
-                RenderLayer::getGuiTextured,
-                //?}
+                RenderPipelines.GUI_TEXTURED,
                 SkinShuffle.id("textures/gui/carousel_add.png"),
                 getX() + (this.getWidth() / 2) - 16,
                 getY() + (this.getHeight() / 2) - 16,
@@ -55,7 +53,7 @@ public class AddCardWidget extends AbstractCardWidget<CarouselScreen> {
 
 
         var text = Text.translatable("skinshuffle.carousel.new");
-        graphics.drawTextWithShadow(this.client.textRenderer, text, getX() + (this.width / 2) - this.client.textRenderer.getWidth(text) / 2, getY() + this.client.textRenderer.fontHeight / 2, this.active ? 0xFFFFFFFF : 0xFF808080);
+        graphics.vanilla().drawTextWithShadow(this.client.textRenderer, text, getX() + (this.width / 2) - this.client.textRenderer.getWidth(text) / 2, getY() + this.client.textRenderer.fontHeight / 2, this.active ? 0xFFFFFFFF : 0xFF808080);
     }
 
     @Override

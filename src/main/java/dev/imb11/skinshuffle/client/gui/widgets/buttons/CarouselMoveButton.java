@@ -2,9 +2,9 @@ package dev.imb11.skinshuffle.client.gui.widgets.buttons;
 
 import dev.imb11.skinshuffle.SkinShuffle;
 import dev.lambdaurora.spruceui.Position;
+import dev.lambdaurora.spruceui.render.SpruceGuiGraphics;
 import dev.lambdaurora.spruceui.widget.AbstractSpruceWidget;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
@@ -56,31 +56,24 @@ public class CarouselMoveButton extends AbstractSpruceWidget {
     }
 
     @Override
-    protected void renderWidget(DrawContext guiGraphics, int mouseX, int mouseY, float delta) {
-        var matrices = guiGraphics.getMatrices();
-        matrices.push();
-        // Translate the matrix forward so its above rendered playermodels
-//        matrices.translate(0, 0, 500);
-        guiGraphics.drawTexture(
-                //? >=1.21.2 {
-                RenderLayer::getGuiTextured,
-                //?}
+    protected void renderWidget(SpruceGuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+        var matrices = guiGraphics.vanilla().getMatrices();
+        matrices.pushMatrix();
+        guiGraphics.vanilla().drawTexture(
+                RenderPipelines.GUI_TEXTURED,
                 ARROW_TEXTURES,
                 getX(),
                 getY(),
-                //? >=1.21.2 {
                 this.type.u,
                 (this.active ? (this.hovered || this.focused ? this.type.height : 0) : this.type.height),
-                //?}
                 width,
                 height,
-                //? <1.21.2 {
-                /*this.type.u,
-                (this.active ? (this.hovered || this.focused ? this.type.height : 0) : this.type.height),
-                *///?}
-                this.type.width, this.type.height, 64, 64
+                this.type.width,
+                this.type.height,
+                64,
+                64
         );
-        matrices.pop();
+        matrices.popMatrix();
     }
 
     @Override

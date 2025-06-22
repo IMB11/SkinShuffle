@@ -1,16 +1,12 @@
 package dev.imb11.skinshuffle.client.skin;
 
 import dev.imb11.skinshuffle.SkinShuffle;
-import dev.imb11.skinshuffle.util.ToastHelper;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.concurrent.CompletableFuture;
 
 public abstract class BackedSkin implements Skin, AutoCloseable {
     // Keep track of how many instances exist for each texture id, so we can clean them up when they're no longer used
@@ -48,26 +44,26 @@ public abstract class BackedSkin implements Skin, AutoCloseable {
             fetching = true;
 
             MinecraftClient.getInstance().execute(() -> {
-                    try {
-                        var texture = loadTexture(() -> {
-                            fetching = false;
-                            fetched = true;
-                            setTexture(id);
-                        });
+                try {
+                    var texture = loadTexture(() -> {
+                        fetching = false;
+                        fetched = true;
+                        setTexture(id);
+                    });
 
-                        if (texture != null) {
-                            textureManager.registerTexture(id, texture);
-                        } else {
-                            fetching = false;
-                            fetched = true;
-                            setTexture(null);
-                        }
-                    } catch (Exception e) {
-                        SkinShuffle.LOGGER.warn("Failed to load skin texture", e);
+                    if (texture != null) {
+                        textureManager.registerTexture(id, texture);
+                    } else {
                         fetching = false;
                         fetched = true;
                         setTexture(null);
                     }
+                } catch (Exception e) {
+                    SkinShuffle.LOGGER.warn("Failed to load skin texture", e);
+                    fetching = false;
+                    fetched = true;
+                    setTexture(null);
+                }
             });
         } else {
             // Texture already exists, we still set it

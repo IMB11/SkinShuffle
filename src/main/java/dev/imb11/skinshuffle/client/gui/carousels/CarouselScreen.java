@@ -13,8 +13,9 @@ import dev.imb11.skinshuffle.client.preset.SkinPreset;
 import dev.imb11.skinshuffle.client.skin.Skin;
 import dev.imb11.skinshuffle.networking.ClientSkinHandling;
 import dev.lambdaurora.spruceui.Position;
-import dev.lambdaurora.spruceui.Tooltip;
+import dev.lambdaurora.spruceui.render.SpruceGuiGraphics;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
+import dev.lambdaurora.spruceui.tooltip.Tooltip;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
 import dev.lambdaurora.spruceui.widget.SpruceIconButtonWidget;
 import dev.lambdaurora.spruceui.widget.SpruceWidget;
@@ -151,19 +152,13 @@ public abstract class CarouselScreen extends SpruceScreen {
     }
 
     @Override
-    public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
+    public void render(SpruceGuiGraphics graphics, int mouseX, int mouseY, float delta) {
         var cardAreaWidth = getCardWidth() + getCardGap();
 
-        // BG stuff
-        this.renderBackground(graphics, mouseX, mouseY, delta);
-
         graphics.fill(0, this.textRenderer.fontHeight * 3, this.width, this.height - (this.textRenderer.fontHeight * 3), 0x7F000000);
-        graphics.fillGradient(0, (int) (this.textRenderer.fontHeight * 2.75), this.width, this.textRenderer.fontHeight * 3, 0x00000000, 0x7F000000);
-        graphics.fillGradient(0, this.height - (this.textRenderer.fontHeight * 3), this.width, (int) (this.height - (this.textRenderer.fontHeight * 2.75)), 0x7F000000, 0x00000000);
 
-        //? if <1.21.2 {
-        /*dev.lambdaurora.spruceui.util.ScissorManager.pushScaleFactor(this.scaleFactor);
-         *///?}
+        graphics.fillGradient(0, (int) (this.textRenderer.fontHeight * 2.75), this.width, this.textRenderer.fontHeight * 3, 0x00000000, 0x00000000, 0x7F000000, 0x7F000000);
+        graphics.fillGradient(0, this.height - (this.textRenderer.fontHeight * 3), this.width, (int) (this.height - (this.textRenderer.fontHeight * 2.75)), 0x7F000000, 0x7F000000, 0x00000000, 0x00000000);
 
         // Carousel Widgets
         int rows = getRows();
@@ -180,13 +175,7 @@ public abstract class CarouselScreen extends SpruceScreen {
         int leftI = this.width / 2 - cardAreaWidth - getCardWidth() / 2;
         int rowI = 0;
         for (AbstractCardWidget<?> widget : this.carouselWidgets) {
-//            var widgetDeltaIndex = widget.getDeltaIndex() - i++;
-//            var widgetXOffset = (int) (widgetDeltaIndex * cardAreaWidth);
             var topI = top + (getCardHeight() + getCardGap()) * rowI;
-//            var position = Position.of(
-//                    widget.isDragging() ? mouseX - widget.getWidth() / 2 : leftI + scrollOffset,
-//                    this.height / 2 - getCardHeight() / 2
-//            );
             var position = Position.of(
                     scrollOffsetPosition, widget.getDeltaX(leftI),
                     widget.getDeltaY(topI)
@@ -206,7 +195,6 @@ public abstract class CarouselScreen extends SpruceScreen {
                 }
             }
 
-//            graphics.drawTextWithShadow(this.textRenderer, String.valueOf(loadedPresets.indexOf(loadedPreset)), leftI + scrollOffset, this.height/2 - this.textRenderer.fontHeight /2 , 0xFFFFFFFF);
             if (widget instanceof PresetWidget<?> loadedPreset) {
                 loadedPreset.overridePosition(position);
                 loadedPreset.setScaleFactor(scaleFactor);
@@ -230,15 +218,11 @@ public abstract class CarouselScreen extends SpruceScreen {
         }
 
         this.renderWidgets(graphics, mouseX, mouseY, delta);
-        this.renderTitle(graphics, mouseX, mouseY, delta);
-        Tooltip.renderAll(graphics);
 
-        //? if <1.21.2 {
-        /*dev.lambdaurora.spruceui.util.ScissorManager.popScaleFactor();
-         *///?}
+        this.renderTitle(graphics.vanilla(), mouseX, mouseY, delta);
+        Tooltip.renderAll(graphics.vanilla());
     }
 
-    @Override
     public void renderTitle(DrawContext graphics, int mouseX, int mouseY, float delta) {
         graphics.drawCenteredTextWithShadow(this.textRenderer, this.getTitle().asOrderedText(), this.width / 2, this.textRenderer.fontHeight, 0xFFFFFFFF);
     }

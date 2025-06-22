@@ -40,11 +40,32 @@ public class LargePresetWidget extends PresetWidget<LargeCarouselScreen> {
     }
 
     @Override
+    protected float getPreviewScaling() {
+        return 1.0f;
+    }
+
+    @Override
     public void setActive(boolean active) {
         super.setActive(active);
 
         int i = this.parent.carouselWidgets.indexOf(this);
         moveLeftButton.setVisible(active && this.isMovable() && i > 0 && this.parent.carouselWidgets.get(i - 1).isMovable());
         moveRightButton.setVisible(active && this.isMovable() && i < this.parent.carouselWidgets.size() - 1 && this.parent.carouselWidgets.get(i + 1).isMovable());
+    }
+
+    @Override
+    protected int[] getPreviewBounds() {
+        // Create a centered rectangular area for the large view
+        int margin = 8;
+        int previewWidth = getWidth() / 3;  // Center third of the widget
+        int previewHeight = getHeight() - margin * 2 - 70; // Height minus margins and button space
+
+        int centerX = getX() + getWidth() / 2;
+        int x1 = centerX - previewWidth / 2;
+        int x2 = centerX + previewWidth / 2;
+        int y1 = getY() + margin + this.client.textRenderer.fontHeight + 5; // Below the title
+        int y2 = y1 + previewHeight;
+
+        return new int[]{x1, y1, x2, y2};
     }
 }

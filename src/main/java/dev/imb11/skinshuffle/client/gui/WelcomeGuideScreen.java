@@ -2,16 +2,16 @@ package dev.imb11.skinshuffle.client.gui;
 
 import dev.lambdaurora.spruceui.Position;
 import dev.lambdaurora.spruceui.navigation.NavigationDirection;
+import dev.lambdaurora.spruceui.render.SpruceGuiGraphics;
 import dev.lambdaurora.spruceui.screen.SpruceScreen;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
 import dev.lambdaurora.spruceui.widget.container.SpruceContainerWidget;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.OrderedText;
-import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.NotNull;
 
 public class WelcomeGuideScreen extends SpruceScreen {
     private final Screen parent;
@@ -58,13 +58,15 @@ public class WelcomeGuideScreen extends SpruceScreen {
     }
 
     @Override
-    public void renderTitle(DrawContext graphics, int mouseX, int mouseY, float delta) {
-        graphics.drawTextWithShadow(
+    public void render(@NotNull SpruceGuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        super.render(graphics, mouseX, mouseY, delta);
+
+        graphics.vanilla().drawTextWithShadow(
                 this.client.textRenderer,
                 this.title,
                 this.width / 2 - this.client.textRenderer.getWidth(this.title) / 2,
                 10,
-                0xFFFFFF
+                0xFFFFFFFF
         );
     }
 
@@ -116,7 +118,7 @@ public class WelcomeGuideScreen extends SpruceScreen {
         }
 
         @Override
-        public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        public void render(SpruceGuiGraphics context, int mouseX, int mouseY, float delta) {
             super.render(context, mouseX, mouseY, delta);
 
             context.enableScissor(
@@ -153,12 +155,12 @@ public class WelcomeGuideScreen extends SpruceScreen {
                 // Wrap the Text object, then draw each wrapped line
                 var wrappedLines = this.client.textRenderer.wrapLines(line, wrapWidth);
                 for (OrderedText wrappedLine : wrappedLines) {
-                    context.drawTextWithShadow(
+                    context.vanilla().drawTextWithShadow(
                             this.client.textRenderer,
                             wrappedLine,
                             this.getX() + 10,
                             currentY,
-                            0xFFFFFF
+                            0xFFFFFFFF
                     );
                     currentY += lineHeight;
                 }

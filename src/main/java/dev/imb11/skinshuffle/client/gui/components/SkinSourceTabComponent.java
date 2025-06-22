@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 public class SkinSourceTabComponent extends TabComponent {
     private final MinecraftClient client;
     private final Consumer<Boolean> onValidationChanged;
-    
+
     private TextFieldWidget textFieldWidget;
     private MultilineTextWidget errorLabel;
     private CyclingButtonWidget<String> skinModelButton;
@@ -35,14 +35,14 @@ public class SkinSourceTabComponent extends TabComponent {
 
     /**
      * Constructor for the skin source tab component.
-     * 
-     * @param textRenderer The text renderer
-     * @param preset The skin preset being edited
-     * @param client The Minecraft client instance
+     *
+     * @param textRenderer        The text renderer
+     * @param preset              The skin preset being edited
+     * @param client              The Minecraft client instance
      * @param onValidationChanged Callback when validation status changes
      */
-    public SkinSourceTabComponent(TextRenderer textRenderer, SkinPreset preset, 
-                                 MinecraftClient client, Consumer<Boolean> onValidationChanged) {
+    public SkinSourceTabComponent(TextRenderer textRenderer, SkinPreset preset,
+                                  MinecraftClient client, Consumer<Boolean> onValidationChanged) {
         super(Text.translatable("skinshuffle.edit.source.title"), textRenderer, preset);
         this.client = client;
         this.onValidationChanged = onValidationChanged;
@@ -118,20 +118,20 @@ public class SkinSourceTabComponent extends TabComponent {
         subGridAdder.add(loadButton);
 
         gridAdder.add(errorLabel, grid.copyPositioner().alignLeft());
-        
+
         // Initial validation
         validateInput();
     }
-    
+
     /**
      * Validates the current input and updates UI based on validity.
      */
     public void validateInput() {
         boolean isValid = true;
-        
+
         if (currentSourceType != SkinLoader.SourceType.UNCHANGED) {
             String input = textFieldWidget.getText();
-            
+
             isValid = switch (currentSourceType) {
                 case URL -> ValidationUtils.isValidUrl(input);
                 case FILE -> ValidationUtils.isValidPngFilePath(input);
@@ -140,7 +140,7 @@ public class SkinSourceTabComponent extends TabComponent {
                 case UUID -> ValidationUtils.isValidUUID(input);
                 default -> false;
             };
-            
+
             // Update error message
             if (!isValid) {
                 errorLabel.setMessage(Text.translatable(currentSourceType.getInvalidInputTranslationKey()));
@@ -148,13 +148,13 @@ public class SkinSourceTabComponent extends TabComponent {
                 errorLabel.setMessage(Text.empty());
             }
         }
-        
+
         // Update visibility of input fields
         textFieldWidget.setVisible(currentSourceType != SkinLoader.SourceType.UNCHANGED);
         loadButton.visible = currentSourceType != SkinLoader.SourceType.UNCHANGED;
         loadButton.active = currentSourceType != SkinLoader.SourceType.UNCHANGED && isValid;
         skinModelButton.visible = currentSourceType != SkinLoader.SourceType.UNCHANGED;
-        
+
         // Notify validation status change
         onValidationChanged.accept(isValid);
     }
@@ -166,13 +166,13 @@ public class SkinSourceTabComponent extends TabComponent {
         loading = true;
         String skinSource = textFieldWidget.getText();
         String model = skinModelButton.getValue();
-        
+
         CompletableFuture<Void> future = SkinLoader.loadSkin(
                 currentSourceType, skinSource, model, preset);
-        
+
         future.thenRun(() -> loading = false);
     }
-    
+
     /**
      * Handles files being dropped onto the screen.
      */
@@ -187,21 +187,21 @@ public class SkinSourceTabComponent extends TabComponent {
             ToastHelper.showToast("invalid_dropped_file");
         }
     }
-    
+
     /**
      * Gets the current source type.
      */
     public SkinLoader.SourceType getCurrentSourceType() {
         return currentSourceType;
     }
-    
+
     /**
      * Gets the source text field.
      */
     public TextFieldWidget getTextFieldWidget() {
         return textFieldWidget;
     }
-    
+
     /**
      * Returns whether a skin is currently loading.
      */

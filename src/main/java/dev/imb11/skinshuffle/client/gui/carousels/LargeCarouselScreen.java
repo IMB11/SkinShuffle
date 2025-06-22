@@ -5,6 +5,7 @@ import dev.imb11.skinshuffle.client.gui.widgets.buttons.CarouselMoveButton;
 import dev.imb11.skinshuffle.client.gui.widgets.presets.AbstractCardWidget;
 import dev.imb11.skinshuffle.client.gui.widgets.presets.LargePresetWidget;
 import dev.imb11.skinshuffle.client.preset.SkinPreset;
+import dev.lambdaurora.spruceui.Position;
 import net.minecraft.client.gui.screen.Screen;
 
 public class LargeCarouselScreen extends CarouselScreen {
@@ -19,23 +20,23 @@ public class LargeCarouselScreen extends CarouselScreen {
     protected void init() {
         super.init();
 
-//        leftMoveButton = new CarouselMoveButton(Position.of((getCardWidth() / 2), this.height - 20), false);
-//        rightMoveButton = new CarouselMoveButton(Position.of(this.width - (getCardWidth() / 2), this.height - 20), true);
-//
-//        leftMoveButton.setCallback(() -> {
-//            scrollCarousel(1, true);
-//            snapCarousel();
-//        });
-//        rightMoveButton.setCallback(() -> {
-//            scrollCarousel(-1, true);
-//            snapCarousel();
-//        });
+        leftMoveButton = new CarouselMoveButton(Position.of((getCardWidth() / 2), this.height - 20), false);
+        rightMoveButton = new CarouselMoveButton(Position.of(this.width - (getCardWidth() / 2), this.height - 20), true);
 
-//        this.addDrawableChild(leftMoveButton);
-//        this.addDrawableChild(rightMoveButton);
+        leftMoveButton.setCallback(() -> {
+            scrollCarousel(-1, true);
+            snapCarousel();
+        });
+        rightMoveButton.setCallback(() -> {
+            scrollCarousel(1, true);
+            snapCarousel();
+        });
 
-//        this.leftMoveButton.setActive(this.carouselWidgets.size() != 1);
-//        this.rightMoveButton.setActive(this.carouselWidgets.size() != 1);
+        this.addDrawableChild(leftMoveButton);
+        this.addDrawableChild(rightMoveButton);
+
+        this.leftMoveButton.setActive(this.carouselWidgets.size() != 1);
+        this.rightMoveButton.setActive(this.carouselWidgets.size() != 1);
     }
 
     @Override

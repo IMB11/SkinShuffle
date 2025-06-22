@@ -5,13 +5,13 @@ import dev.imb11.skinshuffle.client.gui.carousels.CompactCarouselScreen;
 import dev.imb11.skinshuffle.client.gui.widgets.buttons.VariableButton;
 import dev.imb11.skinshuffle.client.preset.SkinPreset;
 import dev.lambdaurora.spruceui.Position;
+import dev.lambdaurora.spruceui.render.SpruceGuiGraphics;
 import dev.lambdaurora.spruceui.widget.SpruceWidget;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.random.Random;
+import org.joml.Matrix3x2fStack;
 import org.lwjgl.glfw.GLFW;
 
 public class CompactPresetWidget extends PresetWidget<CompactCarouselScreen> {
@@ -57,20 +57,24 @@ public class CompactPresetWidget extends PresetWidget<CompactCarouselScreen> {
     }
 
     @Override
-    public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
-        var matrices = graphics.getMatrices();
-        matrices.push();
+    public void render(SpruceGuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        Matrix3x2fStack matrices = graphics.vanilla().getMatrices();
+        matrices.pushMatrix();
 
+        // Wiggle effect when in edit mode and draggable
         if (parent.isEditMode() && isMovable()) {
-            var x = getX() + getWidth() / 2;
-            var y = getY() + getHeight() / 2;
-            matrices.translate(x, y, 0);
-            matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees((float) Math.sin(GlfwUtil.getTime() * wiggleSpeed) * wiggleAmount));
-            matrices.translate(-x, -y, 0);
-        }
-        super.render(graphics, mouseX, mouseY, delta);
+            float cx = getX() + getWidth() * 0.5f;
+            float cy = getY() + getHeight() * 0.5f;
+            matrices.translate(cx, cy);
 
-        matrices.pop();
+            float angle = (float) Math.sin(GlfwUtil.getTime() * wiggleSpeed) * wiggleAmount;
+            matrices.rotate(angle);
+
+            matrices.translate(-cx, -cy);
+        }
+
+        super.render(graphics, mouseX, mouseY, delta);
+        matrices.popMatrix();
     }
 
     @Override
@@ -90,22 +94,20 @@ public class CompactPresetWidget extends PresetWidget<CompactCarouselScreen> {
         return false;
     }
 
-    private int getPreviewMargin() {
-        return 4;
+    @Override
+    protected float getPreviewScaling() {
+        return 0.5f;
     }
 
     @Override
-    protected int getPreviewX() {
-        return getX() + width / 4;
-    }
+    protected int[] getPreviewBounds() {
+        int margin = 5;
 
-    @Override
-    protected int getPreviewY() {
-        return getY() + height - getPreviewMargin() + 14;
-    }
-
-    @Override
-    protected int getPreviewSize() {
-        return ((height - getPreviewMargin() * 2) * 10 / 22) - 2;
+        int x1 = getX() + margin;
+        int y1 = getY() + margin + this.client.textRenderer.fontHeight + 1; // Below the title
+        int x2 = x1 + getWidth() / 2;
+        int y2 = y1 + (int) (getHeight() / 1.5f);
+        
+        return new int[]{x1, y1, x2, y2};
     }
 }

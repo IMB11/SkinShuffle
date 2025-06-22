@@ -1,10 +1,10 @@
 package dev.imb11.skinshuffle.client.skin;
 
-import dev.imb11.skinshuffle.SkinShuffle;
-import dev.imb11.skinshuffle.api.MojangSkinAPI;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.imb11.skinshuffle.SkinShuffle;
+import dev.imb11.skinshuffle.api.MojangSkinAPI;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;

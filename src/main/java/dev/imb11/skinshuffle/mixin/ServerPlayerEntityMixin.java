@@ -1,9 +1,9 @@
 package dev.imb11.skinshuffle.mixin;
 
-import dev.imb11.skinshuffle.networking.ServerSkinHandling;
-import dev.imb11.skinshuffle.util.SkinShufflePlayer;
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
+import dev.imb11.skinshuffle.networking.ServerSkinHandling;
+import dev.imb11.skinshuffle.util.SkinShufflePlayer;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
@@ -15,7 +15,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.source.BiomeAccess;
 import org.spongepowered.asm.mixin.Final;
@@ -37,18 +36,18 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
     @Final
     public ServerPlayerInteractionManager interactionManager;
 
-    protected ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
-        super(world, pos, yaw, gameProfile);
+    public ServerPlayerEntityMixin(World world, GameProfile profile) {
+        super(world, profile);
     }
-
-    @Shadow
-    public abstract ServerWorld getServerWorld();
 
     @Shadow
     public abstract void sendAbilitiesUpdate();
 
     @Shadow
     public abstract boolean isDisconnected();
+
+    @Shadow
+    public abstract ServerWorld getWorld();
 
     /**
      * @author Pyrofab
@@ -68,15 +67,10 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
         playerManager.sendToAll(new PlayerRemoveS2CPacket(new ArrayList<>(Collections.singleton(this.getUuid()))));
         playerManager.sendToAll(PlayerListS2CPacket.entryFromPlayer(Collections.singleton((ServerPlayerEntity) (Object) this)));
 
-        ServerChunkManager manager = this.getServerWorld().getChunkManager();
+        ServerChunkManager manager = this.getWorld().getChunkManager();
 
-        /*? if <1.21 {*/
-        /*var storage = manager.threadedAnvilChunkStorage;
-        var trackerEntry = storage.entityTrackers.get(this.getId());
-        *//*?} else {*/
         var storage = manager.chunkLoadingManager;
         var trackerEntry = storage.entityTrackers.get(this.getId());
-        /*?}*/
 
         // Refreshing skin in world for all that see the player
         trackerEntry.listeners.forEach(tracking -> {
@@ -87,20 +81,9 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
 
         if (!ServerSkinHandling.attemptPlayerListEntryRefresh((ServerPlayerEntity) (Object) this, this.getId())) {
             // If we could not send refresh packet, we change the player entity on the client
-            ServerWorld level = this.getServerWorld();
+            ServerWorld level = this.getWorld();
 
             this.networkHandler.sendPacket(new PlayerRespawnS2CPacket(
-
-                    // RegistryEntry<DimensionType> registryEntry,
-                    // RegistryKey<World> registryKey,
-                    // long l,
-                    // GameMode gameMode,
-                    // @Nullable GameMode gameMode2,
-                    // boolean bl,
-                    // boolean bl2,
-                    // Optional<GlobalPos> optional,
-                    // int i,
-                    // int j
 
                     new CommonPlayerSpawnInfo(
                             level.getDimensionEntry(),
@@ -111,27 +94,17 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Sk
                             level.isDebugWorld(),
                             level.isFlat(),
                             this.getLastDeathPos(),
-                            this.getPortalCooldown()
-                            //? if >=1.21.2 {
-                            , level.getSeaLevel()
-                            //?}
+                            this.getPortalCooldown(),
+                            level.getSeaLevel()
                     ), (byte) 3)
             );
 
-            //? if <1.21.2 {
-            /*this.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(this.getX(), this.getY(), this.getZ(), this.getYaw(), this.getPitch(), Collections.emptySet(), 0));
-             *///?} else {
+
             this.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(0, net.minecraft.entity.player.PlayerPosition.fromEntity(this), Collections.emptySet()));
-            //?}
-
-            //? if <1.21.5 {
-            /*this.networkHandler.sendPacket(new UpdateSelectedSlotS2CPacket(this.getInventory().selectedSlot));
-             *///?} else {
             this.networkHandler.sendPacket(new UpdateSelectedSlotS2CPacket(this.getInventory().getSelectedSlot()));
-            //?}
-
             this.networkHandler.sendPacket(new DifficultyS2CPacket(level.getDifficulty(), level.getLevelProperties().isDifficultyLocked()));
             this.networkHandler.sendPacket(new ExperienceBarUpdateS2CPacket(this.experienceProgress, this.totalExperience, this.experienceLevel));
+
             playerManager.sendWorldInfo((ServerPlayerEntity) (Object) this, level);
             playerManager.sendCommandTree((ServerPlayerEntity) (Object) this);
 

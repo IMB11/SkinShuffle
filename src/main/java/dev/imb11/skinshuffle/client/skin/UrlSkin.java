@@ -1,20 +1,18 @@
 package dev.imb11.skinshuffle.client.skin;
 
-import dev.imb11.skinshuffle.SkinShuffle;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.imb11.skinshuffle.SkinShuffle;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import kong.unirest.Unirest;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;

@@ -1,9 +1,9 @@
 package dev.imb11.skinshuffle.client.gui.widgets.buttons;
 
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -37,19 +37,13 @@ public class IconButtonWidget extends ButtonWidget {
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
         super.renderWidget(context, mouseX, mouseY, delta);
 
-        // Function<Identifier, RenderLayer> renderLayers, Identifier sprite, int x, int y, float u, float v, int width, int height, int textureWidth, int textureHeight, int color
         context.drawTexture(
-                //? >=1.21.2 {
-                RenderLayer::getGuiTextured,
-                //?}
+                RenderPipelines.GUI_TEXTURED,
                 this.iconTexture,
                 this.getIconX(),
                 this.getIconY(),
                 this.iconU,
                 this.iconV + (active ? (hovered ? 16 : 0) : this.iconDisabledVOffset),
-                //? <1.21.2 {
-                /*0,
-                 *///?}
                 this.iconWidth,
                 this.iconHeight,
                 this.iconTextureWidth,

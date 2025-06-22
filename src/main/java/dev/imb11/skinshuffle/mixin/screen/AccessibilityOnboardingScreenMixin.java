@@ -1,8 +1,6 @@
 package dev.imb11.skinshuffle.mixin.screen;
 
-import com.mojang.authlib.GameProfile;
 import dev.imb11.skinshuffle.MixinStatics;
-import dev.imb11.skinshuffle.api.MojangSkinAPI;
 import dev.imb11.skinshuffle.client.config.SkinPresetManager;
 import dev.imb11.skinshuffle.util.NetworkingUtil;
 import dev.imb11.skinshuffle.util.ToastHelper;
@@ -13,10 +11,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 @Mixin(AccessibilityOnboardingScreen.class)
 public abstract class AccessibilityOnboardingScreenMixin extends Screen {
