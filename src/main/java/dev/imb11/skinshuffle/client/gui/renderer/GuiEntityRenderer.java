@@ -4,6 +4,7 @@ import dev.imb11.skinshuffle.client.SkinShuffleClient;
 import dev.imb11.skinshuffle.client.config.SkinShuffleConfig;
 import dev.imb11.skinshuffle.client.skin.Skin;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.render.state.special.EntityGuiElementRenderState;
 import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.util.math.MathHelper;
