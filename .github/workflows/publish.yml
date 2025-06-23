@@ -36,7 +36,7 @@ jobs:
     runs-on: "ubuntu-latest"
     strategy:
       matrix:
-        game_version: [ "1.21", "1.21.3", "1.21.4", "1.21.5" ]
+        game_version: [ "1.21.6" ]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
