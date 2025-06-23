@@ -9,8 +9,10 @@
     "accessor.YggdrasilUserApiServiceAccessor"
   ],
   "client": [
+    "EntityGuiRendererMixin",
     "EntityGuiRenderStateMixin",
     "GuiRendererMixin",
+    "LivingEntityRendererMixin",
     "MinecraftClientMixin",
     "PlayerEntityMixin",
     "QuickplayMixin",

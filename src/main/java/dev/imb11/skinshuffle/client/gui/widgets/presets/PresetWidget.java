@@ -4,7 +4,6 @@ import dev.imb11.skinshuffle.client.config.SkinPresetManager;
 import dev.imb11.skinshuffle.client.config.SkinShuffleConfig;
 import dev.imb11.skinshuffle.client.gui.PresetEditScreen;
 import dev.imb11.skinshuffle.client.gui.carousels.CarouselScreen;
-import dev.imb11.skinshuffle.client.gui.carousels.CompactCarouselScreen;
 import dev.imb11.skinshuffle.client.gui.renderer.SkinPreviewRenderer;
 import dev.imb11.skinshuffle.client.gui.widgets.buttons.VariableButton;
 import dev.imb11.skinshuffle.client.preset.SkinPreset;
@@ -15,7 +14,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.ScreenRect;
 import net.minecraft.client.gui.screen.ConfirmScreen;
 import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.text.Text;
 
 public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCardWidget<S> {
@@ -153,6 +151,7 @@ public abstract class PresetWidget<S extends CarouselScreen> extends AbstractCar
     /**
      * Get the rectangular area where the skin preview should be rendered.
      * Subclasses should override this to define their preview area.
+     *
      * @return array of [x1, y1, x2, y2] representing the preview bounds
      */
     protected abstract int[] getPreviewBounds();

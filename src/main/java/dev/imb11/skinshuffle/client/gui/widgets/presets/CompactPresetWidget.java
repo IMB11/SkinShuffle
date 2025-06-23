@@ -107,7 +107,7 @@ public class CompactPresetWidget extends PresetWidget<CompactCarouselScreen> {
         int y1 = getY() + margin + this.client.textRenderer.fontHeight + 1; // Below the title
         int x2 = x1 + getWidth() / 2;
         int y2 = y1 + (int) (getHeight() / 1.5f);
-        
+
         return new int[]{x1, y1, x2, y2};
     }
 }

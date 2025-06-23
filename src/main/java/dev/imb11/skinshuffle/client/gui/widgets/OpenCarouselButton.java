@@ -32,9 +32,9 @@ public class OpenCarouselButton extends ButtonWidget {
             // Create a rectangular area above the button with 1:3 ratio (width:height)
             int skinWidth = 60;  // Width of the skin preview area
             int skinHeight = 120; // Height of the skin preview area (3x width for 1:3 ratio)
-            
+
             int skinCenterX = getX() + getWidth() / 2;
-            
+
             // Position the skin area above the button
             int x1 = skinCenterX - skinWidth / 2;
             int x2 = skinCenterX + skinWidth / 2;
@@ -48,7 +48,8 @@ public class OpenCarouselButton extends ButtonWidget {
                     x1, y1, x2, y2,
                     0.8f,
                     SkinShuffleConfig.get().widgetSkinRenderStyle,
-                    false
+                    false,
+                    this.alpha
             );
         }
     }

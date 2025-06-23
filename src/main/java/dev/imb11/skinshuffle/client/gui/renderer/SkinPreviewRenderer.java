@@ -35,6 +35,14 @@ public class SkinPreviewRenderer {
                 previewCenterX + previewSpanX - 1, previewCenterY + previewSpanY - 1, 0x7F000000);
     }
 
+    public void renderSkinPreview(DrawContext graphics, SkinPreset preset,
+                                  int mouseX, int mouseY,
+                                  int x1, int y1, int x2, int y2, float sizeScaling,
+                                  SkinShuffleConfig.SkinRenderStyle renderStyle,
+                                  boolean isLoading) {
+        this.renderSkinPreview(graphics, preset, mouseX, mouseY, x1, y1, x2, y2, sizeScaling, renderStyle, isLoading, 1.0f);
+    }
+
     /**
      * Renders the given {@link SkinPreset} in the rectangle [x1 ,y1]–[x2 ,y2].
      *
@@ -54,7 +62,7 @@ public class SkinPreviewRenderer {
                                   int mouseX, int mouseY,
                                   int x1, int y1, int x2, int y2, float sizeScaling,
                                   SkinShuffleConfig.SkinRenderStyle renderStyle,
-                                  boolean isLoading) {
+                                  boolean isLoading, float alpha) {
 
         // If the skin (or the screen) is still loading, just show the spinner.
         if (preset.getSkin().isLoading() || isLoading) {
@@ -81,7 +89,7 @@ public class SkinPreviewRenderer {
         // Pass the raw mouse coordinates - let GuiEntityRenderer handle the mouse calculations
         GuiEntityRenderer.drawEntity(
                 graphics, x1, y1, x2, y2, size,
-                rotation, mouseX, mouseY, preset.getSkin(), renderStyle
+                rotation, mouseX, mouseY, preset.getSkin(), renderStyle, alpha
         );
     }
 

@@ -15,49 +15,47 @@ public class GuiEntityRenderer {
 
     public static void drawEntity(DrawContext context, int x1, int y1, int x2, int y2, int size,
                                   float rotation, double mouseX, double mouseY, Skin skin,
-                                  SkinShuffleConfig.SkinRenderStyle style) {
-        
+                                  SkinShuffleConfig.SkinRenderStyle style, float alpha) {
+
         // Calculate center position
         int centerX = (x1 + x2) / 2;
         int centerY = (y1 + y2) / 2;
-        
+
         // Calculate head rotation based on style
         float headYaw = 0.0f;
         float headPitch = 0.0f;
-        
+
         if (style == SkinShuffleConfig.SkinRenderStyle.CURSOR) {
             // Calculate mouse position relative to the render area center
             float deltaX = (float) (centerX - mouseX);
             float deltaY = (float) (mouseY - centerY);
-            
+
             // Use atan2 for smooth, natural head rotation
             // Scale the input to create a reasonable sensitivity
             float sensitivity = 0.003f; // Adjust this value to control sensitivity
             headYaw = (float) Math.toDegrees(Math.atan(deltaX * sensitivity));
             headPitch = (float) Math.toDegrees(Math.atan(deltaY * sensitivity));
         }
-        
+
         // Create player render state
         PlayerEntityRenderState renderState = createPlayerRenderState(skin, headYaw, headPitch, rotation);
-        
+
         // Create base rotation quaternion (try Z-axis rotation if Y-axis doesn't work)
 //        System.out.println(rotation);
         Quaternionf baseRotation = new Quaternionf();
         baseRotation.rotationZ((float) (Math.PI * 1.0f));
-        
+
         // Calculate entity position (negative Y to fix upside down rendering)
         Vector3f entityPosition = new Vector3f(0.0F, 1.1F, 0.0F);
-        
+
         // Render the entity within the scissor area
         context.enableScissor(x1, y1, x2, y2);
-        context.addEntity(
-                renderState,
-                size,
-                entityPosition,
-                baseRotation,
-                null,
-                x1, y1, x2, y2
-        );
+
+        var state = new EntityGuiElementRenderState(renderState, entityPosition, baseRotation, null, x1, y1, x2, y2, (float) size, context.scissorStack.peekLast());
+
+        ((InstancedGuiEntityRenderState) (Object) state).setAlpha(alpha);
+
+        context.state.addSpecialElement(state);
         context.disableScissor();
     }
 
