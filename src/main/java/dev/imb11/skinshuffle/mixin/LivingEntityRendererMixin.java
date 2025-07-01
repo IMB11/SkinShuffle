@@ -19,6 +19,7 @@ public class LivingEntityRendererMixin {
     )
     private int changeAlpha(int originalColour) {
         if (MixinStatics.RENDERING_STATE == null) return originalColour;
+        if (MixinStatics.RENDERING_STATE.getAlpha() == 0) return originalColour;
 
         int alpha = (int) (MathHelper.clamp(MixinStatics.RENDERING_STATE.getAlpha(), 0.0F, 1.0F) * 255.0F) & 0xFF;
         return (alpha << 24) | (originalColour & 0x00FFFFFF);
